@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Calendar IQ Connector</string>
+
+    <string name="mainActivity_permissions">This app needs access to calendars to read appointments.</string>
+    <string name="mainActivity_description_success">Select the calendars to load appointments from.</string>
+    <string name="mainActivity_description_connectIQError">Install the Garmin ConnectIQ app to use this app. </string>
+    <string name="mainActivity_description_permissionsError">Install the Garmin ConnectIQ app to use this app. </string>
+    <string name="mainActivity_menu_requestPermissions">Request permissions</string>
+    <string name="mainActivity_menu_refresh">Refresh</string>
+    <string name="mainActivity_menu_send">Synchronize watches</string>
+
+    <string name="watchSyncService_description">Replies to appointment requests by Garmin devices.</string>
+</resources>
