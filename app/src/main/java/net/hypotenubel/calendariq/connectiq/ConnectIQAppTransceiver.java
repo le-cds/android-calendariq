@@ -10,10 +10,8 @@ import com.garmin.android.connectiq.exception.InvalidStateException;
 
 import net.hypotenubel.calendariq.util.Utilities;
 
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -44,7 +42,7 @@ public class ConnectIQAppTransceiver {
         /** The ConnectIQ library is scheduled to be stopped. */
         STOPPING,
         /** The ConnectIQ library is fully initialized. */
-        STARTED;
+        STARTED
     }
 
     /** Log tag for log messages. */
@@ -170,28 +168,23 @@ public class ConnectIQAppTransceiver {
      * @param device the device the target app is supposed to be running on.
      * @param app the app to send the message to.
      * @param msg the message itself.
-     * @throws IllegalStateException if {@link #isRunning()} returns {@code false}.
      */
     public final void sendMessage(final IQDevice device, final IQApp app, final List<Object> msg) {
-        if (!isRunning()) {
-            throw new IllegalStateException("Sending a message requires the framework to be "
-                    + "started. Current state: " + state.name());
-        }
-
-        Log.d(LOG_TAG, "Sending message to " + app.getApplicationId()
-                + " on " + device.getDeviceIdentifier());
-
-        // TODO Enqueue send requests and process them on a separate worker thread?
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    connectIQ.sendMessage(device, app, msg, sendMessageListener);
-                } catch (Exception e) {
-                    Log.e(LOG_TAG, "Exception while trying to send a message", e);
+        if (isRunning()) {
+            // TODO Enqueue send requests and process them on a separate worker thread?
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Log.d(LOG_TAG, "Sending message to " + app.getApplicationId()
+                                + " on " + device.getDeviceIdentifier());
+                        connectIQ.sendMessage(device, app, msg, sendMessageListener);
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, "Exception while trying to send a message", e);
+                    }
                 }
-            }
-            }).start();
+                }).start();
+        }
     }
 
 
@@ -203,13 +196,11 @@ public class ConnectIQAppTransceiver {
      */
     private void doStop() {
         try {
+            // This notifies our initialization listener which takes care of updating our state
             connectIQ.shutdown(context);
         } catch (InvalidStateException e) {
             Log.e(LOG_TAG, "Exception while trying to shot down ConnectIQ", e);
         }
-
-        Log.d(LOG_TAG, state.name() + " -> STOPPED");
-        state = State.STOPPED;
 
         // Let listeners react
         onStopped();
@@ -344,23 +335,10 @@ public class ConnectIQAppTransceiver {
     private class DeviceListener implements ConnectIQ.IQDeviceEventListener {
         @Override
         public void onDeviceStatusChanged(IQDevice device, IQDevice.IQDeviceStatus status) {
-            Log.d(LOG_TAG, device.getDeviceIdentifier() + " changed status to " + status.name());
+            Log.d(LOG_TAG, device.getDeviceIdentifier() + " changed status to "
+                    + status.name());
 
-            if (status == IQDevice.IQDeviceStatus.CONNECTED) {
-//                try {
-//                    connectIQ.registerForAppEvents(device, iqApp, appEventListener);
-//                } catch (InvalidStateException e) {
-//                    Log.e(LOG_TAG, "Failed to register for application events", e);
-//                }
-
-            } else {
-//                try {
-//                    // Ensure that we stop listening for app events
-//                    connectIQ.unregisterForApplicationEvents(device, iqApp);
-//                } catch (InvalidStateException e) {
-//                    Log.e(LOG_TAG, "Failed to unregister for application events", e);
-//                }
-            }
+            // Register for app events if connected? Unregister if disconnected?
         }
 
     }
