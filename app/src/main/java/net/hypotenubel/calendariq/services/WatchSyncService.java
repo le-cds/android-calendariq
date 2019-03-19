@@ -74,6 +74,8 @@ public class WatchSyncService extends Service implements ITransceiverEventListen
     public void onDestroy() {
         super.onDestroy();
 
+        Log.d(LOG_TAG, "onDestroy() called");
+
         // Stop the transceiver service if it's still running
         if (appTransceiver != null && appTransceiver.isRunning()) {
             // Removing us as a listener will prevent the onStop method from being called and
@@ -138,16 +140,6 @@ public class WatchSyncService extends Service implements ITransceiverEventListen
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     // ConnectIQ Events
-
-    @Override
-    public void onRunning() {
-        // Nothing to do here
-    }
-
-    @Override
-    public void onAppDiscovered(IQDevice device, IQApp app) {
-        // Nothing to do here
-    }
 
     @Override
     public void onMessageReceived(final IQDevice device, final IQApp app, final List<Object> msg) {

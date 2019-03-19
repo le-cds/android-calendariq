@@ -12,19 +12,6 @@ import java.util.List;
 public interface ITransceiverEventListener {
 
     /**
-     * Called once all devices have finished reporting their application installation status.
-     */
-    void onRunning();
-
-    /**
-     * Called when a new device with an app is discovered after the initial discovery phase.
-     *
-     * @param device the device.
-     * @param app the app.
-     */
-    void onAppDiscovered(IQDevice device, IQApp app);
-
-    /**
      * Called whenever a message is received from the app on a device.
      *
      * @param device the device that sent the message.

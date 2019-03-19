@@ -11,7 +11,6 @@ import com.garmin.android.connectiq.exception.InvalidStateException;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +39,12 @@ public class ConnectIQAppTransceiver {
     private enum State {
         /** The ConnectIQ library is not initialized. */
         STOPPED,
-        /** The ConnectIQ library is currently being initialized. */
-        INITIALIZING,
-        /** The ConnectIQ library is up and running. */
-        RUNNING,
-        /** The ConnectIQ library is currently being or is scheduled to shut down. */
-        STOPPING;
+        /** The ConnectIQ library is being started. */
+        STARTING,
+        /** The ConnectIQ library is scheduled to be stopped. */
+        STOPPING,
+        /** The ConnectIQ library is fully initialized. */
+        STARTED;
     }
 
     /** Log tag for log messages. */
@@ -59,24 +58,26 @@ public class ConnectIQAppTransceiver {
     private final Context context;
     /** ConnectIQ instance we're using to communicate with devices. */
     private final ConnectIQ connectIQ;
+
     /** ID of the app we're communicating with. */
     private final String appId;
+    /** The IQApp object we're using to represent our app. */
+    private final IQApp iqApp;
 
     /** Event listeners listening to what we have to say. */
     private final Set<ITransceiverEventListener> eventListeners = new LinkedHashSet<>();
 
-    /** The one application event listener we're using. */
+    /** Listener for initialization events. */
+    private final InitializationListener initializationListener = new InitializationListener();
+    /** Listener for application-related events. */
     private final ApplicationEventListener appEventListener = new ApplicationEventListener();
-    /** The one send message listener we're using. */
+    /** Listener for device events. */
+    private final DeviceListener deviceListener = new DeviceListener();
+    /** Listener for message events. */
     private final ConnectIQ.IQSendMessageListener sendMessageListener = new SendMessageListener();
 
     /** The state we're currently in. */
     private State state = State.STOPPED;
-
-    /** Set of devices that we still have to finish querying about their application status. */
-    private final Set<IQDevice> unqueriedDevices = new HashSet<>();
-    /** Map of devices to the copy of our app installed there. */
-    private final Map<IQDevice, IQApp> deviceApps = new HashMap<>();
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,6 +98,7 @@ public class ConnectIQAppTransceiver {
 
         this.context = context;
         this.appId = appId;
+        this.iqApp = new IQApp(appId);
 
         // Obtain a ConnectIQ instance
         Log.d(LOG_TAG, "Obtaining ConnectIQ instance for " + connectionType.name());
@@ -119,30 +121,36 @@ public class ConnectIQAppTransceiver {
             throw new IllegalStateException(state.name());
         }
 
-        Log.d(LOG_TAG, state.name() + " -> INITIALIZING");
-        state = State.INITIALIZING;
-        connectIQ.initialize(context, false, new InitializationListener());
+        Log.d(LOG_TAG, state.name() + " -> STARTING");
+        state = State.STARTING;
+        connectIQ.initialize(context, false, initializationListener);
     }
 
     /**
-     * Stops the transceiver by shutting down ConnectIQ.
+     * Stops the transceiver by shutting down ConnectIQ. This method is only valid to be called if
+     * the framework is not
      *
      * @throws IllegalStateException
      *         if this method is called while the transceiver is not running.
      */
     public final void stop() {
-        if (state == State.INITIALIZING) {
-            // If this is called before initialization has finished, indicate that we want to stop
-            // directly after initialization has finished in the listener
-            Log.d(LOG_TAG, state.name() + " -> STOPPING");
-            state = State.STOPPING;
+        switch (state) {
+            case STARTING:
+                // If this is called before initialization has finished, indicate that we want to
+                // stop directly after initialization has finished in the listener
+                Log.d(LOG_TAG, state.name() + " -> STOPPING");
+                state = State.STOPPING;
+                break;
 
-        } else if (state == State.RUNNING) {
-            // Actually do stop
-            doStop();
+            case STARTED:
+                // Actually do stop
+                doStop();
 
-        } else {
-            throw new IllegalStateException(state.name());
+            case STOPPING:
+                // We're already stopping, so do nothing...
+
+            default:
+                throw new IllegalStateException(state.name());
         }
     }
 
@@ -153,7 +161,7 @@ public class ConnectIQAppTransceiver {
      * @return whether the transceiver is currently running.
      */
     public final boolean isRunning() {
-        return state == State.RUNNING;
+        return state == State.STARTED;
     }
 
     /**
@@ -162,34 +170,28 @@ public class ConnectIQAppTransceiver {
      * @param device the device the target app is supposed to be running on.
      * @param app the app to send the message to.
      * @param msg the message itself.
+     * @throws IllegalStateException if {@link #isRunning()} returns {@code false}.
      */
     public final void sendMessage(final IQDevice device, final IQApp app, final List<Object> msg) {
-            Log.d(LOG_TAG, "Sending message to " + app.getDisplayName()
-                    + " on " + device.getFriendlyName());
-
-            // TODO Enqueue send requests and process them on a separate worker thread?
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        connectIQ.sendMessage(device, app, msg, sendMessageListener);
-                    } catch (Exception e) {
-                        Log.e(LOG_TAG, "Exception while trying to send a message", e);
-                    }
-                }
-            }).start();
-    }
-
-    /**
-     * Sends the given message to all of the app's instances over all devices.
-     *
-     * @param msg the message.
-     */
-    public final void broadcastMessage(List<Object> msg) {
-        Log.d(LOG_TAG, "Broadcasting message");
-        for (Map.Entry<IQDevice, IQApp> app : deviceApps.entrySet()) {
-            sendMessage(app.getKey(), app.getValue(), msg);
+        if (!isRunning()) {
+            throw new IllegalStateException("Sending a message requires the framework to be "
+                    + "started. Current state: " + state.name());
         }
+
+        Log.d(LOG_TAG, "Sending message to " + app.getApplicationId()
+                + " on " + device.getDeviceIdentifier());
+
+        // TODO Enqueue send requests and process them on a separate worker thread?
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    connectIQ.sendMessage(device, app, msg, sendMessageListener);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Exception while trying to send a message", e);
+                }
+            }
+            }).start();
     }
 
 
@@ -201,7 +203,6 @@ public class ConnectIQAppTransceiver {
      */
     private void doStop() {
         try {
-            connectIQ.unregisterAllForEvents();
             connectIQ.shutdown(context);
         } catch (InvalidStateException e) {
             Log.e(LOG_TAG, "Exception while trying to shot down ConnectIQ", e);
@@ -210,15 +211,7 @@ public class ConnectIQAppTransceiver {
         Log.d(LOG_TAG, state.name() + " -> STOPPED");
         state = State.STOPPED;
 
-        // Ensure that our set and map are clear
-        synchronized (unqueriedDevices) {
-            unqueriedDevices.clear();
-        }
-
-        synchronized (deviceApps) {
-            deviceApps.clear();
-        }
-
+        // Let listeners react
         onStopped();
     }
 
@@ -226,50 +219,28 @@ public class ConnectIQAppTransceiver {
      * Obtains all devices and remembers those that have our app installed.
      */
     private void discoverDevices() {
-        Log.d(LOG_TAG, "Discovering decives...");
+        Log.d(LOG_TAG, "Discovering devices...");
 
         try {
-            // Create a DeviceListener for each device. If the app is available there, it will
-            // find out
-            List<IQDevice> devices = connectIQ.getConnectedDevices();
-            while (devices == null || devices.isEmpty()) {
-                Thread.sleep(500);
-                devices = connectIQ.getConnectedDevices();
-            }
-
-            synchronized (unqueriedDevices) {
-                unqueriedDevices.addAll(devices);
-            }
-
+            // Find all known devices and register for events
+            List<IQDevice> devices = connectIQ.getKnownDevices();
             for (IQDevice device : devices) {
-                Log.d(LOG_TAG, "Creating DeviceListener for " + device.getFriendlyName());
-                new DeviceListener(device);
+                Log.d(LOG_TAG, "Registering for events on " + device.getDeviceIdentifier()
+                        + " (" + device.getFriendlyName() + ")");
+
+                /* Normally, we'd want to check whether our app is installed on the device. That
+                 * would require us to send an application info request once the device is connected
+                 * and have an ApplicationInfoListener wait for the response. The way the ConnectIQ
+                 * library works, however, only one such listener can be active at a time, over all
+                 * devices. We would thus have to sequentialize application info requests, querying
+                 * the next device once the request to the previous has been answered. This could be
+                 * done in the future, but for now we just build our own IQApp and simply register
+                 * for device and app events, whether it's installed on the device or not.
+                 */
+                connectIQ.registerForEvents(device, deviceListener, iqApp, appEventListener);
             }
-
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception while trying to obtain connected devices", e);
-        }
-    }
-
-    /**
-     * Notifies us that we have finished determining the app installation status on the given
-     * device. Once all devices have finished querying, we can transition into
-     * {@link State#RUNNING}.
-     */
-    private void removeUnqueriedDevice(IQDevice device) {
-        Log.d(LOG_TAG, "Querying " + device.getFriendlyName() + " finished");
-        boolean unqueriedDevicesEmpty = false;
-
-        // Keep the atomic section as short as possible
-        synchronized (unqueriedDevices) {
-            unqueriedDevices.remove(device);
-            unqueriedDevicesEmpty = unqueriedDevices.isEmpty();
-        }
-
-        if (unqueriedDevicesEmpty) {
-            Log.d(LOG_TAG, state.name() + " -> RUNNING");
-            state = State.RUNNING;
-            onRunning();
+            Log.e(LOG_TAG, "Exception while trying to obtain known devices", e);
         }
     }
 
@@ -284,7 +255,7 @@ public class ConnectIQAppTransceiver {
      */
     public final void addAppTransceiverListener(ITransceiverEventListener listener) {
         if (listener == null) {
-            throw new IllegalArgumentException("listener must not be null");
+            throw new IllegalArgumentException("listener cannot be null");
         }
 
         eventListeners.add(listener);
@@ -297,37 +268,10 @@ public class ConnectIQAppTransceiver {
      */
     public final void removeAppTransceiverListener(ITransceiverEventListener listener) {
         if (listener == null) {
-            throw new IllegalArgumentException("listener must not be null");
+            throw new IllegalArgumentException("listener cannot be null");
         }
 
         eventListeners.remove(listener);
-    }
-
-    /**
-     * Called once all devices have finished reporting their application installation status.
-     * Override this method to send a message to all known installations of our app as soon as
-     * possible.
-     */
-    protected void onRunning() {
-        Log.d(LOG_TAG, "onRunning");
-        for (ITransceiverEventListener listener : eventListeners) {
-            listener.onRunning();
-        }
-    }
-
-    /**
-     * Called when a new device with an app is discovered after the initial discovery phase.
-     * Override if you need to start communicating with apps as soon as their device is paired.
-     *
-     * @param device the device.
-     * @param app the app.
-     */
-    protected void onAppDiscovered(IQDevice device, IQApp app) {
-        Log.d(LOG_TAG, "onAppDiscovered for " + app.getDisplayName()
-                + " on " + device.getFriendlyName());
-        for (ITransceiverEventListener listener : eventListeners) {
-            listener.onAppDiscovered(device, app);
-        }
     }
 
     /**
@@ -338,9 +282,7 @@ public class ConnectIQAppTransceiver {
      * @param app app object.
      * @param msg the message itself.
      */
-    protected void onMessageReceived(IQDevice device, IQApp app, List<Object> msg) {
-        Log.d(LOG_TAG, "onMessageReceived from " + app.getDisplayName()
-                + " on " + device.getFriendlyName());
+    private void onMessageReceived(IQDevice device, IQApp app, List<Object> msg) {
         for (ITransceiverEventListener listener : eventListeners) {
             listener.onMessageReceived(device, app, msg);
         }
@@ -350,8 +292,7 @@ public class ConnectIQAppTransceiver {
      * Called once we've stopped connecting to the ConnectIQ library. This might be because
      * initialization has failed or in response to the {@link #stop()} method having been called.
      */
-    protected void onStopped() {
-        Log.d(LOG_TAG, "onStopped");
+    private void onStopped() {
         for (ITransceiverEventListener listener : eventListeners) {
             listener.onStopped();
         }
@@ -372,6 +313,9 @@ public class ConnectIQAppTransceiver {
             if (state == State.STOPPING) {
                 doStop();
             } else {
+                Log.d(LOG_TAG, state.name() + " -> STARTED");
+                state = State.STARTED;
+
                 discoverDevices();
             }
         }
@@ -398,103 +342,25 @@ public class ConnectIQAppTransceiver {
      * it to our list of app instances to send messages to.
      */
     private class DeviceListener implements ConnectIQ.IQDeviceEventListener {
-
-        public DeviceListener(IQDevice device) {
-            try {
-                connectIQ.registerForDeviceEvents(device, this);
-                discoverApp(device);
-
-            } catch (InvalidStateException e) {
-                removeUnqueriedDevice(device);
-
-                Log.e(LOG_TAG, "Exception while trying to register for device events", e);
-            }
-        }
-
         @Override
         public void onDeviceStatusChanged(IQDevice device, IQDevice.IQDeviceStatus status) {
-            Log.d(LOG_TAG, device.getFriendlyName() + " changed status to " + status.name());
+            Log.d(LOG_TAG, device.getDeviceIdentifier() + " changed status to " + status.name());
 
             if (status == IQDevice.IQDeviceStatus.CONNECTED) {
-                // Check if the app is on the device
-                discoverApp(device);
+//                try {
+//                    connectIQ.registerForAppEvents(device, iqApp, appEventListener);
+//                } catch (InvalidStateException e) {
+//                    Log.e(LOG_TAG, "Failed to register for application events", e);
+//                }
 
             } else {
-                synchronized (deviceApps) {
-                    if (deviceApps.containsKey(device)) {
-                        try {
-                            // Ensure that we stop listening for app events
-                            connectIQ.unregisterForApplicationEvents(
-                                    device, deviceApps.get(device));
-                        } catch (InvalidStateException e) {
-                            Log.e(LOG_TAG, "Failed to unregister for application events", e);
-                        }
-
-                        // Remove this device from our list of devices to send messages to
-                        deviceApps.remove(device);
-                    }
-                }
+//                try {
+//                    // Ensure that we stop listening for app events
+//                    connectIQ.unregisterForApplicationEvents(device, iqApp);
+//                } catch (InvalidStateException e) {
+//                    Log.e(LOG_TAG, "Failed to unregister for application events", e);
+//                }
             }
-        }
-
-        private void discoverApp(IQDevice device) {
-            Log.d(LOG_TAG, "Attempting to discover app on " + device.getFriendlyName());
-
-            try {
-                connectIQ.getApplicationInfo(appId, device, new ApplicationInfoListener(device));
-            } catch (Exception e) {
-                removeUnqueriedDevice(device);
-
-                Log.e(LOG_TAG, "Exception while trying to obtain application info", e);
-            }
-        }
-
-    }
-
-    /**
-     * Listens for replies to app discovery requests. If an app is installed on a device, this
-     * listener will put the device and its app object into our device-application map. Otherwise,
-     * it won't do anything.
-     */
-    private class ApplicationInfoListener implements ConnectIQ.IQApplicationInfoListener {
-
-        /** The device we're listening on. */
-        private IQDevice device;
-
-        public ApplicationInfoListener(IQDevice device) {
-            this.device = device;
-        }
-
-        @Override
-        public void onApplicationInfoReceived(IQApp iqApp) {
-            Log.d(LOG_TAG, "Received application info for " + iqApp.getDisplayName()
-                    + " on " + device.getFriendlyName());
-
-            try {
-                // Start listening for messages from that application
-                connectIQ.registerForAppEvents(device, iqApp, appEventListener);
-
-                // Remember the combination of device and app
-                synchronized (deviceApps) {
-                    deviceApps.put(device, iqApp);
-                }
-
-            } catch (InvalidStateException e) {
-                Log.e(LOG_TAG, "Failed to register for application events", e);
-            }
-
-            if (state == State.RUNNING) {
-                // We've discovered a new app, so call the appropriate event
-                onAppDiscovered(device, iqApp);
-            } else {
-                removeUnqueriedDevice(device);
-            }
-        }
-
-        @Override
-        public void onApplicationNotInstalled(String s) {
-            Log.d(LOG_TAG, "App not installed: " + s);
-            removeUnqueriedDevice(device);
         }
 
     }
@@ -503,25 +369,31 @@ public class ConnectIQAppTransceiver {
      * Listens for application messages and calls the appropriate event method.
      */
     private class ApplicationEventListener implements ConnectIQ.IQApplicationEventListener {
-
         @Override
         public void onMessageReceived(IQDevice iqDevice, IQApp iqApp, List<Object> list,
                                       ConnectIQ.IQMessageStatus iqMessageStatus) {
 
+            Log.d(LOG_TAG, "Message received from " + iqApp.getApplicationId()
+                    + " on " + iqDevice.getDeviceIdentifier()
+                    + " with status " + iqMessageStatus.name());
+            if (list == null) {
+                Log.d(LOG_TAG, "Message has null payload");
+            } else {
+                Log.d(LOG_TAG, "Message has payload of " + list.size() + " items");
+            }
+
             ConnectIQAppTransceiver.this.onMessageReceived(iqDevice, iqApp, list);
         }
-
     }
 
     private static class SendMessageListener implements ConnectIQ.IQSendMessageListener {
-
         @Override
         public void onMessageStatus(IQDevice iqDevice, IQApp iqApp,
                                     ConnectIQ.IQMessageStatus iqMessageStatus) {
 
-            Log.d(LOG_TAG, "Message to " + iqApp.getDisplayName()
-                    + " on " + iqDevice.getFriendlyName()
-                    + " sent with status " + iqMessageStatus.name());
+            Log.d(LOG_TAG, "Message sent to " + iqApp.getApplicationId()
+                    + " on " + iqDevice.getDeviceIdentifier()
+                    + " with status " + iqMessageStatus.name());
         }
     }
 
