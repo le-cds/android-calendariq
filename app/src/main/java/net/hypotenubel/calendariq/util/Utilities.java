@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 
 import com.garmin.android.connectiq.ConnectIQ;
 
@@ -16,6 +15,8 @@ import net.hypotenubel.calendariq.calendar.SampleCalendarDescriptorProvider;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * Contains glorious utility methods.
