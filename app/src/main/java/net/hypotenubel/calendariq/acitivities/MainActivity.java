@@ -14,9 +14,11 @@ import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
 import net.hypotenubel.calendariq.calendar.ICalendarDescriptorProvider;
 import net.hypotenubel.calendariq.services.WatchSyncService;
+import net.hypotenubel.calendariq.services.WatchSyncWorker;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
             // Ensure that our sync service is running
             if (!isEmulator) {
-                startService(new Intent(this, WatchSyncService.class));
+                runSyncWorker();
+//                runSyncService();
             }
         } else {
             showPermissionsError();
@@ -182,6 +188,39 @@ public class MainActivity extends AppCompatActivity {
 
     private void showConnectIQError() {
         descriptionView.setText(R.string.mainActivity_description_connectIQError);
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Services
+
+    /** ID of the work item we're using to run our worker. */
+    private String SYNC_WORK_NAME = "sync_devices";
+
+    /**
+     * Ensures that our synchronization worker is run by the work manager API.
+     */
+    private void runSyncWorker() {
+        // Build a new periodic work request and register it if none was already registered
+        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(
+                        WatchSyncWorker.class,
+                        30,
+                        TimeUnit.MINUTES)
+                .build();
+
+        WorkManager
+                .getInstance()
+                .enqueueUniquePeriodicWork(
+                        SYNC_WORK_NAME,
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        request);
+    }
+
+    /**
+     * Runs our synchronization service.
+     */
+    private void runSyncService() {
+        startService(new Intent(this, WatchSyncService.class));
     }
 
 

@@ -15,16 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * <h3>Possible Problems</h3>
- *
- * <ul>
- * <li>If a new device is paired with ConnectIQ, the transceiver needs to be stopped and started
- * again to refresh its list of devices.</li>
- * <li>If our app is installed on a device, that device must be disconnected and reconnected again
- * for us to discover the app. Alternatively, the transceiver needs to be stopped and started
- * again.</li>
- * <li>There may be multithreading bugs in here.</li>
- * </ul>
+ * Use this class to stay connected to installations of an app across all known devices and react to
+ * messages sent from ConnectIQ devices to the Android device.
  */
 public class ConnectIQAppTransceiver {
 

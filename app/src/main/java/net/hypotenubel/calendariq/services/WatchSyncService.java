@@ -2,7 +2,6 @@ package net.hypotenubel.calendariq.services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -13,13 +12,10 @@ import android.util.Log;
 import com.garmin.android.connectiq.IQApp;
 import com.garmin.android.connectiq.IQDevice;
 
-import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
-import net.hypotenubel.calendariq.calendar.ICalendarDescriptorProvider;
 import net.hypotenubel.calendariq.connectiq.ConnectIQAppTransceiver;
 import net.hypotenubel.calendariq.connectiq.ITransceiverEventListener;
 import net.hypotenubel.calendariq.util.Utilities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WatchSyncService extends Service implements ITransceiverEventListener {
@@ -146,7 +142,10 @@ public class WatchSyncService extends Service implements ITransceiverEventListen
         Log.d(LOG_TAG, "Received request");
         if (isAppointmentRequest(msg)) {
             Log.d(LOG_TAG, "Request is an appointment request");
-            processAppointmentRequest(device, app);
+            appTransceiver.sendMessage(
+                    device,
+                    app,
+                    AppointmentLoader.prepareAppointmentMessage(this));
         }
     }
 
@@ -165,76 +164,6 @@ public class WatchSyncService extends Service implements ITransceiverEventListen
      */
     private boolean isAppointmentRequest(List<Object> msg) {
         return msg.size() == 1 && APPOINTMENT_REQUEST_MSG.equals(msg.get(0));
-    }
-
-    /**
-     * Processes an appointment request by replying with the time of the next appointment.
-     */
-    private void processAppointmentRequest(IQDevice device, IQApp app) {
-        CalendarDescriptor nextAppointment = calendarWithNextAppointment(loadActiveCalendars());
-        List<Object> reply = null;
-
-        if (nextAppointment != null) {
-            reply = packAppointmentReply(nextAppointment.getUpcomingAppointment());
-        } else {
-            reply = packAppointmentReply(0);
-        }
-
-        Log.d(LOG_TAG, "Replying to appointment request");
-        appTransceiver.sendMessage(device, app, reply);
-    }
-
-    /**
-     * Loads the active calendars that we can take events from.
-     */
-    private List<CalendarDescriptor> loadActiveCalendars() {
-        ICalendarDescriptorProvider calendarProvider = Utilities.obtainCalendarProvider(this);
-        SharedPreferences preferences = Utilities.obtainSharedPreferences(this);
-
-        List<CalendarDescriptor> activeCalendars = new ArrayList<>();
-        for (int calendarId : Utilities.loadActiveCalendarIds(preferences)) {
-            CalendarDescriptor calendar = calendarProvider.loadCalendar(calendarId);
-            if (calendar != null) {
-                activeCalendars.add(calendar);
-            }
-        }
-        return activeCalendars;
-    }
-
-    /**
-     * Finds the calendar with the nearest upcoming appointment among the list of calendars, if any.
-     */
-    private CalendarDescriptor calendarWithNextAppointment(List<CalendarDescriptor> calendars) {
-        CalendarDescriptor result = null;
-
-        for (CalendarDescriptor calendar : calendars) {
-            if (calendar.hasUpcomingAppointment()) {
-                if (result == null) {
-                    result = calendar;
-                } else if (calendar.getUpcomingAppointment() < result.getUpcomingAppointment()) {
-                    result = calendar;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Assembles a message describing the time of the given appointment, ready to be sent to the
-     * device.
-     */
-    private List<Object> packAppointmentReply(long nextAppointment) {
-        List<Object> reply = new ArrayList<>();
-
-        // The message consists of the time of the next appointment and the current timestamp, both
-        // in seconds UTC. Note that, at least according to the documentation, MonkeyC doesn't
-        // support Java's long type, just ints. The following casts don't truncate until
-        // 2038-01-19 at 03:14:07
-        reply.add((int) nextAppointment);
-        reply.add((int) (System.currentTimeMillis() / 1000));
-
-        return reply;
     }
 
 }
