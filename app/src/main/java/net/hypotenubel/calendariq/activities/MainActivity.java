@@ -210,8 +210,10 @@ public class MainActivity extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Services
 
-    /** ID of the work item we're using to run our worker. */
+    /** ID of the work item we're using to run our worker periodically. */
     private String SYNC_WORK_NAME = "sync_devices";
+    /** ID of the work item we're using to run our worker once. */
+    private String SYNC_ONCE_WORK_NAME = "sync_devices_once";
 
     /**
      * Ensures that our synchronization worker is run by the work manager API.
@@ -241,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
         Operation operation = WorkManager
                 .getInstance()
                 .enqueueUniqueWork(
-                        SYNC_WORK_NAME,
+                        SYNC_ONCE_WORK_NAME,
                         ExistingWorkPolicy.REPLACE,
                         request);
 
