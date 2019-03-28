@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.acitivities;
+package net.hypotenubel.calendariq.activities;
 
 import android.Manifest;
 import android.content.Intent;

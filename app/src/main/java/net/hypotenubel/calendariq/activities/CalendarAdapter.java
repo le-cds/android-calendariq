@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.acitivities;
+package net.hypotenubel.calendariq.activities;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
