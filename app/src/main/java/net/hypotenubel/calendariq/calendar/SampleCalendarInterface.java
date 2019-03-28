@@ -2,6 +2,7 @@ package net.hypotenubel.calendariq.calendar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -10,8 +11,8 @@ import java.util.List;
  */
 public class SampleCalendarDescriptorProvider implements ICalendarDescriptorProvider {
 
-    /** The number of milliseconds that pass by each hour. */
-    private static final long MILLISECONDS_PER_HOUR = 60 * 60 * 1000;
+    /** The number of seconds that pass by each half hour. */
+    private static final long SECONDS_PER_HALF_HOUR = 30 * 60;
 
     /** Names to be used for the sample calendars. */
     private static final String[] CALENDAR_NAMES = {
@@ -36,34 +37,31 @@ public class SampleCalendarDescriptorProvider implements ICalendarDescriptorProv
         // Each calendar exists once per account
         int calCount = CALENDAR_NAMES.length * ACCOUNT_NAMES.length;
         for (int id = 0; id < calCount; id++) {
-            calendars.add(loadCalendar(id));
+            int calIndex = id % CALENDAR_NAMES.length;
+            int accIndex = id / CALENDAR_NAMES.length;
+
+            calendars.add(new CalendarDescriptor(
+                    id,
+                    CALENDAR_NAMES[calIndex],
+                    ACCOUNT_NAMES[accIndex],
+                    CALENDAR_COLOURS[calIndex]
+            ));
         }
 
         return calendars;
     }
 
     @Override
-    public CalendarDescriptor loadCalendar(int id) {
-        // Check if the ID is valid
-        if (id < 0 || id >= CALENDAR_NAMES.length * ACCOUNT_NAMES.length) {
-            return null;
-        }
-
-        int calIndex = id % CALENDAR_NAMES.length;
-        int accIndex = id / CALENDAR_NAMES.length;
-
-        // Compute next appointment as being an hour in the future
+    public List<Long> loadUpcomingAppointments(int maxCount, Collection<Integer> from) {
+        // Return appointments in 30 minute increments, starting in 30 minutes
         Calendar nowCal = Calendar.getInstance();
         long nowMillis = nowCal.getTimeInMillis();
-        long hourFromNowMillis = nowMillis + MILLISECONDS_PER_HOUR;
 
-        return new CalendarDescriptor(
-                id,
-                CALENDAR_NAMES[calIndex],
-                ACCOUNT_NAMES[accIndex],
-                CALENDAR_COLOURS[calIndex],
-                hourFromNowMillis / 1000
-        );
+        List<Long> result = new ArrayList<>();
+        for (int i = 1; i <= maxCount; i++) {
+            result.add(nowMillis + i * SECONDS_PER_HALF_HOUR);
+        }
+        return result;
     }
 
 }

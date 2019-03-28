@@ -1,6 +1,5 @@
 package net.hypotenubel.calendariq.calendar;
 
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,9 +9,9 @@ import android.util.Log;
 
 import net.hypotenubel.calendariq.util.Utilities;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -86,38 +85,6 @@ public class AndroidCalendarDescriptorProvider implements ICalendarDescriptorPro
         return calendars;
     }
 
-    @Override
-    public CalendarDescriptor loadCalendar(int id) {
-        // If we don't have access to calendars, we won't be able to load any (citation needed)
-        if (!Utilities.ensureCalendarPermission(context)) {
-            return null;
-        }
-
-        // We select only the requested calendar
-        String selection = "(" + CalendarContract.Calendars._ID + " = ?)";
-        String[] selectionArgs = new String[] {String.valueOf(id)};
-
-        // Perform the query
-        Cursor cursor = context.getContentResolver().query(
-                CalendarContract.Calendars.CONTENT_URI,
-                CALENDAR_PROJECTION,
-                selection,
-                selectionArgs,
-                null);
-
-        CalendarDescriptor cal = null;
-        if (cursor.moveToNext()) {
-            // Load the calendar and its next appointment
-            cal = toCalendar(cursor);
-        } else {
-            Log.d(LOG_TAG, "Unable to load calenar with ID " + id);
-        }
-
-        cursor.close();
-
-        return cal;
-    }
-
     /**
      * Turns the cursor's current row of data into a calendar instance.
      *
@@ -130,36 +97,39 @@ public class AndroidCalendarDescriptorProvider implements ICalendarDescriptorPro
                 calId,
                 cursor.getString(CALENDAR_PROJECTION_DISPLAY_NAME),
                 cursor.getString(CALENDAR_PROJECTION_ACCOUNT_NAME),
-                cursor.getInt(CALENDAR_PROJECTION_COLOR),
-                loadUpcomingAppointment(calId)
+                cursor.getInt(CALENDAR_PROJECTION_COLOR)
         );
     }
 
+    @Override
+    public List<Long> loadUpcomingAppointments(int maxCount, Collection<Integer> from) {
+        List<Long> result = new ArrayList<>(maxCount);
+        if (from.isEmpty()) {
+            return result;
+        }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    // Appointment Management
-
-    /**
-     * Loads the calendar's next upcoming appointment, which is saved in said calendar.
-     *
-     * @param calId ID of the calendar whose upcoming appointment to retrieve.
-     */
-    private long loadUpcomingAppointment(int calId) {
-        // The event must be between now and 24 hours from now
+        // We'll be loading events from the upcoming seven days, max
         Calendar nowCal = Calendar.getInstance();
-        long nowMillis = nowCal.getTimeInMillis();
-        long tomorrowMillis = nowMillis + MILLISECONDS_PER_DAY;
+        long startMillis = nowCal.getTimeInMillis();
+        long endMillis = startMillis + 7 * MILLISECONDS_PER_DAY;
 
         // The query specifies the start and end times of event instances we're interested in
         Uri.Builder builder = CalendarContract.Instances.CONTENT_URI.buildUpon();
-        ContentUris.appendId(builder, nowMillis);
-        ContentUris.appendId(builder, tomorrowMillis);
+        ContentUris.appendId(builder, startMillis);
+        ContentUris.appendId(builder, endMillis);
 
         // We select events from the given calendar that are not all-day events
-        String selection = "(" + CalendarContract.Instances.CALENDAR_ID + " = ?"
-                + " and " + CalendarContract.Instances.ALL_DAY + " = 0"
-                + " and " + CalendarContract.Instances.BEGIN + " > ?)";
-        String[] selectionArgs = new String[] {String.valueOf(calId), String.valueOf(nowMillis)};
+        String selection = buildSelectionExpression(from.size());
+
+        String[] selectionArgs = new String[from.size() + 1];
+        selectionArgs[0] = String.valueOf(startMillis);
+
+        int currIdx = 1;
+        for (Integer calId : from) {
+            selectionArgs[currIdx++] = calId.toString();
+        }
+
+        Log.d(LOG_TAG, "Appointment selection expression: " + selection);
 
         // Actually perform the query
         Cursor cursor =  context.getContentResolver().query(builder.build(),
@@ -168,19 +138,33 @@ public class AndroidCalendarDescriptorProvider implements ICalendarDescriptorPro
                 selectionArgs,
                 CalendarContract.Instances.BEGIN + " ASC");
 
-        // If anything was returned, the first thing is what we're interested in
-        long upcomingAppointment = CalendarDescriptor.NO_UPCOMING_APPOINTMENT;
-        if (cursor.moveToNext()) {
+        for (int i = 0; i < maxCount && cursor.moveToNext(); i++) {
             // Convert from UTC milliseconds to UTC seconds
-            upcomingAppointment = cursor.getLong(INSTANCE_PROJECTION_BEGIN) / 1000;
-            Log.d(LOG_TAG, "Upcoming appointment for calendar " + calId + " at "
-                    + upcomingAppointment + " UTC");
-
-        } else {
-            Log.d(LOG_TAG, "No upcoming appointment for calendar " + calId);
+            result.add(cursor.getLong(INSTANCE_PROJECTION_BEGIN) / 1000);
         }
 
-        return upcomingAppointment;
+        Log.d(LOG_TAG, "Loaded " + result.size() + " appointments");
+
+        return result;
+    }
+
+    /**
+     * Builds a selection expression with the given number of placeholders for calendar IDs.
+     */
+    private String buildSelectionExpression(int calendarIdCount) {
+        String selection = CalendarContract.Instances.ALL_DAY + " = 0"
+                + " and " + CalendarContract.Instances.BEGIN + " > ?";
+
+        selection += " and (";
+        for (int i = 0; i < calendarIdCount; i++) {
+            if (i == 0) {
+                selection += " or ";
+            }
+            selection += CalendarContract.Instances.CALENDAR_ID + " = ?";
+        }
+        selection += ")";
+
+        return "(" + selection + ")";
     }
 
 }

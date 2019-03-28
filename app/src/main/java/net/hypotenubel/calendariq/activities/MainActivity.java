@@ -9,10 +9,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
-import net.hypotenubel.calendariq.calendar.ICalendarDescriptorProvider;
+import net.hypotenubel.calendariq.calendar.ICalendarInterface;
 import net.hypotenubel.calendariq.services.WatchSyncService;
 import net.hypotenubel.calendariq.services.WatchSyncWorker;
 import net.hypotenubel.calendariq.util.Utilities;
@@ -24,9 +25,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -37,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
 
     /** Log tag used to log log messages in a logging fashion. */
     private static final String LOG_TAG = Utilities.logTag(MainActivity.class);
+
+    /** Synchronization interval in minutes. */
+    private static final int SYNC_INTERVAL = 15;
+
     /** Constant that identifies our permission request. */
     private static final int PERMISSION_REQUEST_READ_CALENDAR = 0;
     /** Package ID of the Garmin ConnectIQ app. Used to ensure its existence on the phone. */
@@ -64,16 +73,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set up the view and our action bar
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.mainActivity_appBar));
 
         descriptionView = findViewById(R.id.mainActivity_description);
 
+        // Check for emulator
         boolean isEmulator = Utilities.isEmulator();
 
         // Ensure that everything is set up as expected
-        garminInstalled = isConnectIQInstalled();
-        if (!garminInstalled && !isEmulator) {
+        if (!isConnectIQInstalled() && !isEmulator) {
             showConnectIQError();
             return;
         }
@@ -111,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             menu.findItem(R.id.mainActivity_menu_requestPermissions).setVisible(false);
             menu.findItem(R.id.mainActivity_menu_refresh).setVisible(true);
+            menu.findItem(R.id.mainActivity_menu_sync).setVisible(true);
         }
 
         return true;
@@ -128,6 +140,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.mainActivity_menu_refresh:
                 loadCalendars();
                 calendarAdapter.updateList(calendars);
+                return true;
+
+            case R.id.mainActivity_menu_sync:
+                runSyncWorkerOnce();
                 return true;
 
             default:
@@ -164,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
      * Populates the {@link #calendars} field.
      */
     private void loadCalendars() {
-        ICalendarDescriptorProvider provider = Utilities.obtainCalendarProvider(this);
+        ICalendarInterface provider = Utilities.obtainCalendarProvider(this);
         calendars = provider.getAvailableCalendars();
     }
 
@@ -204,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         // Build a new periodic work request and register it if none was already registered
         PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(
                         WatchSyncWorker.class,
-                        30,
+                        SYNC_INTERVAL,
                         TimeUnit.MINUTES)
                 .build();
 
@@ -214,6 +230,32 @@ public class MainActivity extends AppCompatActivity {
                         SYNC_WORK_NAME,
                         ExistingPeriodicWorkPolicy.KEEP,
                         request);
+    }
+
+    /**
+     * Ensures that our synchronization worker is run once by the work manager API.
+     */
+    private void runSyncWorkerOnce() {
+        // Build a new periodic work request and register it if none was already registered
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(WatchSyncWorker.class).build();
+        Operation operation = WorkManager
+                .getInstance()
+                .enqueueUniqueWork(
+                        SYNC_WORK_NAME,
+                        ExistingWorkPolicy.REPLACE,
+                        request);
+
+        operation.getState().observe(this, new Observer<Operation.State>() {
+            @Override
+            public void onChanged(Operation.State state) {
+                // This is only called if things were successful
+                Toast.makeText(
+                            MainActivity.this,
+                            "Appointments sent",
+                            Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
     }
 
     /**
