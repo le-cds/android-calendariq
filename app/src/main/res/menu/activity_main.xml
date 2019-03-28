@@ -13,4 +13,10 @@
         android:visible="false"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/mainActivity_menu_sync"
+        android:title="@string/mainActivity_menu_sync"
+        android:visible="false"
+        app:showAsAction="never"/>
+
 </menu>

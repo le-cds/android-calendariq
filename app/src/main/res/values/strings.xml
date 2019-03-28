@@ -7,7 +7,7 @@
     <string name="mainActivity_description_permissionsError">Install the Garmin ConnectIQ app to use this app. </string>
     <string name="mainActivity_menu_requestPermissions">Request permissions</string>
     <string name="mainActivity_menu_refresh">Refresh</string>
-    <string name="mainActivity_menu_send">Synchronize watches</string>
+    <string name="mainActivity_menu_sync">Sync now</string>
 
     <string name="watchSyncService_description">Replies to appointment requests by Garmin devices.</string>
 </resources>
