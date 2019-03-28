@@ -16,8 +16,6 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
     private final String accName;
     /** The calendar's color. */
     private final int colour;
-    /** Start of the next appointment which is not all-day as UTC timestamp in seconds. */
-    private final long upcomingAppointment;
 
 
     /**
@@ -33,12 +31,11 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
      *         the calendar's colour.
      */
     public CalendarDescriptor(final int id, final String calName, final String accName,
-                              final int colour, final long upcomingAppointment) {
+                              final int colour) {
         this.id = id;
         this.calName = calName;
         this.accName = accName;
         this.colour = colour;
-        this.upcomingAppointment = upcomingAppointment;
     }
 
 
@@ -76,27 +73,6 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
      */
     public int getColour() {
         return colour;
-    }
-
-    /**
-     * Returns the upcoming appointment. Call {@link #hasUpcomingAppointment()} to check whether
-     * there is an upcoming appointment. The upcoming appointment is stored as a UTC timestamp in
-     * seconds.
-     *
-     * @return timestamp of the upcoming appointment or {@link #NO_UPCOMING_APPOINTMENT} if there
-     * is no upcoming appointment.
-     */
-    public long getUpcomingAppointment() {
-        return upcomingAppointment;
-    }
-
-    /**
-     * Checks whether the calendar has an upcoming appointment.
-     *
-     * @return {@code true} if the calendar has an upcoming appointment.
-     */
-    public boolean hasUpcomingAppointment() {
-        return upcomingAppointment != NO_UPCOMING_APPOINTMENT;
     }
 
     @Override

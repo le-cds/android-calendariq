@@ -145,7 +145,7 @@ public class WatchSyncService extends Service implements ITransceiverEventListen
             appTransceiver.sendMessage(
                     device,
                     app,
-                    AppointmentLoader.prepareAppointmentMessage(this));
+                    AppointmentMessageGenerator.prepareAppointmentMessage(this));
         }
     }
 

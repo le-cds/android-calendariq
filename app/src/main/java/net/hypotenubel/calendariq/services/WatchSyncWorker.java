@@ -100,7 +100,7 @@ public class WatchSyncWorker extends Worker {
         @Override
         public void handleMessage(Message msg) {
             // If the message comes from us, load appointments and broadcast them
-            List<Object> appointmentMsg = AppointmentLoader.prepareAppointmentMessage(
+            List<Object> appointmentMsg = AppointmentMessageGenerator.prepareAppointmentMessage(
                     getApplicationContext());
             ConnectIQAppBroadcaster.broadcast(
                     appointmentMsg,

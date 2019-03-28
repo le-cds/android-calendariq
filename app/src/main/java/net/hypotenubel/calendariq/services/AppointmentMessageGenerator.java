@@ -3,7 +3,7 @@ package net.hypotenubel.calendariq.services;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import net.hypotenubel.calendariq.calendar.ICalendarDescriptorProvider;
+import net.hypotenubel.calendariq.calendar.ICalendarInterface;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Knows how to load appointments and turn them into
  */
-public class AppointmentLoader {
+public class AppointmentMessageGenerator {
 
     /** The maximum number of upcoming appointments to load. */
     private static final int MAX_APPOINTMENT_COUNT = 10;
@@ -28,7 +28,7 @@ public class AppointmentLoader {
         Collection<Integer> activeCalIds = Utilities.loadActiveCalendarIds(preferences);
 
         // Obtain the upcoming appointments
-        ICalendarDescriptorProvider provider = Utilities.obtainCalendarProvider(context);
+        ICalendarInterface provider = Utilities.obtainCalendarProvider(context);
         List<Long> appointments = provider.loadUpcomingAppointments(
                 MAX_APPOINTMENT_COUNT, activeCalIds);
 

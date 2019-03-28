@@ -9,7 +9,7 @@ import java.util.List;
  * A calendar provider that returns sample data. To be used in the Android emulator, since that
  * usually doesn't have proper calendar data available.
  */
-public class SampleCalendarDescriptorProvider implements ICalendarDescriptorProvider {
+public class SampleCalendarInterface implements ICalendarInterface {
 
     /** The number of seconds that pass by each half hour. */
     private static final long SECONDS_PER_HALF_HOUR = 30 * 60;

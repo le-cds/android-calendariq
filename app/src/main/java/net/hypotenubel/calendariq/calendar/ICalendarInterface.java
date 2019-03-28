@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Implementations of this interface can load calendars.
  */
-public interface ICalendarDescriptorProvider {
+public interface ICalendarInterface {
 
     /**
      * Load all available calendars.

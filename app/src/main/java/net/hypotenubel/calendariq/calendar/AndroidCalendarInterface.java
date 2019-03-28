@@ -17,10 +17,10 @@ import java.util.List;
 /**
  * A calendar provider that loads calendars from the Android APIs.
  */
-public class AndroidCalendarDescriptorProvider implements ICalendarDescriptorProvider {
+public class AndroidCalendarInterface implements ICalendarInterface {
 
     /** Log tag for log messages. */
-    private static final String LOG_TAG = Utilities.logTag(AndroidCalendarDescriptorProvider.class);
+    private static final String LOG_TAG = Utilities.logTag(AndroidCalendarInterface.class);
 
     /** The number of milliseconds that pass by each day, mostly unnoticed by us mere humans. */
     private static final long MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -53,7 +53,7 @@ public class AndroidCalendarDescriptorProvider implements ICalendarDescriptorPro
      *
      * @param context the context from which the instance is created.
      */
-    public AndroidCalendarDescriptorProvider(Context context) {
+    public AndroidCalendarInterface(Context context) {
         this.context = context;
     }
 
@@ -121,15 +121,11 @@ public class AndroidCalendarDescriptorProvider implements ICalendarDescriptorPro
         // We select events from the given calendar that are not all-day events
         String selection = buildSelectionExpression(from.size());
 
-        String[] selectionArgs = new String[from.size() + 1];
-        selectionArgs[0] = String.valueOf(startMillis);
-
-        int currIdx = 1;
+        String[] selectionArgs = new String[from.size()];
+        int currIdx = 0;
         for (Integer calId : from) {
             selectionArgs[currIdx++] = calId.toString();
         }
-
-        Log.d(LOG_TAG, "Appointment selection expression: " + selection);
 
         // Actually perform the query
         Cursor cursor =  context.getContentResolver().query(builder.build(),
@@ -152,12 +148,10 @@ public class AndroidCalendarDescriptorProvider implements ICalendarDescriptorPro
      * Builds a selection expression with the given number of placeholders for calendar IDs.
      */
     private String buildSelectionExpression(int calendarIdCount) {
-        String selection = CalendarContract.Instances.ALL_DAY + " = 0"
-                + " and " + CalendarContract.Instances.BEGIN + " > ?";
+        String selection = CalendarContract.Instances.ALL_DAY + " = 0 and (";
 
-        selection += " and (";
         for (int i = 0; i < calendarIdCount; i++) {
-            if (i == 0) {
+            if (i != 0) {
                 selection += " or ";
             }
             selection += CalendarContract.Instances.CALENDAR_ID + " = ?";
