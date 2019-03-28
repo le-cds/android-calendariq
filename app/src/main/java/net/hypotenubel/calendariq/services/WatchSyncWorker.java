@@ -31,7 +31,7 @@ public class WatchSyncWorker extends Worker {
     private static final int SERVICE_MESSAGE_ARG_2 = 0x67487fd4;
 
     /** Synchronization lock to wait for the broadcaster to finish. */
-    private Object lock;
+    private Object lock = new Object();
     /** Whether the broadcaster has already told us that it's finished. */
     private boolean finished = false;
 
