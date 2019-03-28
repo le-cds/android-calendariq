@@ -148,13 +148,6 @@ public class ConnectIQAppBroadcaster {
                     Log.e(LOG_TAG, "Exception while sending message", e);
                 }
             }
-
-            // After all messages have been sent, it's time to shut down ConnectIQ
-            try {
-                connectIQ.shutdown(context);
-            } catch (InvalidStateException e) {
-                Log.e(LOG_TAG, "Exception while shutting down ConnectIQ", e);
-            }
         }
 
         finish();
