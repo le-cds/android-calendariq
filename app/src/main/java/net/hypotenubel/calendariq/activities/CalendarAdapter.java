@@ -1,6 +1,5 @@
 package net.hypotenubel.calendariq.activities;
 
-import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,19 +14,17 @@ import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Adapts a list of {@link CalendarDescriptor} instances for a recycler view. The adapter internally
- * works on a copy of the list, so changes to the list passed to its constructor won't be reflected
- * in any way. Since each calendar has an associated switch, this adapter also listens for changes
- * to the switch's checked state. To save the state, call {@link #saveActiveCalendarIds()}.
+ * Adapts a {@link CalendarViewModel} for a recycler view. The adapter internally works on a copy of
+ * the list of calendars. It refreshes itself automatically if the view model's list of calendars is
+ * refreshed.
  */
 public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -39,22 +36,20 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     /** View type for displaying calendars. */
     private static final int VIEW_TYPE_CALENDAR = 2;
 
-    /** Shared preferences to load and store active calendars. */
-    private final SharedPreferences preferences;
     /** The calendars we're adapting. */
     private final List<Object> calendars = new ArrayList<>();
-    /** IDs of those calendars that are marked as being active for easy lookup. */
-    private final Set<Integer> activeCalendarIds = new HashSet<>();
 
 
     /**
-     * Creates a new instance for the given calendars.
+     * Creates a new instance owned by the given lifecycle owner to display the given view model.
      */
-    public CalendarAdapter(List<CalendarDescriptor> calendars, SharedPreferences preferences) {
-        this.preferences = preferences;
-        loadActiveCalendarIds();
-
-        updateList(calendars, false);
+    public CalendarAdapter(LifecycleOwner owner, CalendarViewModel viewModel) {
+        viewModel.getCalendars().observe(owner, new Observer<List<CalendarDescriptor>>() {
+            @Override
+            public void onChanged(List<CalendarDescriptor> calendarDescriptors) {
+                updateList(calendarDescriptors);
+            }
+        });
     }
 
 
@@ -64,79 +59,22 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     /**
      * Updates the list of calendars and refreshes our view.
      */
-    public void updateList(List<CalendarDescriptor> calendars) {
-        updateList(calendars, true);
-    }
+    private void updateList(List<CalendarDescriptor> newCalendars) {
+        // We'll rebuild our list in a moment
+        calendars.clear();
 
-    /**
-     * Updates the list of calendars and optionally refreshes our view.
-     */
-    private void updateList(List<CalendarDescriptor> calendars, boolean notifyView) {
-        // Ensure the original list is sorted
-        Collections.sort(calendars);
-
-        // Add account name headers and collect calendar IDs on the way
-        this.calendars.clear();
-
-        Set<Integer> existingCalendarIds = new HashSet<>();
-
+        // Add calendars to our list, but insert account name headers along the way
         String currAccountName = null;
-        for (CalendarDescriptor descriptor : calendars) {
+        for (CalendarDescriptor descriptor : newCalendars) {
             if (currAccountName == null || !currAccountName.equals(descriptor.getAccName())) {
                 currAccountName = descriptor.getAccName();
-                this.calendars.add(currAccountName);
+                calendars.add(currAccountName);
             }
 
-            this.calendars.add(descriptor);
-            existingCalendarIds.add(descriptor.getId());
+            calendars.add(descriptor);
         }
 
-        // Ensure that the active calendar IDs only contain IDs of existing calendars
-        activeCalendarIds.retainAll(existingCalendarIds);
-
-        if (notifyView) {
-            notifyDataSetChanged();
-        }
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Update Preferences
-
-    /**
-     * Populates our set of active calendar IDs.
-     */
-    private void loadActiveCalendarIds() {
-        activeCalendarIds.addAll(Utilities.loadActiveCalendarIds(preferences));
-    }
-
-    /**
-     * Saves the set of active calendar IDs.
-     */
-    public void saveActiveCalendarIds() {
-        Set<String> activeCalendarIdStrings = new HashSet<>();
-        for (Integer id : activeCalendarIds) {
-            activeCalendarIdStrings.add(id.toString());
-        }
-
-        preferences
-                .edit()
-                .putStringSet(Utilities.PREF_ACTIVE_CALENDARS, activeCalendarIdStrings)
-                .apply();
-    }
-
-    /**
-     * Activates the calendar with the given ID and saves the preferences.
-     */
-    private void activateCalendar(int id) {
-        activeCalendarIds.add(id);
-    }
-
-    /**
-     * Deactivates the calendar with the given ID and saves the preferences.
-     */
-    private void deactivateCalendar(int id) {
-        activeCalendarIds.remove(id);
+        notifyDataSetChanged();
     }
 
 
@@ -187,7 +125,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             // Xor colour value with this value to make the colour solid as opposed to translucent
             calViewHolder.colorShape.setColor(descriptor.getColour() | 0xFF000000);
             calViewHolder.calendarNameView.setText(descriptor.getCalName());
-            calViewHolder.activeSwitch.setChecked(activeCalendarIds.contains(descriptor.getId()));
+            calViewHolder.activeSwitch.setChecked(descriptor.isActive());
 
         } else if (o instanceof String) {
             String account = (String) o;
@@ -246,12 +184,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             // Retrieve the calendar we're representing right now
             CalendarDescriptor calendar = (CalendarDescriptor) calendars.get(getAdapterPosition());
-
-            if (isChecked) {
-                activateCalendar(calendar.getId());
-            } else {
-                deactivateCalendar(calendar.getId());
-            }
+            calendar.setActive(isChecked);
         }
     }
 }

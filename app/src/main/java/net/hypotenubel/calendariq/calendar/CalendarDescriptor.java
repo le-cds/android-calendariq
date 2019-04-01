@@ -1,12 +1,10 @@
 package net.hypotenubel.calendariq.calendar;
 
 /**
- * Represents a calendar, together with its upcoming appointment.
+ * Represents a calendar. A calendar can be active or not. This influences whether appointments from
+ * this calendar are taken into account when attempting to find the upcoming appointment.
  */
 public final class CalendarDescriptor implements Comparable<CalendarDescriptor> {
-
-    /** Indicates that the calendar has no upcoming appointment. */
-    public static final long NO_UPCOMING_APPOINTMENT = -1;
 
     /** The calendar's ID. */
     private final int id;
@@ -16,6 +14,9 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
     private final String accName;
     /** The calendar's color. */
     private final int colour;
+
+    /** Whether the calendar is currently active or not. */
+    private boolean active = false;
 
 
     /**
@@ -75,6 +76,24 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
         return colour;
     }
 
+    /**
+     * Checks whether this calendar is active.
+     *
+     * @return {@code true} or {@code false} as the calendar is or isn't active.
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Determines whether this calendar is active or not.
+     *
+     * @param active {@code true} if the calendar should be active.
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public String toString() {
         return getAccName() + "/" + getCalName() + "/" + getId();
@@ -93,4 +112,5 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
             return accName.compareTo(other.accName);
         }
     }
+
 }

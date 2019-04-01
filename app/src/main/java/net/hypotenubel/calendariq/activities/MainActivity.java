@@ -1,7 +1,6 @@
 package net.hypotenubel.calendariq.activities;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -12,13 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
-import net.hypotenubel.calendariq.calendar.ICalendarInterface;
-import net.hypotenubel.calendariq.services.WatchSyncService;
 import net.hypotenubel.calendariq.services.WatchSyncWorker;
 import net.hypotenubel.calendariq.util.Utilities;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
@@ -37,9 +32,6 @@ import androidx.work.WorkManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    // TODO Load calendar data in another thread?
-    // TODO Make calendar data a view model with live data objects?
-
     /** Log tag used to log log messages in a logging fashion. */
     private static final String LOG_TAG = Utilities.logTag(MainActivity.class);
 
@@ -54,13 +46,12 @@ public class MainActivity extends AppCompatActivity {
     /** Whether the Garmin Connect app is installed. */
     private boolean garminInstalled = false;
 
-    /** The list of calendars. */
-    private List<CalendarDescriptor> calendars;
-
     /** The label that displays the description text. */
     private TextView descriptionView;
     /** Our calendar list view. */
     private RecyclerView calendarView;
+    /** View model for our calendars. */
+    private CalendarViewModel calendarViewModel;
     /** Adapter feeding the calendar list. */
     private CalendarAdapter calendarAdapter;
     /** Layout for the calendar list. */
@@ -95,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
             // Ensure that our sync service is running
             if (!isEmulator) {
                 runSyncWorker();
-//                runSyncService();
             }
         } else {
             showPermissionsError();
@@ -106,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        if (calendarAdapter != null) {
-            calendarAdapter.saveActiveCalendarIds();
+        if (calendarViewModel != null) {
+            calendarViewModel.storeActiveCalendarIds();
         }
     }
 
@@ -117,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         inflater.inflate(R.menu.activity_main, menu);
 
         // Show calendar-related items if we have calendar permissions
-        if (calendars == null) {
+        if (calendarViewModel == null) {
             menu.findItem(R.id.mainActivity_menu_requestPermissions).setVisible(garminInstalled);
         } else {
             menu.findItem(R.id.mainActivity_menu_requestPermissions).setVisible(false);
@@ -138,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.mainActivity_menu_refresh:
-                loadCalendars();
-                calendarAdapter.updateList(calendars);
+                // This will automatically cause our list to update
+                calendarViewModel.refresh();
                 return true;
 
             case R.id.mainActivity_menu_sync:
@@ -160,28 +150,20 @@ public class MainActivity extends AppCompatActivity {
     private void initCalendarView() {
         calendarView = findViewById(R.id.mainActivity_calendars);
 
+        // Instantiate our view model
+        calendarViewModel = new CalendarViewModel(getApplication());
+
         // Setup layout
         calendarLayoutManager = new LinearLayoutManager(this);
         calendarView.setLayoutManager(calendarLayoutManager);
 
         // Setup adapter
-        loadCalendars();
-        calendarAdapter = new CalendarAdapter(
-                calendars,
-                Utilities.obtainSharedPreferences(this));
+        calendarAdapter = new CalendarAdapter(this, calendarViewModel);
         calendarView.setAdapter(calendarAdapter);
 
         // Show the calendar-related menu items in the action bar as well as the correct description
         descriptionView.setText(R.string.mainActivity_description_success);
         invalidateOptionsMenu();
-    }
-
-    /**
-     * Populates the {@link #calendars} field.
-     */
-    private void loadCalendars() {
-        ICalendarInterface provider = Utilities.obtainCalendarProvider(this);
-        calendars = provider.getAvailableCalendars();
     }
 
 
@@ -230,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 .getInstance()
                 .enqueueUniquePeriodicWork(
                         SYNC_WORK_NAME,
-                        ExistingPeriodicWorkPolicy.KEEP,
+                        ExistingPeriodicWorkPolicy.REPLACE,
                         request);
     }
 
@@ -258,13 +240,6 @@ public class MainActivity extends AppCompatActivity {
                         .show();
             }
         });
-    }
-
-    /**
-     * Runs our synchronization service.
-     */
-    private void runSyncService() {
-        startService(new Intent(this, WatchSyncService.class));
     }
 
 
