@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Ensure that our sync service is running
             if (!isEmulator) {
-                WatchSyncWorker.runSyncWorker();
+                WatchSyncWorker.runSyncWorker(this, false);
             }
         } else {
             showPermissionsError();

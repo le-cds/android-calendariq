@@ -1,6 +1,7 @@
 package net.hypotenubel.calendariq.services;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -40,9 +42,10 @@ public class WatchSyncWorker extends Worker {
     private static final String SYNC_WORK_NAME = "sync_devices";
     /** ID of the work item we're using to run our worker once. */
     private static final String SYNC_ONCE_WORK_NAME = "sync_devices_once";
-    /** Synchronization interval in minutes. */
-    // TODO Replace by preference value
-    private static final int SYNC_INTERVAL = 15;
+    /** Key of the preference that contains the sync interval. */
+    private static final String SYNC_INTERVAL_PREFERENCE_KEY = "frequency";
+    /** Default synchronization interval in minutes. */
+    private static final int DEFAULT_SYNC_INTERVAL = 15;
 
     // Message field values that indicate that a message to the handler thread was sent by us
     private static final int SERVICE_MESSAGE_WHAT = 0xdabcd41f;
@@ -60,21 +63,45 @@ public class WatchSyncWorker extends Worker {
 
 
     /**
-     * Ensures that our synchronization worker is run by the work manager API.
+     * Calls {@link #runSyncWorker(int, boolean)} with the interval loaded from the shared
+     * preferences of the given context.
+     *
+     * @param context the context to load preferences from.
+     * @param replaceExisting {@code true} if an existing worker should be replaced. If this is
+     *                        {@code false}, nothing happens if a worker already exists.
      */
-    public static void runSyncWorker() {
+    public static void runSyncWorker(Context context, boolean replaceExisting) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String frequencyString = preferences.getString(
+                SYNC_INTERVAL_PREFERENCE_KEY,
+                String.valueOf(DEFAULT_SYNC_INTERVAL));
+
+        runSyncWorker(Integer.parseInt(frequencyString), replaceExisting);
+    }
+
+    /**
+     * Ensures that our synchronization worker is run by the work manager API.
+     *
+     * @param interval the interval it should be periodically run in.
+     * @param replaceExisting {@code true} if an existing worker should be replaced. If this is
+     *                                    {@code false}, nothing happens if a worker already exists.
+     */
+    public static void runSyncWorker(int interval, boolean replaceExisting) {
         // Build a new periodic work request and register it if none was already registered
         PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(
                 WatchSyncWorker.class,
-                SYNC_INTERVAL,
+                interval,
                 TimeUnit.MINUTES)
                 .build();
 
+        ExistingPeriodicWorkPolicy policy = replaceExisting
+                ? ExistingPeriodicWorkPolicy.REPLACE
+                : ExistingPeriodicWorkPolicy.KEEP;
         WorkManager
                 .getInstance()
                 .enqueueUniquePeriodicWork(
                         SYNC_WORK_NAME,
-                        ExistingPeriodicWorkPolicy.REPLACE,
+                        policy,
                         request);
     }
 

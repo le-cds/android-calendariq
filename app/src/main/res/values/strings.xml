@@ -12,15 +12,16 @@
 
     <!-- Settings Activity -->
     <string name="settingsActivity_title">Settings</string>
+    <string name="settingsActivity_sending">Sending appointments...</string>
 
     <!-- Sync Service -->
     <string name="watchSyncService_description">Replies to appointment requests by Garmin devices.</string>
 
-    <!-- Strings related to Settings -->
+    <!-- Preferences -->
     <string name="pref_cat_what">What to Sync</string>
 
     <string name="pref_appointments">Appointments</string>
-    <string name="pref_appointments_summary">Sync up to {0} upcoming appointments.</string>
+    <string name="pref_appointments_summary">Sync up to %1s upcoming appointments.</string>
     <string-array name="pref_appointments_entries">
         <item>5</item>
         <item>10</item>
@@ -33,7 +34,7 @@
     </string-array>
 
     <string name="pref_interval">Interval</string>
-    <string name="pref_interval_summary">Sync appointments from upcoming {0}.</string>
+    <string name="pref_interval_summary">Sync appointments from upcoming %1s.</string>
     <string-array name="pref_interval_entries">
         <item>1 day</item>
         <item>3 days</item>
@@ -52,7 +53,7 @@
     <string name="pref_cat_when">When to Sync</string>
 
     <string name="pref_frequency">Frequency</string>
-    <string name="pref_frequency_summary">Sync every {0}.</string>
+    <string name="pref_frequency_summary">Sync every %1s.</string>
     <string-array name="pref_frequency_entries">
         <item>15 minutes</item>
         <item>30 minutes</item>
@@ -72,7 +73,8 @@
         <item>1440</item>
     </string-array>
 
-    <string name="pref_sync">Sync now</string>
-    <string name="pref_sync_summary_singular">Last synced {0} device on {1}.</string>
-    <string name="pref_sync_summary_plural">Last synced {0} devices on {1}.</string>
+    <string name="pref_last_sync">Sync now</string>
+    <string name="pref_last_sync_summary_never">Nothing synced yet.</string>
+    <string name="pref_last_sync_summary_singular">Last synced {0} device on {1}.</string>
+    <string name="pref_last_sync_summary_plural">Last synced {0} devices on {1}.</string>
 </resources>

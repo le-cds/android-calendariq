@@ -42,9 +42,9 @@
             app:positiveButtonText="@null"/>
 
         <Preference
-            app:key="sync"
-            app:title="@string/pref_sync"
-            app:summary="@string/pref_sync_summary_singular"
+            app:key="last_sync"
+            app:title="@string/pref_last_sync"
+            app:summary="@string/pref_last_sync_summary_never"
             app:icon="@drawable/ic_sync_white_24dp"/>
 
     </PreferenceCategory>
