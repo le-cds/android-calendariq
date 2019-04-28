@@ -1,6 +1,7 @@
 package net.hypotenubel.calendariq.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -8,35 +9,22 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.services.WatchSyncWorker;
 import net.hypotenubel.calendariq.util.Utilities;
 
-import java.util.concurrent.TimeUnit;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.Operation;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 public class MainActivity extends AppCompatActivity {
 
     /** Log tag used to log log messages in a logging fashion. */
     private static final String LOG_TAG = Utilities.logTag(MainActivity.class);
-
-    /** Synchronization interval in minutes. */
-    private static final int SYNC_INTERVAL = 15;
 
     /** Constant that identifies our permission request. */
     private static final int PERMISSION_REQUEST_READ_CALENDAR = 0;
@@ -85,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Ensure that our sync service is running
             if (!isEmulator) {
-                runSyncWorker();
+                WatchSyncWorker.runSyncWorker();
             }
         } else {
             showPermissionsError();
@@ -112,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             menu.findItem(R.id.mainActivity_menu_requestPermissions).setVisible(false);
             menu.findItem(R.id.mainActivity_menu_refresh).setVisible(true);
-            menu.findItem(R.id.mainActivity_menu_sync).setVisible(true);
         }
 
         return true;
@@ -132,8 +119,8 @@ public class MainActivity extends AppCompatActivity {
                 calendarViewModel.refresh();
                 return true;
 
-            case R.id.mainActivity_menu_sync:
-                runSyncWorkerOnce();
+            case R.id.mainActivity_menu_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
 
             default:
@@ -186,60 +173,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void showConnectIQError() {
         descriptionView.setText(R.string.mainActivity_description_connectIQError);
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Services
-
-    /** ID of the work item we're using to run our worker periodically. */
-    private String SYNC_WORK_NAME = "sync_devices";
-    /** ID of the work item we're using to run our worker once. */
-    private String SYNC_ONCE_WORK_NAME = "sync_devices_once";
-
-    /**
-     * Ensures that our synchronization worker is run by the work manager API.
-     */
-    private void runSyncWorker() {
-        // Build a new periodic work request and register it if none was already registered
-        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(
-                        WatchSyncWorker.class,
-                        SYNC_INTERVAL,
-                        TimeUnit.MINUTES)
-                .build();
-
-        WorkManager
-                .getInstance()
-                .enqueueUniquePeriodicWork(
-                        SYNC_WORK_NAME,
-                        ExistingPeriodicWorkPolicy.REPLACE,
-                        request);
-    }
-
-    /**
-     * Ensures that our synchronization worker is run once by the work manager API.
-     */
-    private void runSyncWorkerOnce() {
-        // Build a new periodic work request and register it if none was already registered
-        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(WatchSyncWorker.class).build();
-        Operation operation = WorkManager
-                .getInstance()
-                .enqueueUniqueWork(
-                        SYNC_ONCE_WORK_NAME,
-                        ExistingWorkPolicy.REPLACE,
-                        request);
-
-        operation.getState().observe(this, new Observer<Operation.State>() {
-            @Override
-            public void onChanged(Operation.State state) {
-                // This is only called if things were successful
-                Toast.makeText(
-                            MainActivity.this,
-                            "Appointments sent",
-                            Toast.LENGTH_SHORT)
-                        .show();
-            }
-        });
     }
 
 

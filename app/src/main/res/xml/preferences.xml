@@ -1,0 +1,52 @@
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="pref_cat_what"
+        app:title="@string/pref_cat_what">
+
+        <ListPreference
+            app:key="appointments"
+            app:title="@string/pref_appointments"
+            app:summary="@string/pref_appointments_summary"
+            app:entries="@array/pref_appointments_entries"
+            app:entryValues="@array/pref_appointments_values"
+            app:defaultValue="10"
+            app:negativeButtonText="@null"
+            app:positiveButtonText="@null"/>
+
+        <ListPreference
+            app:key="interval"
+            app:title="@string/pref_interval"
+            app:summary="@string/pref_interval_summary"
+            app:entries="@array/pref_interval_entries"
+            app:entryValues="@array/pref_interval_values"
+            app:defaultValue="7"
+            app:negativeButtonText="@null"
+            app:positiveButtonText="@null"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="pref_cat_when"
+        app:title="@string/pref_cat_when">
+
+        <ListPreference
+            app:key="frequency"
+            app:title="@string/pref_frequency"
+            app:summary="@string/pref_frequency_summary"
+            app:entries="@array/pref_frequency_entries"
+            app:entryValues="@array/pref_frequency_values"
+            app:defaultValue="15"
+            app:negativeButtonText="@null"
+            app:positiveButtonText="@null"/>
+
+        <Preference
+            app:key="sync"
+            app:title="@string/pref_sync"
+            app:summary="@string/pref_sync_summary_singular"
+            app:icon="@drawable/ic_sync_white_24dp"/>
+
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

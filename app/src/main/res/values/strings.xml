@@ -1,13 +1,78 @@
 <resources>
     <string name="app_name">Calendar IQ Connector</string>
 
+    <!-- Main Activity -->
     <string name="mainActivity_permissions">This app needs access to calendars to read appointments.</string>
     <string name="mainActivity_description_success">Select the calendars to load appointments from.</string>
     <string name="mainActivity_description_connectIQError">Install the Garmin ConnectIQ app to use this app. </string>
     <string name="mainActivity_description_permissionsError">Install the Garmin ConnectIQ app to use this app. </string>
     <string name="mainActivity_menu_requestPermissions">Request permissions</string>
     <string name="mainActivity_menu_refresh">Refresh</string>
-    <string name="mainActivity_menu_sync">Sync now</string>
+    <string name="mainActivity_menu_settings">Settings</string>
 
+    <!-- Settings Activity -->
+    <string name="settingsActivity_title">Settings</string>
+
+    <!-- Sync Service -->
     <string name="watchSyncService_description">Replies to appointment requests by Garmin devices.</string>
+
+    <!-- Strings related to Settings -->
+    <string name="pref_cat_what">What to Sync</string>
+
+    <string name="pref_appointments">Appointments</string>
+    <string name="pref_appointments_summary">Sync up to {0} upcoming appointments.</string>
+    <string-array name="pref_appointments_entries">
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+    </string-array>
+    <string-array name="pref_appointments_values">
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+    </string-array>
+
+    <string name="pref_interval">Interval</string>
+    <string name="pref_interval_summary">Sync appointments from upcoming {0}.</string>
+    <string-array name="pref_interval_entries">
+        <item>1 day</item>
+        <item>3 days</item>
+        <item>1 week</item>
+        <item>2 weeks</item>
+        <item>4 weeks</item>
+    </string-array>
+    <string-array name="pref_interval_values">
+        <item>1</item>
+        <item>3</item>
+        <item>7</item>
+        <item>14</item>
+        <item>28</item>
+    </string-array>
+
+    <string name="pref_cat_when">When to Sync</string>
+
+    <string name="pref_frequency">Frequency</string>
+    <string name="pref_frequency_summary">Sync every {0}.</string>
+    <string-array name="pref_frequency_entries">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+    </string-array>
+    <string-array name="pref_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>360</item>
+        <item>720</item>
+        <item>1440</item>
+    </string-array>
+
+    <string name="pref_sync">Sync now</string>
+    <string name="pref_sync_summary_singular">Last synced {0} device on {1}.</string>
+    <string name="pref_sync_summary_plural">Last synced {0} devices on {1}.</string>
 </resources>

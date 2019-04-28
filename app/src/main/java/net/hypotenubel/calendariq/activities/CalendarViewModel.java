@@ -14,6 +14,7 @@ import java.util.Set;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.preference.PreferenceManager;
 
 /**
  * View model for the list of calendars.
@@ -83,7 +84,7 @@ public class CalendarViewModel extends AndroidViewModel {
         // Obtain the active calendar IDs from preferences or current list of calendars
         if (calendars.getValue() == null) {
             activeCalIds = Utilities.loadActiveCalendarIds(
-                    Utilities.obtainSharedPreferences(getApplication()));
+                    PreferenceManager.getDefaultSharedPreferences(getApplication()));
         } else {
             activeCalIds = new HashSet<>();
             for (CalendarDescriptor cal : calendars.getValue()) {
@@ -116,7 +117,7 @@ public class CalendarViewModel extends AndroidViewModel {
         }
 
         // Save the whole thing
-        Utilities.obtainSharedPreferences(getApplication())
+        PreferenceManager.getDefaultSharedPreferences(getApplication())
                 .edit()
                 .putStringSet(Utilities.PREF_ACTIVE_CALENDARS, activeCalendarIdStrings)
                 .apply();

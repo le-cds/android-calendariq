@@ -104,18 +104,6 @@ public final class Utilities {
     }
 
     /**
-     * Returns the shared preferences that can be used all over the application.
-     *
-     * @param context a context to retrieve the preferences from.
-     * @return the shared preferences.
-     */
-    public static SharedPreferences obtainSharedPreferences(Context context) {
-        return context.getSharedPreferences(
-                context.getPackageName() + ".CalendarIQ",
-                Context.MODE_PRIVATE);
-    }
-
-    /**
      * Loads the set of active calendar IDs from the shared preferences.
      */
     public static Set<Integer> loadActiveCalendarIds(SharedPreferences preferences) {

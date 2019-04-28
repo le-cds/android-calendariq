@@ -13,18 +13,26 @@
         android:supportsRtl="true"
         android:theme="@style/CalendarIQTheme.Dark">
 
-        <service android:name=".services.WatchSyncService"
+        <service
+            android:name=".services.WatchSyncService"
             android:description="@string/watchSyncService_description"
             android:exported="false" />
 
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/settingsActivity_title"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.hypotenubel.calendariq.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

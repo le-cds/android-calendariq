@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import androidx.preference.PreferenceManager;
+
 /**
  * Knows how to load appointments and turn them into
  */
@@ -24,7 +26,7 @@ public class AppointmentMessageGenerator {
      */
     public static List<Object> prepareAppointmentMessage(Context context) {
         // Obtain the list of active calendar IDs
-        SharedPreferences preferences = Utilities.obtainSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         Collection<Integer> activeCalIds = Utilities.loadActiveCalendarIds(preferences);
 
         // Obtain the upcoming appointments
