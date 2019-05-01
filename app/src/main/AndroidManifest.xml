@@ -13,11 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/CalendarIQTheme.Dark">
 
-        <service
-            android:name=".services.WatchSyncService"
-            android:description="@string/watchSyncService_description"
-            android:exported="false" />
-
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
