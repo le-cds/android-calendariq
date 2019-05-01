@@ -12,7 +12,7 @@
 
     <!-- Settings Activity -->
     <string name="settingsActivity_title">Settings</string>
-    <string name="settingsActivity_sending">Sending appointments...</string>
+    <string name="settingsActivity_sending">Sending appointments…</string>
 
     <!-- Sync Service -->
     <string name="watchSyncService_description">Replies to appointment requests by Garmin devices.</string>
@@ -75,6 +75,6 @@
 
     <string name="pref_last_sync">Sync now</string>
     <string name="pref_last_sync_summary_never">Nothing synced yet.</string>
-    <string name="pref_last_sync_summary_singular">Last synced {0} device on {1}.</string>
-    <string name="pref_last_sync_summary_plural">Last synced {0} devices on {1}.</string>
+    <string name="pref_last_sync_summary_singular">Last synced %1$d device on %2$tB %2$te, %2$tY at %2$tH:%2$tM.</string>
+    <string name="pref_last_sync_summary_plural">Last synced %1$d devices on %2$tB %2$te, %2$tY at %2$tH:%2$tM.</string>
 </resources>

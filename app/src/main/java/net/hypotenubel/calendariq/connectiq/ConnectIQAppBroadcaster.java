@@ -42,6 +42,8 @@ public class ConnectIQAppBroadcaster {
     private IQDevice deviceCurrentlyQueried = null;
     /** Map of device / app object combinations that we'll send the message to. */
     private final Map<IQDevice, IQApp> messageRecipients = new HashMap<>();
+    /** Number of messages we have tried to send. */
+    private int sentMessages = 0;
 
     /** ID of the app we're communicating with. */
     private final String appId;
@@ -145,6 +147,8 @@ public class ConnectIQAppBroadcaster {
                             entry.getValue(),
                             msg,
                             sendMessageListener);
+                    sentMessages++;
+
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "Exception while sending message", e);
                 }
@@ -168,7 +172,8 @@ public class ConnectIQAppBroadcaster {
 
         // Notifiy the listener, if present
         if (listener != null) {
-            listener.broadcastFinished();
+            listener.broadcastFinished(
+                    new BroadcastStats(sentMessages, System.currentTimeMillis()));
         }
     }
 
@@ -226,7 +231,7 @@ public class ConnectIQAppBroadcaster {
         }
     }
 
-    private static class SendMessageListener implements ConnectIQ.IQSendMessageListener {
+    private class SendMessageListener implements ConnectIQ.IQSendMessageListener {
         @Override
         public void onMessageStatus(IQDevice iqDevice, IQApp iqApp,
                                     ConnectIQ.IQMessageStatus iqMessageStatus) {

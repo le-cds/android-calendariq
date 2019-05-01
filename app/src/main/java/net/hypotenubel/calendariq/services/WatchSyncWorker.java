@@ -1,22 +1,22 @@
 package net.hypotenubel.calendariq.services;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import net.hypotenubel.calendariq.connectiq.BroadcastStats;
 import net.hypotenubel.calendariq.connectiq.ConnectIQAppBroadcaster;
 import net.hypotenubel.calendariq.connectiq.IBroadcasterEventListener;
+import net.hypotenubel.calendariq.util.Preferences;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
-import androidx.preference.PreferenceManager;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -53,7 +53,7 @@ public class WatchSyncWorker extends Worker {
     private static final int SERVICE_MESSAGE_ARG_2 = 0x67487fd4;
 
     /** Synchronization lock to wait for the broadcaster to finish. */
-    private Object lock = new Object();
+    private final Object lock = new Object();
     /** Whether the broadcaster has already told us that it's finished. */
     private boolean finished = false;
 
@@ -196,9 +196,13 @@ public class WatchSyncWorker extends Worker {
      */
     private final class EventListener implements IBroadcasterEventListener {
         @Override
-        public void broadcastFinished() {
+        public void broadcastFinished(BroadcastStats stats) {
             synchronized (lock) {
                 finished = true;
+
+                // Store the synchronization stats
+                Preferences.LAST_SYNC.storeString(getApplicationContext(), stats.toString());
+
                 lock.notifyAll();
             }
         }

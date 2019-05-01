@@ -7,8 +7,8 @@ import androidx.preference.PreferenceManager;
 
 /**
  * Helper class to cope with preferences. Each preference has an associated type, and its value can
- * be retrieved by calling one of its {@code loadTYPE} methods. Calling the wrong method for a type
- * will result in a {@link ClassCastException}.
+ * be retrieved and stored by calling one of its {@code loadTYPE} and {@code storeTYPE} methods,
+ * respectively. Calling the wrong method for a type will result in a {@link ClassCastException}.
  */
 public enum Preferences {
 
@@ -17,7 +17,8 @@ public enum Preferences {
 
     APPOINTMENTS("appointments", "10", Integer.class),
     INTERVAL("interval", "7", Integer.class),
-    FREQUENCY("frequency", "15", Integer.class);
+    FREQUENCY("frequency", "15", Integer.class),
+    LAST_SYNC("last_sync", "", String.class);
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -35,6 +36,14 @@ public enum Preferences {
         this.key = key;
         this.defaultValue = defaultValue;
         this.type = type;
+    }
+
+
+    /**
+     * Returns this preference's key.
+     */
+    public String getKey() {
+        return key;
     }
 
 
@@ -60,6 +69,14 @@ public enum Preferences {
         return preferences.getString(key, defaultValue);
     }
 
+    /**
+     * Stores the value under the preference.
+     */
+    private void store(Context context, String value) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences.edit().putString(key, value).apply();
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Access
@@ -73,11 +90,27 @@ public enum Preferences {
     }
 
     /**
+     * Stores a string preference.
+     */
+    public void storeString(Context context, String value) {
+        ensureProperType(String.class);
+        store(context, value);
+    }
+
+    /**
      * Loads an int preference.
      */
     public int loadInt(Context context) {
         ensureProperType(Integer.class);
         return Integer.parseInt(load(context));
+    }
+
+    /**
+     * Stores an int preference.
+     */
+    public void storeInt(Context context, int value) {
+        ensureProperType(Integer.class);
+        store(context, String.valueOf(value));
     }
 
 }

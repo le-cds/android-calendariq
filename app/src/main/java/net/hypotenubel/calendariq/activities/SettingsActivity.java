@@ -1,9 +1,11 @@
 package net.hypotenubel.calendariq.activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import net.hypotenubel.calendariq.R;
+import net.hypotenubel.calendariq.connectiq.BroadcastStats;
 import net.hypotenubel.calendariq.services.WatchSyncWorker;
 import net.hypotenubel.calendariq.util.Preferences;
 
@@ -14,6 +16,7 @@ import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.work.Operation;
 
 /**
@@ -37,6 +40,26 @@ public class SettingsActivity extends AppCompatActivity {
      * Fragment that displays our list of settings.
      */
     public static class SettingsFragment extends PreferenceFragmentCompat {
+
+        /**
+         * Permanent handle to the last sync preference. We'll update its summary from time to time.
+         */
+        private Preference lastSyncPreference;
+        /**
+         * Listens for changes to shared preferences. This is basically only there to check whether
+         * the last sync time has changed and to update the preference's summary accordingly.
+         */
+        private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener
+                = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if (key.equals(Preferences.LAST_SYNC.getKey())) {
+                    updateLastSyncSummary();
+                }
+            }
+        };
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences, rootKey);
@@ -45,7 +68,7 @@ public class SettingsActivity extends AppCompatActivity {
             Preference appointments = findPreference("appointments");
             Preference interval = findPreference("interval");
             Preference frequency = findPreference("frequency");
-            Preference lastSync = findPreference("last_sync");
+            lastSyncPreference = findPreference("last_sync");
 
             // Install summary providers
             appointments.setSummaryProvider(new FormattingSummaryProvider(getString(
@@ -54,12 +77,6 @@ public class SettingsActivity extends AppCompatActivity {
                     R.string.pref_interval_summary)));
             frequency.setSummaryProvider(new FormattingSummaryProvider(getString(
                     R.string.pref_frequency_summary)));
-            lastSync.setSummaryProvider(new Preference.SummaryProvider() {
-                @Override
-                public CharSequence provideSummary(Preference preference) {
-                    return provideLastSyncSummary(preference);
-                }
-            });
 
             // Listen to frequency changes to we can restart the sync worker
             frequency.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -71,7 +88,9 @@ public class SettingsActivity extends AppCompatActivity {
             });
 
             // Listen to synchronisation requests
-            lastSync.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            lastSyncPreference.setOnPreferenceClickListener(
+                    new Preference.OnPreferenceClickListener() {
+
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     runSyncWorkerOnce();
@@ -80,12 +99,51 @@ public class SettingsActivity extends AppCompatActivity {
             });
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            // Update last sync time
+            updateLastSyncSummary();
+
+            // Register for preference change events
+            PreferenceManager.getDefaultSharedPreferences(getContext())
+                    .registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+
+            // Unreagister for preference change events
+            PreferenceManager.getDefaultSharedPreferences(getContext())
+                    .unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
+        }
+
         /**
          * Provides a summary for the last synchronisation. This is more complex, so we handle it in
          * this rather special method.
          */
-        private CharSequence provideLastSyncSummary(Preference lastSyncPref) {
-            return getString(R.string.pref_last_sync_summary_never);
+        private void updateLastSyncSummary() {
+            // Not sure how to obtain the preference value except for actually looking it up in the
+            // shared preferences
+            String value = Preferences.LAST_SYNC.loadString(getContext());
+
+            if (value == null || value.equals("")) {
+                lastSyncPreference.setSummary(getString(R.string.pref_last_sync_summary_never));
+            } else {
+                // Turn the string into stats and put them into our string
+                BroadcastStats stats = new BroadcastStats(value);
+
+                String formatString = stats.getDevices() == 1
+                        ? getString(R.string.pref_last_sync_summary_singular)
+                        : getString(R.string.pref_last_sync_summary_plural);
+
+                lastSyncPreference.setSummary(String.format(
+                        formatString,
+                        stats.getDevices(),
+                        stats.getUtcTimestampMillis()));
+            }
         }
 
         /**
