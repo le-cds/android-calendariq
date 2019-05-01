@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.services.WatchSyncWorker;
+import net.hypotenubel.calendariq.util.Preferences;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -91,7 +92,9 @@ public class SettingsActivity extends AppCompatActivity {
          * Re-register sync worker upon frequency changes.
          */
         private void onFrequencyChanged(String newValue) {
-            WatchSyncWorker.runSyncWorker(Integer.parseInt(newValue),true);
+            WatchSyncWorker.runSyncWorker(
+                    Preferences.FREQUENCY.loadInt(this.getContext()),
+                    true);
         }
 
         /**

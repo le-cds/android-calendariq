@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.services.WatchSyncWorker;
+import net.hypotenubel.calendariq.util.Preferences;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import androidx.annotation.NonNull;
@@ -73,7 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
             // Ensure that our sync service is running
             if (!isEmulator) {
-                WatchSyncWorker.runSyncWorker(this, false);
+                WatchSyncWorker.runSyncWorker(
+                        Preferences.FREQUENCY.loadInt(this),
+                        false);
             }
         } else {
             showPermissionsError();

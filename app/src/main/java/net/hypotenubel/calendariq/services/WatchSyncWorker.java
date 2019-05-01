@@ -61,24 +61,6 @@ public class WatchSyncWorker extends Worker {
     //////////////////////////////////////////////////////////////////////////////////////////////
     // Management
 
-
-    /**
-     * Calls {@link #runSyncWorker(int, boolean)} with the interval loaded from the shared
-     * preferences of the given context.
-     *
-     * @param context the context to load preferences from.
-     * @param replaceExisting {@code true} if an existing worker should be replaced. If this is
-     *                        {@code false}, nothing happens if a worker already exists.
-     */
-    public static void runSyncWorker(Context context, boolean replaceExisting) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String frequencyString = preferences.getString(
-                SYNC_INTERVAL_PREFERENCE_KEY,
-                String.valueOf(DEFAULT_SYNC_INTERVAL));
-
-        runSyncWorker(Integer.parseInt(frequencyString), replaceExisting);
-    }
-
     /**
      * Ensures that our synchronization worker is run by the work manager API.
      *
@@ -87,6 +69,13 @@ public class WatchSyncWorker extends Worker {
      *                                    {@code false}, nothing happens if a worker already exists.
      */
     public static void runSyncWorker(int interval, boolean replaceExisting) {
+        // Let it be known in the kingdom that we shall unleash the workers!
+        if (replaceExisting) {
+            Log.d(LOG_TAG,"Replacing sync worker with interval of " + interval + " minutes");
+        } else {
+            Log.d(LOG_TAG,"Running sync worker with interval of " + interval + " minutes");
+        }
+
         // Build a new periodic work request and register it if none was already registered
         PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(
                 WatchSyncWorker.class,
@@ -111,6 +100,8 @@ public class WatchSyncWorker extends Worker {
      * kind of a notification.
      */
     public static Operation runSyncWorkerOnce() {
+        Log.d(LOG_TAG,"Running sync worker once");
+
         // Build a new periodic work request and register it if none was already registered
         OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(WatchSyncWorker.class).build();
         return WorkManager

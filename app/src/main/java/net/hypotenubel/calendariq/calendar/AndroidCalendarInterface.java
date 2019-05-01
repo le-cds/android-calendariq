@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 import android.util.Log;
 
+import net.hypotenubel.calendariq.util.Preferences;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
@@ -102,7 +103,9 @@ public class AndroidCalendarInterface implements ICalendarInterface {
     }
 
     @Override
-    public List<Long> loadUpcomingAppointments(int maxCount, Collection<Integer> from) {
+    public List<Long> loadUpcomingAppointments(int maxCount, int maxDays,
+                                               Collection<Integer> from) {
+
         List<Long> result = new ArrayList<>(maxCount);
         if (from.isEmpty()) {
             return result;
@@ -111,7 +114,7 @@ public class AndroidCalendarInterface implements ICalendarInterface {
         // We'll be loading events from the upcoming seven days, max
         Calendar nowCal = Calendar.getInstance();
         long startMillis = nowCal.getTimeInMillis();
-        long endMillis = startMillis + 7 * MILLISECONDS_PER_DAY;
+        long endMillis = startMillis + maxDays * MILLISECONDS_PER_DAY;
 
         // The query specifies the start and end times of event instances we're interested in
         Uri.Builder builder = CalendarContract.Instances.CONTENT_URI.buildUpon();

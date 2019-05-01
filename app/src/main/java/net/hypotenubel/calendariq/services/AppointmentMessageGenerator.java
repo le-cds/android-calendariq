@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import net.hypotenubel.calendariq.calendar.ICalendarInterface;
+import net.hypotenubel.calendariq.util.Preferences;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
@@ -17,10 +18,6 @@ import androidx.preference.PreferenceManager;
  */
 public class AppointmentMessageGenerator {
 
-    /** The maximum number of upcoming appointments to load. */
-    private static final int MAX_APPOINTMENT_COUNT = 10;
-
-
     /**
      * Processes an appointment request by replying with the time of the next appointment.
      */
@@ -32,7 +29,9 @@ public class AppointmentMessageGenerator {
         // Obtain the upcoming appointments
         ICalendarInterface provider = Utilities.obtainCalendarProvider(context);
         List<Long> appointments = provider.loadUpcomingAppointments(
-                MAX_APPOINTMENT_COUNT, activeCalIds);
+                Preferences.APPOINTMENTS.loadInt(context),
+                Preferences.INTERVAL.loadInt(context),
+                activeCalIds);
 
         return packAppointmentReply(appointments);
     }

@@ -52,7 +52,9 @@ public class SampleCalendarInterface implements ICalendarInterface {
     }
 
     @Override
-    public List<Long> loadUpcomingAppointments(int maxCount, Collection<Integer> from) {
+    public List<Long> loadUpcomingAppointments(int maxCount, int maxDays,
+                                               Collection<Integer> from) {
+
         // Return appointments in 30 minute increments, starting in 30 minutes
         Calendar nowCal = Calendar.getInstance();
         long nowMillis = nowCal.getTimeInMillis();

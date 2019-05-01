@@ -17,7 +17,8 @@ import java.util.Queue;
 
 /**
  * Use this class to broadcast a message to each installation of an app on any device that is
- * currently connected. Call {@link #broadcast(Object, Context, String, ConnectIQ.IQConnectType)}
+ * currently connected. Call
+ * {@link #broadcast(Object, Context, String, ConnectIQ.IQConnectType, IBroadcasterEventListener)}
  * to use the class. The method should be called from a separate thread.
  */
 public class ConnectIQAppBroadcaster {
