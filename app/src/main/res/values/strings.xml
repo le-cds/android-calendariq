@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Calendar IQ Connector</string>
+    <string name="app_name">Calendar IQ</string>
 
     <!-- Main Activity -->
     <string name="mainActivity_permissions">This app needs access to calendars to read appointments.</string>
