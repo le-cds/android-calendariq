@@ -1,6 +1,6 @@
 # Calendar IQ Connector
 
-This Android app sends information about upcoming appointments to _Facey McWatchface_ installations on all connected Garmin devices.
+This Android app sends calendar events to compatible (and registered) apps on Garmin smartwatches. It is a companion app to [Facey McWatchface](https://github.com/le-cds/connectiq-faceymcwatchface), my own watchface.
 
 It looks something like this:
 
