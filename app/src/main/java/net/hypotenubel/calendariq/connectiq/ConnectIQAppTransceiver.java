@@ -324,7 +324,7 @@ public class ConnectIQAppTransceiver {
      * installed there. If so, the appropriate listener will register for that app's events and add
      * it to our list of app instances to send messages to.
      */
-    private class DeviceListener implements ConnectIQ.IQDeviceEventListener {
+    private static class DeviceListener implements ConnectIQ.IQDeviceEventListener {
         @Override
         public void onDeviceStatusChanged(IQDevice device, IQDevice.IQDeviceStatus status) {
             Log.d(LOG_TAG, device.getDeviceIdentifier() + " changed status to "

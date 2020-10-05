@@ -2,7 +2,7 @@ package net.hypotenubel.calendariq.calendar;
 
 /**
  * Represents a calendar. A calendar can be active or not. This influences whether appointments from
- * this calendar are taken into account when attempting to find the upcoming appointment.
+ * this calendar are taken into account when attempting to find upcoming appointments.
  */
 public final class CalendarDescriptor implements Comparable<CalendarDescriptor> {
 

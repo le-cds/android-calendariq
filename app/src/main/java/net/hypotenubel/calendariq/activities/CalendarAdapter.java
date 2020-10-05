@@ -22,9 +22,9 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Adapts a {@link CalendarViewModel} for a recycler view. The adapter internally works on a copy of
- * the list of calendars. It refreshes itself automatically if the view model's list of calendars is
- * refreshed.
+ * Adapts a {@link CalendarViewModel} for a recycler view. The adapter internally works on a
+ * complete copy of the list of calendars since we expect that there won't be that many. It
+ * refreshes itself automatically if the view model's list of calendars is refreshed.
  */
 public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

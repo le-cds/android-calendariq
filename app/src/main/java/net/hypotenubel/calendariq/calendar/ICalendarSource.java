@@ -4,9 +4,13 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Implementations of this interface can load calendars.
+ * Implementations of this interface can load calendars and their upcoming appointments. The
+ * standard implementation, {@link AndroidCalendarSource}, loads the calendars registered with
+ * Android. Other implementations might return test data.
+ *
+ * @see AndroidCalendarSource
  */
-public interface ICalendarInterface {
+public interface ICalendarSource {
 
     /**
      * Load all available calendars.

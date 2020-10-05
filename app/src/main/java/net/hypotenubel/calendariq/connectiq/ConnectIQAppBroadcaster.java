@@ -231,7 +231,7 @@ public class ConnectIQAppBroadcaster {
         }
     }
 
-    private class SendMessageListener implements ConnectIQ.IQSendMessageListener {
+    private static class SendMessageListener implements ConnectIQ.IQSendMessageListener {
         @Override
         public void onMessageStatus(IQDevice iqDevice, IQApp iqApp,
                                     ConnectIQ.IQMessageStatus iqMessageStatus) {

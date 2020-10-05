@@ -7,9 +7,9 @@ import android.os.Build;
 
 import com.garmin.android.connectiq.ConnectIQ;
 
-import net.hypotenubel.calendariq.calendar.AndroidCalendarInterface;
-import net.hypotenubel.calendariq.calendar.ICalendarInterface;
-import net.hypotenubel.calendariq.calendar.SampleCalendarInterface;
+import net.hypotenubel.calendariq.calendar.AndroidCalendarSource;
+import net.hypotenubel.calendariq.calendar.ICalendarSource;
+import net.hypotenubel.calendariq.calendar.SampleCalendarSource;
 
 import androidx.core.content.ContextCompat;
 
@@ -67,18 +67,18 @@ public final class Utilities {
     }
 
     /**
-     * Returns an instance of {@link ICalendarInterface} that is appropriate for the given context.
+     * Returns an instance of {@link ICalendarSource} that is appropriate for the given context.
      * When running in an emulator, a sample data provider is returned. Otherwise, a provider is
      * returned that provides access to the user's Android calendars.
      *
      * @param context the context from which this method is called.
      * @return a suitable calendar provider.
      */
-    public static ICalendarInterface obtainCalendarProvider(Context context) {
+    public static ICalendarSource obtainCalendarProvider(Context context) {
         if (Utilities.isEmulator()) {
-            return new SampleCalendarInterface();
+            return new SampleCalendarSource();
         } else {
-            return new AndroidCalendarInterface(context);
+            return new AndroidCalendarSource(context);
         }
     }
 

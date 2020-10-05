@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 import android.util.Log;
 
-import net.hypotenubel.calendariq.util.Preferences;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
@@ -16,12 +15,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A calendar provider that loads calendars from the Android APIs.
+ * An implementation of {@link ICalendarSource} that loads calendars from the Android APIs.
  */
-public class AndroidCalendarInterface implements ICalendarInterface {
+public class AndroidCalendarSource implements ICalendarSource {
 
     /** Log tag for log messages. */
-    private static final String LOG_TAG = Utilities.logTag(AndroidCalendarInterface.class);
+    private static final String LOG_TAG = Utilities.logTag(AndroidCalendarSource.class);
 
     /** The number of milliseconds that pass by each day, mostly unnoticed by us mere humans. */
     private static final long MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -54,7 +53,7 @@ public class AndroidCalendarInterface implements ICalendarInterface {
      *
      * @param context the context from which the instance is created.
      */
-    public AndroidCalendarInterface(Context context) {
+    public AndroidCalendarSource(Context context) {
         this.context = context;
     }
 

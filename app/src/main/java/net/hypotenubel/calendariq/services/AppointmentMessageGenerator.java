@@ -2,7 +2,7 @@ package net.hypotenubel.calendariq.services;
 
 import android.content.Context;
 
-import net.hypotenubel.calendariq.calendar.ICalendarInterface;
+import net.hypotenubel.calendariq.calendar.ICalendarSource;
 import net.hypotenubel.calendariq.util.Preferences;
 import net.hypotenubel.calendariq.util.Utilities;
 
@@ -23,7 +23,7 @@ public class AppointmentMessageGenerator {
         Collection<Integer> activeCalIds = Preferences.ACTIVE_CALENDARS.loadIntSet(context);
 
         // Obtain the upcoming appointments
-        ICalendarInterface provider = Utilities.obtainCalendarProvider(context);
+        ICalendarSource provider = Utilities.obtainCalendarProvider(context);
         List<Long> appointments = provider.loadUpcomingAppointments(
                 Preferences.APPOINTMENTS.loadInt(context),
                 Preferences.INTERVAL.loadInt(context),

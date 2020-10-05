@@ -3,7 +3,7 @@ package net.hypotenubel.calendariq.activities;
 import android.app.Application;
 
 import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
-import net.hypotenubel.calendariq.calendar.ICalendarInterface;
+import net.hypotenubel.calendariq.calendar.ICalendarSource;
 import net.hypotenubel.calendariq.util.Preferences;
 import net.hypotenubel.calendariq.util.Utilities;
 
@@ -58,7 +58,7 @@ public class CalendarViewModel extends AndroidViewModel {
             @Override
             public void run() {
                 // Load available calendars
-                ICalendarInterface provider = Utilities.obtainCalendarProvider(getApplication());
+                ICalendarSource provider = Utilities.obtainCalendarProvider(getApplication());
                 List<CalendarDescriptor> calList = provider.getAvailableCalendars();
 
                 // Sort the list so that the UI won't have to
