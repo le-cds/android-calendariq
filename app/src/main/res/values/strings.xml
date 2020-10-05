@@ -3,9 +3,9 @@
 
     <!-- Main Activity -->
     <string name="mainActivity_permissions">This app needs access to calendars to read appointments.</string>
-    <string name="mainActivity_description_success">Select the calendars to load appointments from.</string>
-    <string name="mainActivity_description_connectIQError">Install the Garmin ConnectIQ app to use this app. </string>
-    <string name="mainActivity_description_permissionsError">Install the Garmin ConnectIQ app to use this app. </string>
+    <string name="mainActivity_description_success">Select the calendars to sync with your watch.</string>
+    <string name="mainActivity_description_connectIQError">Install the Garmin ConnectIQ app to use this app.</string>
+    <string name="mainActivity_description_permissionsError">This app needs access to calendars to read appointments.</string>
     <string name="mainActivity_menu_requestPermissions">Request permissions</string>
     <string name="mainActivity_menu_refresh">Refresh</string>
     <string name="mainActivity_menu_settings">Settings</string>
