@@ -1,7 +1,6 @@
 package net.hypotenubel.calendariq.services;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import net.hypotenubel.calendariq.calendar.ICalendarInterface;
 import net.hypotenubel.calendariq.util.Preferences;
@@ -10,8 +9,6 @@ import net.hypotenubel.calendariq.util.Utilities;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import androidx.preference.PreferenceManager;
 
 /**
  * Knows how to load appointments and turn them into
@@ -23,8 +20,7 @@ public class AppointmentMessageGenerator {
      */
     public static List<Object> prepareAppointmentMessage(Context context) {
         // Obtain the list of active calendar IDs
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Collection<Integer> activeCalIds = Utilities.loadActiveCalendarIds(preferences);
+        Collection<Integer> activeCalIds = Preferences.ACTIVE_CALENDARS.loadIntSet(context);
 
         // Obtain the upcoming appointments
         ICalendarInterface provider = Utilities.obtainCalendarProvider(context);

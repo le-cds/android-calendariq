@@ -2,7 +2,6 @@ package net.hypotenubel.calendariq.util;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
@@ -11,10 +10,6 @@ import com.garmin.android.connectiq.ConnectIQ;
 import net.hypotenubel.calendariq.calendar.AndroidCalendarInterface;
 import net.hypotenubel.calendariq.calendar.ICalendarInterface;
 import net.hypotenubel.calendariq.calendar.SampleCalendarInterface;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import androidx.core.content.ContextCompat;
 
@@ -25,9 +20,6 @@ public final class Utilities {
 
     /** Identifier of our watchface running on the watch. */
     public static final String APP_ID = "d7d720e4-e397-43fe-b4ef-7df656ac5766";
-
-    /** Preference key for the active calendars setting. */
-    public static final String PREF_ACTIVE_CALENDARS = "activeCalendars";
 
 
     /**
@@ -101,21 +93,6 @@ public final class Utilities {
                 context,
                 Manifest.permission.READ_CALENDAR);
         return permissionState == PackageManager.PERMISSION_GRANTED;
-    }
-
-    /**
-     * Loads the set of active calendar IDs from the shared preferences.
-     */
-    public static Set<Integer> loadActiveCalendarIds(SharedPreferences preferences) {
-        Set<String> idStrings = preferences.getStringSet(
-                Utilities.PREF_ACTIVE_CALENDARS, Collections.<String>emptySet());
-
-        Set<Integer> ids = new HashSet<>();
-        for (String idString : idStrings) {
-            ids.add(Integer.parseInt(idString));
-        }
-
-        return ids;
     }
 
 }

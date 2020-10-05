@@ -4,6 +4,7 @@ import android.app.Application;
 
 import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
 import net.hypotenubel.calendariq.calendar.ICalendarInterface;
+import net.hypotenubel.calendariq.util.Preferences;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.Collections;
@@ -14,7 +15,6 @@ import java.util.Set;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.preference.PreferenceManager;
 
 /**
  * View model for the list of calendars.
@@ -83,8 +83,7 @@ public class CalendarViewModel extends AndroidViewModel {
 
         // Obtain the active calendar IDs from preferences or current list of calendars
         if (calendars.getValue() == null) {
-            activeCalIds = Utilities.loadActiveCalendarIds(
-                    PreferenceManager.getDefaultSharedPreferences(getApplication()));
+            activeCalIds = Preferences.ACTIVE_CALENDARS.loadIntSet(getApplication());
         } else {
             activeCalIds = new HashSet<>();
             for (CalendarDescriptor cal : calendars.getValue()) {
@@ -108,19 +107,15 @@ public class CalendarViewModel extends AndroidViewModel {
             return;
         }
 
-        // Build a set of strings with the IDs of active calendars
-        Set<String> activeCalendarIdStrings = new HashSet<>();
+        // Build a set of IDs of our active calendars
+        Set<Integer> activeCalendarIds = new HashSet<>();
         for (CalendarDescriptor cal : calendars.getValue()) {
             if (cal.isActive()) {
-                activeCalendarIdStrings.add(Integer.toString(cal.getId()));
+                activeCalendarIds.add(cal.getId());
             }
         }
 
-        // Save the whole thing
-        PreferenceManager.getDefaultSharedPreferences(getApplication())
-                .edit()
-                .putStringSet(Utilities.PREF_ACTIVE_CALENDARS, activeCalendarIdStrings)
-                .apply();
+        Preferences.ACTIVE_CALENDARS.storeIntSet(getApplication(), activeCalendarIds);
     }
 
 }
