@@ -2,6 +2,7 @@ package net.hypotenubel.calendariq.util;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
@@ -20,6 +21,8 @@ public final class Utilities {
 
     /** Identifier of our watchface running on the watch. */
     public static final String APP_ID = "d7d720e4-e397-43fe-b4ef-7df656ac5766";
+    /** Package ID of the Garmin ConnectIQ app. Used to ensure its existence on the phone. */
+    public static final String GARMIN_PACKAGE_ID = "com.garmin.android.apps.connectmobile";
 
 
     /**
@@ -29,6 +32,9 @@ public final class Utilities {
     }
 
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Logging
+
     /**
      * Returns the log tag the given class should use for log messages.
      *
@@ -37,6 +43,24 @@ public final class Utilities {
      */
     public static String logTag(Class<?> clazz) {
         return "CalendarIQ." + clazz.getSimpleName();
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // ConnectIQ
+
+    /**
+     * Checks whether ConnectIQ is installed.
+     */
+    public static boolean isConnectIQInstalled(Context context) {
+        try {
+            // Try to find the app, which must also correspond to a minimum version (see ConnectIQ
+            // mobile SDK code)
+            PackageInfo info = context.getPackageManager().getPackageInfo(GARMIN_PACKAGE_ID, 0);
+            return info.versionCode >= 2000;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     /**
@@ -49,21 +73,24 @@ public final class Utilities {
         return ConnectIQ.IQConnectType.WIRELESS;
     }
 
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Emulation
+
     /**
      * Makes an effort to check whether we're currently running on an emulator.
      *
      * @return {@code true} if we're running on an emulator.
      */
     public static boolean isEmulator() {
-        // This heap of tests comes straight from trusty internet sources
-        return Build.FINGERPRINT.startsWith("generic")
-                || Build.FINGERPRINT.startsWith("unknown")
-                || Build.MODEL.contains("google_sdk")
-                || Build.MODEL.contains("Emulator")
-                || Build.MODEL.contains("Android SDK built for x86")
-                || Build.MANUFACTURER.contains("Genymotion")
-                || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
-                || (Build.PRODUCT).equals("google_sdk");
+        // This just tests for the Android SDK emulator
+        return Build.BRAND.equals("google")
+                && Build.MANUFACTURER.equals("Google")
+                && Build.PRODUCT.startsWith("sdk_gphone_")
+                && Build.MODEL.startsWith("sdk_gphone_")
+                && Build.FINGERPRINT.startsWith("google/sdk_gphone_")
+                && (Build.FINGERPRINT.endsWith(":user/release-keys")
+                    || Build.FINGERPRINT.endsWith(":userdebug/dev-keys"));
     }
 
     /**
@@ -81,6 +108,10 @@ public final class Utilities {
             return new AndroidCalendarSource(context);
         }
     }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Permissions
 
     /**
      * Checks whether we have permission to read calendars.

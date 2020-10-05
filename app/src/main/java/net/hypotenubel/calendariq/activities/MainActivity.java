@@ -2,7 +2,6 @@ package net.hypotenubel.calendariq.activities;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     /** Constant that identifies our permission request. */
     private static final int PERMISSION_REQUEST_READ_CALENDAR = 0;
-    /** Package ID of the Garmin ConnectIQ app. Used to ensure its existence on the phone. */
-    private static final String GARMIN_PACKAGE_ID = "com.garmin.android.apps.connectmobile";
 
     /** Whether the Garmin Connect app is installed. */
     private boolean garminInstalled = false;
@@ -64,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         boolean isEmulator = Utilities.isEmulator();
 
         // Ensure that everything is set up as expected
-        if (!isConnectIQInstalled() && !isEmulator) {
+        if (!Utilities.isConnectIQInstalled(getApplicationContext()) && !isEmulator) {
             showConnectIQError();
             return;
         }
@@ -159,20 +156,6 @@ public class MainActivity extends AppCompatActivity {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // ConnectIQ
-
-    /**
-     * Ensures that ConnectIQ is installed.
-     */
-    private boolean isConnectIQInstalled() {
-        try {
-            // Try to find the app, which must also correspond to a minimum version (see ConnectIQ
-            // mobile SDK code)
-            PackageInfo info = getPackageManager().getPackageInfo(GARMIN_PACKAGE_ID, 0);
-            return info.versionCode >= 2000;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
 
     private void showConnectIQError() {
         descriptionView.setText(R.string.mainActivity_description_connectIQError);
