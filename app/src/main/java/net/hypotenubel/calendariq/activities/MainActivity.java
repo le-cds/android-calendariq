@@ -94,13 +94,17 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_main, menu);
 
-        // Show calendar-related items if we have calendar permissions
-        if (calendarViewModel == null) {
-            menu.findItem(R.id.mainActivity_menu_requestPermissions).setVisible(garminInstalled);
-        } else {
-            menu.findItem(R.id.mainActivity_menu_requestPermissions).setVisible(false);
-            menu.findItem(R.id.mainActivity_menu_refresh).setVisible(true);
-        }
+        // "Request Permissions" is available if we don't have calendar access right now and
+        // ConnectIQ is installed
+        menu.findItem(R.id.mainActivity_menu_requestPermissions).setVisible(
+                calendarViewModel == null && garminInstalled);
+
+        // "Refresh" is available if we have calendar access
+        menu.findItem(R.id.mainActivity_menu_refresh).setVisible(calendarViewModel != null);
+
+        // Settings are available if we have both
+        menu.findItem(R.id.mainActivity_menu_settings).setVisible(
+                calendarViewModel != null && garminInstalled);
 
         return true;
     }

@@ -16,7 +16,8 @@ import java.util.Set;
 
 /**
  * Use this class to stay connected to installations of an app across all known devices and react to
- * messages sent from ConnectIQ devices to the Android device.
+ * messages sent from ConnectIQ devices to the Android device. This class is currently not used by
+ * this app.
  */
 public class ConnectIQAppTransceiver {
 

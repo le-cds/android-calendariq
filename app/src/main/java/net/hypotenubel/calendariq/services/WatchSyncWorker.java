@@ -42,10 +42,6 @@ public class WatchSyncWorker extends Worker {
     private static final String SYNC_WORK_NAME = "sync_devices";
     /** ID of the work item we're using to run our worker once. */
     private static final String SYNC_ONCE_WORK_NAME = "sync_devices_once";
-    /** Key of the preference that contains the sync interval. */
-    private static final String SYNC_INTERVAL_PREFERENCE_KEY = "frequency";
-    /** Default synchronization interval in minutes. */
-    private static final int DEFAULT_SYNC_INTERVAL = 15;
 
     // Message field values that indicate that a message to the handler thread was sent by us
     private static final int SERVICE_MESSAGE_WHAT = 0xdabcd41f;
@@ -178,7 +174,7 @@ public class WatchSyncWorker extends Worker {
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull  Message msg) {
             // If the message comes from us, load appointments and broadcast them
             List<Object> appointmentMsg = AppointmentMessageGenerator.prepareAppointmentMessage(
                     getApplicationContext());

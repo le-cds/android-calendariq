@@ -41,24 +41,8 @@ public class SettingsActivity extends AppCompatActivity {
      */
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
-        /**
-         * Permanent handle to the last sync preference. We'll update its summary from time to time.
-         */
-        private Preference lastSyncPreference;
-        /**
-         * Listens for changes to shared preferences. This is basically only there to check whether
-         * the last sync time has changed and to update the preference's summary accordingly.
-         */
-        private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener
-                = new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals(Preferences.LAST_SYNC.getKey())) {
-                    updateLastSyncSummary();
-                }
-            }
-        };
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // Lifecycle
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -120,6 +104,29 @@ public class SettingsActivity extends AppCompatActivity {
                     .unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
         }
 
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // Last Synced
+
+        /**
+         * Permanent handle to the last sync preference. We'll update its summary from time to time.
+         */
+        private Preference lastSyncPreference;
+
+        /**
+         * Listens for changes to shared preferences. This is basically only there to check whether
+         * the last sync time has changed and to update the preference's summary accordingly.
+         */
+        private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener
+                = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if (key.equals(Preferences.LAST_SYNC.getKey())) {
+                    updateLastSyncSummary();
+                }
+            }
+        };
+
         /**
          * Provides a summary for the last synchronisation. This is more complex, so we handle it in
          * this rather special method.
@@ -145,6 +152,9 @@ public class SettingsActivity extends AppCompatActivity {
                         stats.getUtcTimestampMillis()));
             }
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // Sync Worker Updates
 
         /**
          * Re-register sync worker upon frequency changes.
