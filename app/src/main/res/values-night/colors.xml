@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="calendar_colorPrimary">#24242b</color>
+    <color name="calendar_colorBackground">#121218</color>
+    <color name="calendar_colorSurface">#1c1c22</color>
+</resources>
