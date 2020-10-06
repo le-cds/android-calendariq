@@ -14,41 +14,17 @@ public class SampleCalendarSource implements ICalendarSource {
     /** The number of seconds that pass by each half hour. */
     private static final long SECONDS_PER_HALF_HOUR = 30 * 60;
 
-    /** Names to be used for the sample calendars. */
-    private static final String[] CALENDAR_NAMES = {
-            "Work Appointments", "Private Appointments", "Fun Appointments", "Other Appointments"
-    };
-
-    /** Names to be used for the sample accounts. */
-    private static final String[] ACCOUNT_NAMES = {
-            "Excellent Google Account", "Glorious CalDAV Provider", "Birthday Account"
-    };
-
-    /** Colours to be used for the sample calendars. */
-    private static final int[] CALENDAR_COLOURS = {
-            0xFF0000, 0x00FF00, 0x0000FF, 0xFF00FF
-    };
+    /** List of calendar descriptors returned by this thing. */
+    private List<CalendarDescriptor> descriptors;
 
 
     @Override
     public List<CalendarDescriptor> getAvailableCalendars() {
-        List<CalendarDescriptor> calendars = new ArrayList<>();
-
-        // Each calendar exists once per account
-        int calCount = CALENDAR_NAMES.length * ACCOUNT_NAMES.length;
-        for (int id = 0; id < calCount; id++) {
-            int calIndex = id % CALENDAR_NAMES.length;
-            int accIndex = id / CALENDAR_NAMES.length;
-
-            calendars.add(new CalendarDescriptor(
-                    id,
-                    CALENDAR_NAMES[calIndex],
-                    ACCOUNT_NAMES[accIndex],
-                    CALENDAR_COLOURS[calIndex]
-            ));
+        if (descriptors == null) {
+            buildDescriptors();
         }
 
-        return calendars;
+        return descriptors;
     }
 
     @Override
@@ -64,6 +40,74 @@ public class SampleCalendarSource implements ICalendarSource {
             result.add(nowMillis + i * SECONDS_PER_HALF_HOUR);
         }
         return result;
+    }
+
+    /**
+     * Builds an assortment of example calendars.
+     */
+    private void buildDescriptors() {
+        descriptors = new CalendarBuilder()
+                .newAccount("Accountable Account")
+                .newCalendar("Holidays", 0xfffdbd)
+
+                .newAccount("Precious Private Account")
+                .newCalendar("Friends", 0xe697ce)
+                .newCalendar("Family", 0xed9191)
+
+                .newAccount("Wretched Work Account")
+                .newCalendar("Meetings", 0xa6c2e3)
+                .newCalendar("Clients", 0xade0da)
+                .newCalendar("Vacation", 0xbaed93)
+
+                .getDescriptors();
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Sample Data Model
+
+    /**
+     * Helper class for building calendar descriptors conveniently.
+     */
+    private static class CalendarBuilder {
+
+        /** Name of the account new calendars will be associated with. */
+        private String currentAccountName;
+        /** ID assigned to the next calendar. */
+        private int nextCalendarId = 0;
+        /** Descriptors of the calendars we have created. */
+        private List<CalendarDescriptor> calendarDescriptors = new ArrayList<>();
+
+        /**
+         * Starts a new account that new calendars will be associated with.
+         */
+        private CalendarBuilder newAccount(String accountName) {
+            currentAccountName = accountName;
+            return this;
+        }
+
+        /**
+         * Add a new calendar.
+         */
+        private CalendarBuilder newCalendar(String name, int color) {
+            CalendarDescriptor descriptor = new CalendarDescriptor(
+                    nextCalendarId,
+                    name,
+                    currentAccountName,
+                    color);
+            calendarDescriptors.add(descriptor);
+
+            nextCalendarId++;
+            return this;
+        }
+
+        /**
+         * Returns the descriptors of all calendars we have created.
+         */
+        private List<CalendarDescriptor> getDescriptors() {
+            return calendarDescriptors;
+        }
+
     }
 
 }
