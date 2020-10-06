@@ -4,4 +4,4 @@ This Android app sends calendar events to compatible (and registered) apps on Ga
 
 It looks something like this:
 
-![App design](screenshot.png)
+![App design](promo/screenshot_small.png)
