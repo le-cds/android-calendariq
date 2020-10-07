@@ -26,14 +26,6 @@ public class MainActivity extends AppCompatActivity {
         // Set up the view and our action bar
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.mainActivity_appBar));
-
-        if (savedInstanceState == null) {
-            Fragment fragment = CalendarListFragment.newInstance();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.mainActivity_fragmentContainer, fragment)
-                    .commit();
-        }
     }
 
 }

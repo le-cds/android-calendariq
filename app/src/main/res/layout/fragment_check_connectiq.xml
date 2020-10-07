@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/checkConnectIQFragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:visibility="invisible"
+    tools:context="net.hypotenubel.calendariq.fragments.CheckConnectIQFragment">
+
+    <ImageView
+        android:id="@+id/checkConnectIQFragment_icon"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginBottom="20dp"
+        android:contentDescription="@string/checkConnectIQFragment_iconContentDescription"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_watch_black_18dp" />
+
+    <TextView
+        android:id="@+id/checkConnectIQFragment_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="@string/checkConnectIQFragment_heading"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+    <TextView
+        android:id="@+id/checkConnectIQFragment_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/checkConnectIQFragment_body"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+    <Button
+        android:id="@+id/checkConnectIQFragment_playStoreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/checkConnectIQFragment_playStoreButtonText" />
+</LinearLayout>
