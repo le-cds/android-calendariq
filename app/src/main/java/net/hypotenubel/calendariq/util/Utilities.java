@@ -119,7 +119,7 @@ public final class Utilities {
      * @param context the context from which this method is called.
      * @return {@code true} if we can read calendars.
      */
-    public static boolean ensureCalendarPermission(Context context) {
+    public static boolean checkCalendarPermission(Context context) {
         int permissionState = ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.READ_CALENDAR);

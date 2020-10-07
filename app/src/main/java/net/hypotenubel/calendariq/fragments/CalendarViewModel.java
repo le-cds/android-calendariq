@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.activities;
+package net.hypotenubel.calendariq.fragments;
 
 import android.app.Application;
 
@@ -17,7 +17,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 /**
- * View model for the list of calendars.
+ * View model for the list of calendars. The activity state of the calendars is automatically
+ * synchronised with the preferences.
  */
 public class CalendarViewModel extends AndroidViewModel {
 
@@ -53,24 +54,27 @@ public class CalendarViewModel extends AndroidViewModel {
             calendars = new MutableLiveData<>();
         }
 
-        // Fire off a thread that loads a new list of calendars
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // Load available calendars
-                ICalendarSource provider = Utilities.obtainCalendarProvider(getApplication());
-                List<CalendarDescriptor> calList = provider.getAvailableCalendars();
+        // Fire off a thread that loads a new list of calendars, provided that we have calendar
+        // access
+        if (Utilities.checkCalendarPermission(getApplication())) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    // Load available calendars
+                    ICalendarSource provider = Utilities.obtainCalendarProvider(getApplication());
+                    List<CalendarDescriptor> calList = provider.getAvailableCalendars();
 
-                // Sort the list so that the UI won't have to
-                Collections.sort(calList);
+                    // Sort the list so that the UI won't have to
+                    Collections.sort(calList);
 
-                // Set the calendar activity flags
-                applyActivityFlags(calList);
+                    // Set the calendar activity flags
+                    applyActivityFlags(calList);
 
-                // Update live data
-                calendars.postValue(calList);
-            }
-        }).start();
+                    // Update live data
+                    calendars.postValue(calList);
+                }
+            }).start();
+        }
     }
 
     /**

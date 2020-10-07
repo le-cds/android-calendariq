@@ -1,51 +1,23 @@
 package net.hypotenubel.calendariq.activities;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.TextView;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.services.WatchSyncWorker;
-import net.hypotenubel.calendariq.util.Preferences;
+import net.hypotenubel.calendariq.fragments.CalendarListFragment;
 import net.hypotenubel.calendariq.util.Utilities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
 
 public class MainActivity extends AppCompatActivity {
 
     /** Log tag used to log log messages in a logging fashion. */
     private static final String LOG_TAG = Utilities.logTag(MainActivity.class);
 
-    /** Constant that identifies our permission request. */
-    private static final int PERMISSION_REQUEST_READ_CALENDAR = 0;
-
-    /** Whether the Garmin Connect app is installed. */
-    private boolean garminInstalled = false;
-
-    /** The label that displays the description text. */
-    private TextView descriptionView;
-    /** Our calendar list view. */
-    private RecyclerView calendarView;
-    /** View model for our calendars. */
-    private CalendarViewModel calendarViewModel;
-    /** Adapter feeding the calendar list. */
-    private CalendarAdapter calendarAdapter;
-    /** Layout for the calendar list. */
-    private LinearLayoutManager calendarLayoutManager;
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // UI Events
+    // Lifecycle
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,152 +27,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.mainActivity_appBar));
 
-        descriptionView = findViewById(R.id.mainActivity_description);
-
-        // Check for emulator
-        boolean isEmulator = Utilities.isEmulator();
-
-        // Ensure that everything is set up as expected
-        if (!Utilities.isConnectIQInstalled(getApplicationContext()) && !isEmulator) {
-            showConnectIQError();
-            return;
+        if (savedInstanceState == null) {
+            Fragment fragment = CalendarListFragment.newInstance();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.mainActivity_fragmentContainer, fragment)
+                    .commit();
         }
-
-        if (ensurePermissions()) {
-            initCalendarView();
-
-            // Ensure that our sync service is running
-            if (!isEmulator) {
-                WatchSyncWorker.runSyncWorker(
-                        Preferences.FREQUENCY.loadInt(this),
-                        false);
-            }
-        } else {
-            showPermissionsError();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (calendarViewModel != null) {
-            calendarViewModel.storeActiveCalendarIds();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.activity_main, menu);
-
-        // "Request Permissions" is available if we don't have calendar access right now and
-        // ConnectIQ is installed
-        menu.findItem(R.id.mainActivity_menu_requestPermissions).setVisible(
-                calendarViewModel == null && garminInstalled);
-
-        // "Refresh" is available if we have calendar access
-        menu.findItem(R.id.mainActivity_menu_refresh).setVisible(calendarViewModel != null);
-
-        // Settings are available if we have both
-        menu.findItem(R.id.mainActivity_menu_settings).setVisible(
-                calendarViewModel != null && garminInstalled);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.mainActivity_menu_requestPermissions:
-                if (ensurePermissions()) {
-                    initCalendarView();
-                }
-                return true;
-
-            case R.id.mainActivity_menu_refresh:
-                // This will automatically cause our list to update
-                calendarViewModel.refresh();
-                return true;
-
-            case R.id.mainActivity_menu_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // UI Initialization
-
-    /**
-     * Configures the calendar view.
-     */
-    private void initCalendarView() {
-        calendarView = findViewById(R.id.mainActivity_calendars);
-
-        // Instantiate our view model
-        calendarViewModel = new CalendarViewModel(getApplication());
-
-        // Setup layout
-        calendarLayoutManager = new LinearLayoutManager(this);
-        calendarView.setLayoutManager(calendarLayoutManager);
-
-        // Setup adapter
-        calendarAdapter = new CalendarAdapter(this, calendarViewModel);
-        calendarView.setAdapter(calendarAdapter);
-
-        // Show the calendar-related menu items in the action bar as well as the correct description
-        descriptionView.setText(R.string.mainActivity_description_success);
-        invalidateOptionsMenu();
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ConnectIQ
-
-    private void showConnectIQError() {
-        descriptionView.setText(R.string.mainActivity_description_connectIQError);
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Permission Handling
-
-    /**
-     * Ensures that we have permission to read calendars. Without this, our app would be
-     * impressively useless.
-     */
-    private boolean ensurePermissions() {
-        if (Utilities.ensureCalendarPermission(this)) {
-            return true;
-        } else {
-            // Ask for permission
-            ActivityCompat.requestPermissions(this,
-                    new String[] {Manifest.permission.READ_CALENDAR},
-                    PERMISSION_REQUEST_READ_CALENDAR);
-            return false;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSION_REQUEST_READ_CALENDAR) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Load our calendars
-                initCalendarView();
-            }
-        }
-    }
-
-    private void showPermissionsError() {
-        descriptionView.setText(R.string.mainActivity_description_permissionsError);
     }
 
 }

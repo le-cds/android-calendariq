@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.activities;
+package net.hypotenubel.calendariq.fragments;
 
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;

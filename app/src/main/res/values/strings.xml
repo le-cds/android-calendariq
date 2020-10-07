@@ -14,6 +14,15 @@
     <string name="settingsActivity_title">Settings</string>
     <string name="settingsActivity_sending">Sending appointments…</string>
 
+    <!-- Calendar List Fragment -->
+    <string name="calendarListFragment_instructions">Select the calendars to sync with your watch.</string>
+
+    <!-- Check Connect IQ Fragment -->
+    <string name="checkConnectIQFragment_iconContentDescription">Warning Icon</string>
+    <string name="checkConnectIQFragment_heading">Garmin Connect</string>
+    <string name="checkConnectIQFragment_body">...must be installed to use this app.</string>
+    <string name="checkConnectIQFragment_playStoreButtonText">Open Play Store</string>
+
     <!-- Sync Service -->
     <string name="watchSyncService_description">Replies to appointment requests by Garmin devices.</string>
 

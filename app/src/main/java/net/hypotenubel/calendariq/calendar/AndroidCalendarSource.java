@@ -62,7 +62,7 @@ public class AndroidCalendarSource implements ICalendarSource {
         List<CalendarDescriptor> calendars = new ArrayList<>();
 
         // Only try loading calendars if we have permission to do so
-        if (!Utilities.ensureCalendarPermission(context)) {
+        if (!Utilities.checkCalendarPermission(context)) {
             Log.d(LOG_TAG, "Missing calendar permission");
             return calendars;
         }
