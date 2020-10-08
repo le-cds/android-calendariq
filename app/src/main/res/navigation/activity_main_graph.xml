@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main_graph"
+    app:startDestination="@id/checkConnectIQFragment">
+
+    <fragment
+        android:id="@+id/checkConnectIQFragment"
+        android:name="net.hypotenubel.calendariq.fragments.CheckConnectIQFragment"
+        android:label="fragment_check_connectiq"
+        tools:layout="@layout/fragment_check_connectiq" >
+        <action
+            android:id="@+id/action_checkConnectIQFragment_to_checkCalendarPermFragment"
+            app:destination="@id/checkCalendarPermFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/calendarListFragment"
+        android:name="net.hypotenubel.calendariq.fragments.CalendarListFragment"
+        android:label="fragment_calendar_list"
+        tools:layout="@layout/fragment_calendar_list" />
+    <fragment
+        android:id="@+id/checkCalendarPermFragment"
+        android:name="net.hypotenubel.calendariq.fragments.CheckCalendarPermFragment"
+        android:label="fragment_check_calendarperm"
+        tools:layout="@layout/fragment_check_calendarperm" >
+        <action
+            android:id="@+id/action_checkCalendarPermFragment_to_calendarListFragment"
+            app:destination="@id/calendarListFragment" />
+    </fragment>
+</navigation>

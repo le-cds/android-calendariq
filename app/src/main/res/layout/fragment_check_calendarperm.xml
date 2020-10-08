@@ -1,42 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/checkConnectIQFragment_container"
+    android:id="@+id/checkCalendarPermFragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="12dp"
     android:gravity="center"
     android:orientation="vertical"
-    android:visibility="invisible"
-    tools:context=".fragments.CheckConnectIQFragment">
+    android:visibility="visible"
+    tools:context=".fragments.CheckCalendarPermFragment">
 
     <ImageView
-        android:id="@+id/checkConnectIQFragment_icon"
+        android:id="@+id/checkCalendarPermFragment_icon"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_marginBottom="20dp"
-        android:contentDescription="@string/checkConnectIQFragment_iconContentDescription"
+        android:contentDescription="@string/checkCalendarPermFragment_iconContentDescription"
         android:scaleType="fitCenter"
-        android:src="@drawable/icon_garmin_connect" />
+        android:src="@drawable/icon_calendar" />
 
     <TextView
-        android:id="@+id/checkConnectIQFragment_heading"
+        android:id="@+id/checkCalendarPermFragment_heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="6dp"
-        android:text="@string/checkConnectIQFragment_heading"
+        android:text="@string/checkCalendarPermFragment_heading"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
     <TextView
-        android:id="@+id/checkConnectIQFragment_body"
+        android:id="@+id/checkCalendarPermFragment_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/checkConnectIQFragment_body"
+        android:text="@string/checkCalendarPermFragment_body"
+        android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-    <Button
-        android:id="@+id/checkConnectIQFragment_playStoreButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="@string/checkConnectIQFragment_playStoreButtonText" />
 
 </LinearLayout>

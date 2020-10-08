@@ -1,30 +1,28 @@
 <resources>
     <string name="app_name">Calendar IQ</string>
 
-    <!-- Main Activity -->
-    <string name="mainActivity_permissions">This app needs access to calendars to read appointments.</string>
-    <string name="mainActivity_description_success">Select the calendars to sync with your watch.</string>
-    <string name="mainActivity_description_connectIQError">Install the Garmin ConnectIQ app to use this app.</string>
-    <string name="mainActivity_description_permissionsError">This app needs access to calendars to read appointments.</string>
-    <string name="mainActivity_menu_requestPermissions">Request permissions</string>
-    <string name="mainActivity_menu_refresh">Refresh</string>
-    <string name="mainActivity_menu_settings">Settings</string>
+    <!-- Calendar List Fragment -->
+    <string name="calendarListFragment_instructions">Select the calendars to sync with your watch.</string>
+    <string name="calendarListFragment_menu_refresh">Refresh</string>
+    <string name="calendarListFragment_menu_settings">Settings</string>
+
+    <!-- Check Connect IQ Fragment -->
+    <string name="checkConnectIQFragment_iconContentDescription">Warning Icon</string>
+    <string name="checkConnectIQFragment_heading">Garmin Connect</string>
+    <string name="checkConnectIQFragment_body">…must be installed to use this app.</string>
+    <string name="checkConnectIQFragment_playStoreButtonText">Open Play Store</string>
+
+    <!-- Check Calendar Permissions Fragment -->
+    <string name="checkCalendarPermFragment_iconContentDescription">Warning Icon</string>
+    <string name="checkCalendarPermFragment_heading">Calendar Permissions</string>
+    <string name="checkCalendarPermFragment_body">We need access to the calendar in order to send appointments to your Garmin device.\n\nActivate calendar access for this app to continue using it.</string>
 
     <!-- Settings Activity -->
     <string name="settingsActivity_title">Settings</string>
     <string name="settingsActivity_sending">Sending appointments…</string>
 
-    <!-- Calendar List Fragment -->
-    <string name="calendarListFragment_instructions">Select the calendars to sync with your watch.</string>
-
-    <!-- Check Connect IQ Fragment -->
-    <string name="checkConnectIQFragment_iconContentDescription">Warning Icon</string>
-    <string name="checkConnectIQFragment_heading">Garmin Connect</string>
-    <string name="checkConnectIQFragment_body">...must be installed to use this app.</string>
-    <string name="checkConnectIQFragment_playStoreButtonText">Open Play Store</string>
-
     <!-- Sync Service -->
-    <string name="watchSyncService_description">Replies to appointment requests by Garmin devices.</string>
+    <string name="watchSyncService_description">Sends appointments to Garmin devices.</string>
 
     <!-- Preferences -->
     <string name="pref_cat_what">What to Sync</string>
@@ -86,4 +84,5 @@
     <string name="pref_last_sync_summary_never">Nothing synced yet.</string>
     <string name="pref_last_sync_summary_singular">Last synced %1$d device on %2$tB %2$te, %2$tY at %2$tH:%2$tM.</string>
     <string name="pref_last_sync_summary_plural">Last synced %1$d devices on %2$tB %2$te, %2$tY at %2$tH:%2$tM.</string>
+
 </resources>

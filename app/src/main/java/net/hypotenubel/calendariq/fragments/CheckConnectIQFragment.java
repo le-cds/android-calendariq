@@ -19,17 +19,13 @@ import net.hypotenubel.calendariq.util.Utilities;
  * A fragment which checks whether Garmin Connect is installed. If so, moves along. Otherwise,
  * displays an appropriate message to the user.
  */
-public class CheckConnectIQFragment extends Fragment implements View.OnClickListener {
+public class CheckConnectIQFragment extends Fragment {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Construction
 
     public CheckConnectIQFragment() {
         // Required empty public constructor
-    }
-
-    public static CheckConnectIQFragment newInstance() {
-        return new CheckConnectIQFragment();
     }
 
 
@@ -53,7 +49,7 @@ public class CheckConnectIQFragment extends Fragment implements View.OnClickList
 
         // Attach event listener explicitly since we're inside a fragment
         Button playStoreButton = (Button) view.findViewById(R.id.checkConnectIQFragment_playStoreButton);
-        playStoreButton.setOnClickListener(this);
+        playStoreButton.setOnClickListener(this::onPlayStoreButtonClick);
 
         return view;
     }
@@ -62,8 +58,7 @@ public class CheckConnectIQFragment extends Fragment implements View.OnClickList
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // UI Events
 
-    @Override
-    public void onClick(View view) {
+    public void onPlayStoreButtonClick(View view) {
         if (view.getId() == R.id.checkConnectIQFragment_playStoreButton) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.garmin.android.apps.connectmobile"));
@@ -86,9 +81,8 @@ public class CheckConnectIQFragment extends Fragment implements View.OnClickList
 
         if (isConnectInstalled) {
             container.setVisibility(View.INVISIBLE);
-            // TODO Navigate to next thingy
             Navigation.findNavController(getView()).navigate(
-                    R.id.action_checkConnectIQFragment_to_calendarListFragment);
+                    R.id.action_checkConnectIQFragment_to_checkCalendarPermFragment);
 
         } else {
             container.setVisibility(View.VISIBLE);
