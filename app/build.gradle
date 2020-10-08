@@ -2,18 +2,29 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
+
     defaultConfig {
         applicationId "net.hypotenubel.calendariq"
-        minSdkVersion 24
-        targetSdkVersion 30
         versionCode 1
         versionName '0.1.0'
+
+        minSdkVersion 24
+        targetSdkVersion 30
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
+        debug {
+            debuggable true
+        }
+
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'proguard-rules.pro'
         }
     }
 
