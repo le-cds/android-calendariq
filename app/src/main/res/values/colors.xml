@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="calendar_colorPrimary">#f0f0f5</color>
-    <color name="calendar_colorPrimaryDark">#9c9cb5</color>
+    <color name="calendar_colorPrimaryVariant">#f0f0f5</color>
+    <color name="calendar_colorOnPrimary">#22222a</color>
     <color name="calendar_colorSecondary">#8585a3</color>
     <color name="calendar_colorBackground">#fafafc</color>
     <color name="calendar_colorSurface">#ffffff</color>

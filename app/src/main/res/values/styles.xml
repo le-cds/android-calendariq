@@ -4,7 +4,8 @@
     <!-- Base application theme. -->
     <style name="CalendarIQTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/calendar_colorPrimary</item>
-        <item name="colorPrimaryDark">@color/calendar_colorPrimaryDark</item>
+        <item name="colorPrimaryVariant">@color/calendar_colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/calendar_colorOnPrimary</item>
         <item name="colorSecondary">@color/calendar_colorSecondary</item>
         <item name="android:colorBackground">@color/calendar_colorBackground</item>
         <item name="colorSurface">@color/calendar_colorSurface</item>
