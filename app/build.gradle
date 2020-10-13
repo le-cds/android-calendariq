@@ -1,12 +1,16 @@
 apply plugin: 'com.android.application'
 
+def versionMajor = 0
+def versionMinor = 1
+def versionPatch = 0
+
 android {
     compileSdkVersion 30
 
     defaultConfig {
         applicationId "net.hypotenubel.calendariq"
-        versionCode 1
-        versionName '0.1.0'
+        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
         minSdkVersion 24
         targetSdkVersion 30
