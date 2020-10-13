@@ -2,13 +2,10 @@ package net.hypotenubel.calendariq.activities;
 
 import android.os.Bundle;
 
-import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.fragments.CalendarListFragment;
-import net.hypotenubel.calendariq.util.Utilities;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
+
+import net.hypotenubel.calendariq.R;
+import net.hypotenubel.calendariq.util.Utilities;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -119,7 +119,7 @@ public enum Preferences {
      */
     private Set<String> loadSet(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getStringSet(key, new HashSet<String>());
+        return preferences.getStringSet(key, new HashSet<>());
     }
 
     /**

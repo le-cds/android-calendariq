@@ -4,13 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.connectiq.BroadcastStats;
-import net.hypotenubel.calendariq.services.WatchSyncWorker;
-import net.hypotenubel.calendariq.util.Preferences;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
@@ -18,6 +12,11 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.work.Operation;
+
+import net.hypotenubel.calendariq.R;
+import net.hypotenubel.calendariq.connectiq.BroadcastStats;
+import net.hypotenubel.calendariq.services.WatchSyncWorker;
+import net.hypotenubel.calendariq.util.Preferences;
 
 /**
  * Presents the user with a list of settings. Since we only have a single list, we're not using
@@ -31,7 +30,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         // Setup the action bar
-        setSupportActionBar((Toolbar) findViewById(R.id.settingsActivity_appBar));
+        setSupportActionBar(findViewById(R.id.settingsActivity_appBar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

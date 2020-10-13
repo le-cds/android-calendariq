@@ -3,14 +3,13 @@ package net.hypotenubel.calendariq.fragments;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.util.Utilities;
@@ -48,7 +47,7 @@ public class CheckConnectIQFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_check_connectiq, container, false);
 
         // Attach event listener explicitly since we're inside a fragment
-        Button playStoreButton = (Button) view.findViewById(R.id.checkConnectIQFragment_playStoreButton);
+        Button playStoreButton = view.findViewById(R.id.checkConnectIQFragment_playStoreButton);
         playStoreButton.setOnClickListener(this::onPlayStoreButtonClick);
 
         return view;

@@ -141,6 +141,8 @@ public class AndroidCalendarSource implements ICalendarSource {
             result.add(cursor.getLong(INSTANCE_PROJECTION_BEGIN) / 1000);
         }
 
+        cursor.close();
+
         Log.d(LOG_TAG, "Loaded " + result.size() + " appointments");
 
         return result;
