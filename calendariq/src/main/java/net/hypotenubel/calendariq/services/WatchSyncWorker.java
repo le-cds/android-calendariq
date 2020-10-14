@@ -181,7 +181,7 @@ public class WatchSyncWorker extends Worker {
             ConnectIQAppBroadcaster.broadcast(
                     appointmentMsg,
                     getApplicationContext(),
-                    Utilities.APP_ID,
+                    Utilities.APP_IDS,
                     Utilities.getIQConnectType(),
                     new EventListener());
         }

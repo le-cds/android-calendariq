@@ -10,16 +10,16 @@ import com.garmin.android.connectiq.exception.InvalidStateException;
 
 import net.hypotenubel.calendariq.util.Utilities;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
 /**
- * Use this class to broadcast a message to each installation of an app on any device that is
- * currently connected. Call
- * {@link #broadcast(Object, Context, String, ConnectIQ.IQConnectType, IBroadcasterEventListener)}
- * to use the class. The method should be called from a separate thread.
+ * Use this class to broadcast a message to each installation of a list of apps on any device that
+ * is currently connected. Call one of the {@code broadcast(...)} methods to get things rolling.
+ * They should be called from a separate thread.
  */
 public class ConnectIQAppBroadcaster {
 
@@ -36,17 +36,17 @@ public class ConnectIQAppBroadcaster {
     private final Context context;
     /** ConnectIQ instance we're using to communicate with devices. */
     private final ConnectIQ connectIQ;
-    /** List of devices we'll have to ask for an installed app. */
-    private final Queue<IQDevice> devicesToQuery = new LinkedList<>();
-    /** The device currently being queried whether it has our app installed. */
-    private IQDevice deviceCurrentlyQueried = null;
+    /** List of app installations we'll have to check for. */
+    private final Queue<AppInstallation> installationsToQuery = new LinkedList<>();
+    /** The installation currently being queried. */
+    private AppInstallation installationCurrentlyQueried = null;
     /** Map of device / app object combinations that we'll send the message to. */
-    private final Map<IQDevice, IQApp> messageRecipients = new HashMap<>();
+    private final List<AppInstallation> messageRecipients = new ArrayList<>();
     /** Number of messages we have tried to send. */
     private int sentMessages = 0;
 
-    /** ID of the app we're communicating with. */
-    private final String appId;
+    /** IDs of the apps we're communicating with. */
+    private final List<String> appIds = new ArrayList<>();
     /** Message to send to the app. */
     private final Object msg;
 
@@ -64,14 +64,14 @@ public class ConnectIQAppBroadcaster {
     /**
      * Creates a new instance and sends the given message to the given app.
      */
-    private ConnectIQAppBroadcaster(Object msg, Context context, String appId,
+    private ConnectIQAppBroadcaster(Object msg, Context context, List<String> appIds,
                                     ConnectIQ.IQConnectType connectionType,
                                     IBroadcasterEventListener listener) {
 
         this.listener = listener;
         this.msg = msg;
         this.context = context;
-        this.appId = appId;
+        this.appIds.addAll(appIds);
 
         // Obtain a ConnectIQ instance and start it up
         Log.d(LOG_TAG, "Obtaining ConnectIQ instance for " + connectionType.name());
@@ -92,20 +92,40 @@ public class ConnectIQAppBroadcaster {
      * @param connectionType the connection type.
      * @param listener optional event listener to be notified as the broadcast finishes.
      */
-    public static void broadcast(Object msg, Context context, String appId,
+//    public static void broadcast(Object msg, Context context, String appId,
+//                                 ConnectIQ.IQConnectType connectionType,
+//                                 IBroadcasterEventListener listener) {
+//
+//        // The act of creating a new instance starts the sending process
+//        List<String> ids = new ArrayList<>();
+//        ids.add(appId);
+//
+//        new ConnectIQAppBroadcaster(msg, context, ids, connectionType, listener);
+//    }
+
+    /**
+     * Sends the message to the apps with the given IDs on any device where they are installed.
+     *
+     * @param msg the message to send.
+     * @param context the context we're operating in.
+     * @param appIds the receiving applications' IDs.
+     * @param connectionType the connection type.
+     * @param listener optional event listener to be notified as the broadcast finishes.
+     */
+    public static void broadcast(Object msg, Context context, List<String> appIds,
                                  ConnectIQ.IQConnectType connectionType,
                                  IBroadcasterEventListener listener) {
 
         // The act of creating a new instance starts the sending process
-        new ConnectIQAppBroadcaster(msg, context, appId, connectionType, listener);
+        new ConnectIQAppBroadcaster(msg, context, appIds, connectionType, listener);
     }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Implementation
 
-    private void queryNextDevice() {
-        if (devicesToQuery.isEmpty()) {
+    private void queryNextInstallation() {
+        if (installationsToQuery.isEmpty()) {
             // We've finished querying devices, so send the messages
             sendMessages();
 
@@ -114,14 +134,18 @@ public class ConnectIQAppBroadcaster {
             boolean querySuccessful = false;
             while (!querySuccessful) {
                 try {
-                    deviceCurrentlyQueried = devicesToQuery.poll();
+                    installationCurrentlyQueried = installationsToQuery.poll();
 
-                    Log.d(LOG_TAG, "Obtaining application info for "
-                            + deviceCurrentlyQueried.getDeviceIdentifier()
-                            + " (" + deviceCurrentlyQueried.getFriendlyName() + ")");
+                    Log.d(LOG_TAG, "Querying app "
+                            + installationCurrentlyQueried.appId
+                            + " on device "
+                            + installationCurrentlyQueried.device.getDeviceIdentifier()
+                            + " (" + installationCurrentlyQueried.device.getFriendlyName() + ")");
 
                     connectIQ.getApplicationInfo(
-                            appId, deviceCurrentlyQueried, applicationInfoListener);
+                            installationCurrentlyQueried.appId,
+                            installationCurrentlyQueried.device,
+                            applicationInfoListener);
                     querySuccessful = true;
 
                 } catch (Exception e) {
@@ -135,23 +159,23 @@ public class ConnectIQAppBroadcaster {
      * Sends the message to all device / app combinations we've found.
      */
     private void sendMessages() {
-        if (!messageRecipients.isEmpty()) {
-            for (Map.Entry<IQDevice, IQApp> entry : messageRecipients.entrySet()) {
-                try {
-                    IQDevice device = entry.getKey();
-                    Log.d(LOG_TAG, "Sending message to "
-                            + device.getDeviceIdentifier()
-                            + " (" + device.getFriendlyName() + ")");
-                    connectIQ.sendMessage(
-                            device,
-                            entry.getValue(),
-                            msg,
-                            sendMessageListener);
-                    sentMessages++;
+        for (AppInstallation appInstallation : messageRecipients) {
+            try {
+                IQDevice device = appInstallation.device;
+                Log.d(LOG_TAG, "Sending message to "
+                        + appInstallation.app.getDisplayName()
+                        + " on "
+                        + appInstallation.device.getDeviceIdentifier()
+                        + " (" + appInstallation.device.getFriendlyName() + ")");
+                connectIQ.sendMessage(
+                        appInstallation.device,
+                        appInstallation.app,
+                        msg,
+                        sendMessageListener);
+                sentMessages++;
 
-                } catch (Exception e) {
-                    Log.e(LOG_TAG, "Exception while sending message", e);
-                }
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Exception while sending message", e);
             }
         }
 
@@ -189,10 +213,16 @@ public class ConnectIQAppBroadcaster {
         public void onSdkReady() {
             Log.d(LOG_TAG, "ConnectIQ ready, discovering connected devices...");
 
-            // Start querying devices
+            // Start querying installations
             try {
-                devicesToQuery.addAll(connectIQ.getConnectedDevices());
-                queryNextDevice();
+                // We'll look for each app on every connected device
+                for (IQDevice device : connectIQ.getConnectedDevices()) {
+                    for (String appId : appIds) {
+                        installationsToQuery.add(new AppInstallation(device, appId));
+                    }
+                }
+
+                queryNextInstallation();
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Exception while trying to obtain connected devices", e);
             }
@@ -217,17 +247,27 @@ public class ConnectIQAppBroadcaster {
 
         @Override
         public void onApplicationInfoReceived(IQApp iqApp) {
-            Log.d(LOG_TAG, "App found on " + deviceCurrentlyQueried.getDeviceIdentifier()
-                    + " (" + deviceCurrentlyQueried.getFriendlyName() + ")");
-            messageRecipients.put(deviceCurrentlyQueried, iqApp);
-            queryNextDevice();
+            Log.d(LOG_TAG, "App "
+                    + installationCurrentlyQueried.appId
+                    + " found on "
+                    + installationCurrentlyQueried.device.getDeviceIdentifier()
+                    + " (" + installationCurrentlyQueried.device.getFriendlyName() + ")");
+
+            // Store the IQApp object
+            installationCurrentlyQueried.app = iqApp;
+            messageRecipients.add(installationCurrentlyQueried);
+
+            queryNextInstallation();
         }
 
         @Override
         public void onApplicationNotInstalled(String s) {
-            Log.d(LOG_TAG, "App not found on " + deviceCurrentlyQueried.getDeviceIdentifier()
-                    + " (" + deviceCurrentlyQueried.getFriendlyName() + "): " + s);
-            queryNextDevice();
+            Log.d(LOG_TAG, "App "
+                    + installationCurrentlyQueried.appId
+                    + " not found on "
+                    + installationCurrentlyQueried.device.getDeviceIdentifier()
+                    + " (" + installationCurrentlyQueried.device.getFriendlyName() + "): " + s);
+            queryNextInstallation();
         }
     }
 
@@ -240,6 +280,31 @@ public class ConnectIQAppBroadcaster {
                     + " on " + iqDevice.getDeviceIdentifier()
                     + " with status " + iqMessageStatus.name());
         }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Data Holding
+
+    /**
+     * Represents an app on a device. If we haven't queried the device for the app yet, this object
+     * will only cary the app ID. Once we found that the app is installed, it will carry the
+     * associated app object as well.
+     */
+    private static class AppInstallation {
+
+        /** The device the app might be or is installed on. */
+        private final IQDevice device;
+        /** The app's ID. */
+        private final String appId;
+        /** The application object, provided it is installed on the device. */
+        private IQApp app;
+
+        private AppInstallation(IQDevice device, String appId) {
+            this.device = device;
+            this.appId = appId;
+        }
+
     }
 
 }

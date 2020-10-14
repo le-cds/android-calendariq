@@ -14,13 +14,18 @@ import net.hypotenubel.calendariq.calendar.SampleCalendarSource;
 
 import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Contains glorious utility methods.
  */
 public final class Utilities {
 
     /** Identifier of our watchface running on the watch. */
-    public static final String APP_ID = "d7d720e4-e397-43fe-b4ef-7df656ac5766";
+    public static final List<String> APP_IDS = Arrays.asList(
+            "d7d720e4-e397-43fe-b4ef-7df656ac5766");
     /** Package ID of the Garmin ConnectIQ app. Used to ensure its existence on the phone. */
     public static final String GARMIN_PACKAGE_ID = "com.garmin.android.apps.connectmobile";
 
