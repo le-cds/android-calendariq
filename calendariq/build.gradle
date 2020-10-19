@@ -3,14 +3,22 @@ apply plugin: 'com.android.application'
 def versionMajor = 0
 def versionMinor = 1
 def versionPatch = 1
+def versionRevision = 1
+def versionSuffix = "devel"
 
 android {
     compileSdkVersion 30
 
     defaultConfig {
         applicationId "net.hypotenubel.calendariq"
-        versionCode versionMajor * 10000 + versionMinor * 100 + versionPatch
-        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+
+        versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionRevision
+
+        if (versionSuffix.isEmpty()) {
+            versionName "${versionMajor}.${versionMinor}.${versionPatch}-${versionRevision}"
+        } else {
+            versionName "${versionMajor}.${versionMinor}.${versionPatch}-${versionRevision}-${versionSuffix}"
+        }
 
         minSdkVersion 24
         targetSdkVersion 30
