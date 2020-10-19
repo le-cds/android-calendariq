@@ -27,3 +27,6 @@
     public static *** w(...);
     public static *** e(...);
 }
+
+# Fixes #7, which causes below class to not be found
+-keepnames class androidx.navigation.fragment.NavHostFragment
