@@ -14,7 +14,7 @@
         android:background="?attr/colorPrimary"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/settingsActivity_settingsFragment"
         android:name="net.hypotenubel.calendariq.activities.SettingsActivity$SettingsFragment"
         android:layout_width="match_parent"

@@ -50,8 +50,6 @@ public class ConnectIQAppTransceiver {
     /** ConnectIQ instance we're using to communicate with devices. */
     private final ConnectIQ connectIQ;
 
-    /** ID of the app we're communicating with. */
-    private final String appId;
     /** The IQApp object we're using to represent our app. */
     private final IQApp iqApp;
 
@@ -88,7 +86,6 @@ public class ConnectIQAppTransceiver {
                                    ConnectIQ.IQConnectType connectionType) {
 
         this.context = context;
-        this.appId = appId;
         this.iqApp = new IQApp(appId);
 
         // Obtain a ConnectIQ instance
@@ -165,18 +162,15 @@ public class ConnectIQAppTransceiver {
     public final void sendMessage(final IQDevice device, final IQApp app, final List<Object> msg) {
         if (isRunning()) {
             // TODO Enqueue send requests and process them on a separate worker thread?
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Log.d(LOG_TAG, "Sending message to " + app.getApplicationId()
-                                + " on " + device.getDeviceIdentifier());
-                        connectIQ.sendMessage(device, app, msg, sendMessageListener);
-                    } catch (Exception e) {
-                        Log.e(LOG_TAG, "Exception while trying to send a message", e);
-                    }
+            new Thread(() -> {
+                try {
+                    Log.d(LOG_TAG, "Sending message to " + app.getApplicationId()
+                            + " on " + device.getDeviceIdentifier());
+                    connectIQ.sendMessage(device, app, msg, sendMessageListener);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, "Exception while trying to send a message", e);
                 }
-                }).start();
+            }).start();
         }
     }
 

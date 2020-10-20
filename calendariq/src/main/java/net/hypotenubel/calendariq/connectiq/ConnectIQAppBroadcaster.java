@@ -13,7 +13,6 @@ import net.hypotenubel.calendariq.util.Utilities;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -50,8 +49,6 @@ public class ConnectIQAppBroadcaster {
     /** Message to send to the app. */
     private final Object msg;
 
-    /** Listener for initialization events. */
-    private final InitializationListener initializationListener = new InitializationListener();
     /** Listener for application infos. */
     private final AppInfoListener applicationInfoListener = new AppInfoListener();
     /** Listener for message events. */
@@ -76,7 +73,7 @@ public class ConnectIQAppBroadcaster {
         // Obtain a ConnectIQ instance and start it up
         Log.d(LOG_TAG, "Obtaining ConnectIQ instance for " + connectionType.name());
         connectIQ = ConnectIQ.getInstance(context, connectionType);
-        connectIQ.initialize(context, false, initializationListener);
+        connectIQ.initialize(context, false, new InitializationListener());
     }
 
 
@@ -92,16 +89,16 @@ public class ConnectIQAppBroadcaster {
      * @param connectionType the connection type.
      * @param listener optional event listener to be notified as the broadcast finishes.
      */
-//    public static void broadcast(Object msg, Context context, String appId,
-//                                 ConnectIQ.IQConnectType connectionType,
-//                                 IBroadcasterEventListener listener) {
-//
-//        // The act of creating a new instance starts the sending process
-//        List<String> ids = new ArrayList<>();
-//        ids.add(appId);
-//
-//        new ConnectIQAppBroadcaster(msg, context, ids, connectionType, listener);
-//    }
+    public static void broadcast(Object msg, Context context, String appId,
+                                 ConnectIQ.IQConnectType connectionType,
+                                 IBroadcasterEventListener listener) {
+
+        // The act of creating a new instance starts the sending process
+        List<String> ids = new ArrayList<>();
+        ids.add(appId);
+
+        new ConnectIQAppBroadcaster(msg, context, ids, connectionType, listener);
+    }
 
     /**
      * Sends the message to the apps with the given IDs on any device where they are installed.

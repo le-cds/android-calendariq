@@ -6,15 +6,14 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
+import androidx.core.content.ContextCompat;
+
 import com.garmin.android.connectiq.ConnectIQ;
 
 import net.hypotenubel.calendariq.calendar.AndroidCalendarSource;
 import net.hypotenubel.calendariq.calendar.ICalendarSource;
 import net.hypotenubel.calendariq.calendar.SampleCalendarSource;
 
-import androidx.core.content.ContextCompat;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,7 +91,8 @@ public final class Utilities {
         return Build.BRAND.equals("google")
                 && Build.MANUFACTURER.equals("Google")
                 && Build.PRODUCT.startsWith("sdk_gphone_")
-                && Build.MODEL.startsWith("sdk_gphone_")
+                && (Build.MODEL.startsWith("sdk_gphone_")
+                    || Build.MODEL.contains("Emulator"))
                 && Build.FINGERPRINT.startsWith("google/sdk_gphone_")
                 && (Build.FINGERPRINT.endsWith(":user/release-keys")
                     || Build.FINGERPRINT.endsWith(":userdebug/dev-keys"));

@@ -2,16 +2,14 @@ package net.hypotenubel.calendariq.fragments;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.util.Utilities;
@@ -23,7 +21,7 @@ import net.hypotenubel.calendariq.util.Utilities;
 public class CheckCalendarPermFragment extends Fragment {
 
     /** The launcher we use to start permission requests. */
-    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
             this::permissionResult);
 

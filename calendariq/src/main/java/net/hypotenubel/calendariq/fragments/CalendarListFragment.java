@@ -1,20 +1,20 @@
 package net.hypotenubel.calendariq.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.activities.SettingsActivity;
@@ -55,8 +55,10 @@ public class CalendarListFragment extends Fragment {
 
         // Take this opportunity to ensure that our sync service is working (unless we're running
         // in the emulator)
-        if (Utilities.checkCalendarPermission(getContext()) && !Utilities.isEmulator()) {
+        Context context = getContext();
+        if (Utilities.checkCalendarPermission(context) && !Utilities.isEmulator()) {
             WatchSyncWorker.runSyncWorker(
+                    context.getApplicationContext(),
                     Preferences.FREQUENCY.loadInt(getContext()),
                     false);
         }
@@ -87,7 +89,7 @@ public class CalendarListFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_calendar_list, menu);
     }
 
@@ -106,18 +108,17 @@ public class CalendarListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.fragment_calendar_list_menu_refresh:
-                // This will automatically cause our list to update
-                calendarViewModel.refresh();
-                return true;
+        if (item.getItemId() == R.id.fragment_calendar_list_menu_refresh) {
+            // This will automatically cause our list to update
+            calendarViewModel.refresh();
+            return true;
 
-            case R.id.fragment_calendar_list_menu_settings:
-                startActivity(new Intent(this.getActivity(), SettingsActivity.class));
-                return true;
+        } else if (item.getItemId() == R.id.fragment_calendar_list_menu_settings) {
+            startActivity(new Intent(this.getActivity(), SettingsActivity.class));
+            return true;
 
-            default:
-                return super.onOptionsItemSelected(item);
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -62,23 +61,15 @@ public class SettingsActivity extends AppCompatActivity {
                     R.string.pref_frequency_summary)));
 
             // Listen to frequency changes to we can restart the sync worker
-            frequency.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    onFrequencyChanged(newValue.toString());
-                    return true;
-                }
+            frequency.setOnPreferenceChangeListener((preference, newValue) -> {
+                onFrequencyChanged(newValue.toString());
+                return true;
             });
 
             // Listen to synchronisation requests
-            lastSyncPreference.setOnPreferenceClickListener(
-                    new Preference.OnPreferenceClickListener() {
-
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    runSyncWorkerOnce();
-                    return true;
-                }
+            lastSyncPreference.setOnPreferenceClickListener(preference -> {
+                runSyncWorkerOnce();
+                return true;
             });
         }
 
@@ -115,16 +106,12 @@ public class SettingsActivity extends AppCompatActivity {
          * Listens for changes to shared preferences. This is basically only there to check whether
          * the last sync time has changed and to update the preference's summary accordingly.
          */
-        private SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener
-                = new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals(Preferences.LAST_SYNC.getKey())) {
-                    updateLastSyncSummary();
-                }
-            }
-        };
+        private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener
+                = (sharedPreferences, key) -> {
+                    if (key.equals(Preferences.LAST_SYNC.getKey())) {
+                        updateLastSyncSummary();
+                    }
+                };
 
         /**
          * Provides a summary for the last synchronisation. This is more complex, so we handle it in
@@ -141,14 +128,12 @@ public class SettingsActivity extends AppCompatActivity {
                 // Turn the string into stats and put them into our string
                 BroadcastStats stats = new BroadcastStats(value);
 
-                String formatString = stats.getDevices() == 1
-                        ? getString(R.string.pref_last_sync_summary_singular)
-                        : getString(R.string.pref_last_sync_summary_plural);
-
-                lastSyncPreference.setSummary(String.format(
-                        formatString,
+                String summary = getContext().getResources().getQuantityString(
+                        R.plurals.pref_last_sync_summary,
                         stats.getDevices(),
-                        stats.getUtcTimestampMillis()));
+                        stats.getDevices(),
+                        stats.getUtcTimestampMillis());
+                lastSyncPreference.setSummary(summary);
             }
         }
 
@@ -160,6 +145,7 @@ public class SettingsActivity extends AppCompatActivity {
          */
         private void onFrequencyChanged(String newValue) {
             WatchSyncWorker.runSyncWorker(
+                    getContext().getApplicationContext(),
                     Preferences.FREQUENCY.loadInt(this.getContext()),
                     true);
         }
@@ -168,19 +154,17 @@ public class SettingsActivity extends AppCompatActivity {
          * Ensures that our synchronization worker is run once by the work manager API.
          */
         private void runSyncWorkerOnce() {
-            Operation syncOperation = WatchSyncWorker.runSyncWorkerOnce();
+            Operation syncOperation = WatchSyncWorker.runSyncWorkerOnce(
+                    getContext().getApplicationContext());
 
             // Display a toast when the operation finishes
-            syncOperation.getState().observe(this, new Observer<Operation.State>() {
-                @Override
-                public void onChanged(Operation.State state) {
-                    // This is only called if things were successful
-                    Toast.makeText(
-                            SettingsFragment.this.getActivity(),
-                            getString(R.string.settingsActivity_sending),
-                            Toast.LENGTH_SHORT)
-                            .show();
-                }
+            syncOperation.getState().observe(this, state -> {
+                // This is only called if things were successful
+                Toast.makeText(
+                        SettingsFragment.this.getActivity(),
+                        getString(R.string.settingsActivity_sending),
+                        Toast.LENGTH_SHORT)
+                        .show();
             });
         }
     }
@@ -193,7 +177,7 @@ public class SettingsActivity extends AppCompatActivity {
             implements Preference.SummaryProvider<Preference> {
 
         /** The format string we'll be using to generate summaries. */
-        private String formatString;
+        private final String formatString;
 
         /**
          * Creates a new summary provider for the given format string.

@@ -7,15 +7,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import net.hypotenubel.calendariq.connectiq.BroadcastStats;
-import net.hypotenubel.calendariq.connectiq.ConnectIQAppBroadcaster;
-import net.hypotenubel.calendariq.connectiq.IBroadcasterEventListener;
-import net.hypotenubel.calendariq.util.Preferences;
-import net.hypotenubel.calendariq.util.Utilities;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import androidx.annotation.NonNull;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.ExistingWorkPolicy;
@@ -25,6 +16,15 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
+
+import net.hypotenubel.calendariq.connectiq.BroadcastStats;
+import net.hypotenubel.calendariq.connectiq.ConnectIQAppBroadcaster;
+import net.hypotenubel.calendariq.connectiq.IBroadcasterEventListener;
+import net.hypotenubel.calendariq.util.Preferences;
+import net.hypotenubel.calendariq.util.Utilities;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A worker that can be invoked regularly to send appointments to devices. Provides static methods
@@ -60,11 +60,14 @@ public class WatchSyncWorker extends Worker {
     /**
      * Ensures that our synchronization worker is run by the work manager API.
      *
+     * @param appContext the application's context to run the work manager in.
      * @param interval the interval it should be periodically run in.
      * @param replaceExisting {@code true} if an existing worker should be replaced. If this is
      *                                    {@code false}, nothing happens if a worker already exists.
      */
-    public static void runSyncWorker(int interval, boolean replaceExisting) {
+    public static void runSyncWorker(final Context appContext, int interval,
+                                     boolean replaceExisting) {
+
         // Let it be known in the kingdom that we shall unleash the workers!
         if (replaceExisting) {
             Log.d(LOG_TAG,"Replacing sync worker with interval of " + interval + " minutes");
@@ -83,7 +86,7 @@ public class WatchSyncWorker extends Worker {
                 ? ExistingPeriodicWorkPolicy.REPLACE
                 : ExistingPeriodicWorkPolicy.KEEP;
         WorkManager
-                .getInstance()
+                .getInstance(appContext)
                 .enqueueUniquePeriodicWork(
                         SYNC_WORK_NAME,
                         policy,
@@ -94,14 +97,16 @@ public class WatchSyncWorker extends Worker {
      * Ensures that our synchronization worker is run once by the work manager API. Returns the
      * operation to be run so that callers can wait for that application to complete to show some
      * kind of a notification.
+     *
+     * @param appContext the application's context to run the work manager in.
      */
-    public static Operation runSyncWorkerOnce() {
+    public static Operation runSyncWorkerOnce(final Context appContext) {
         Log.d(LOG_TAG,"Running sync worker once");
 
         // Build a new periodic work request and register it if none was already registered
         OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(WatchSyncWorker.class).build();
         return WorkManager
-                .getInstance()
+                .getInstance(appContext)
                 .enqueueUniqueWork(
                         SYNC_ONCE_WORK_NAME,
                         ExistingWorkPolicy.REPLACE,

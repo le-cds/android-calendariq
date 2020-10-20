@@ -76,7 +76,7 @@ public class SampleCalendarSource implements ICalendarSource {
         /** ID assigned to the next calendar. */
         private int nextCalendarId = 0;
         /** Descriptors of the calendars we have created. */
-        private List<CalendarDescriptor> calendarDescriptors = new ArrayList<>();
+        private final List<CalendarDescriptor> calendarDescriptors = new ArrayList<>();
 
         /**
          * Starts a new account that new calendars will be associated with.

@@ -6,8 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
@@ -15,11 +20,6 @@ import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Adapts a {@link CalendarViewModel} for a recycler view. The adapter internally works on a
@@ -44,12 +44,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
      * Creates a new instance owned by the given lifecycle owner to display the given view model.
      */
     public CalendarAdapter(LifecycleOwner owner, CalendarViewModel viewModel) {
-        viewModel.getCalendars().observe(owner, new Observer<List<CalendarDescriptor>>() {
-            @Override
-            public void onChanged(List<CalendarDescriptor> calendarDescriptors) {
-                updateList(calendarDescriptors);
-            }
-        });
+        viewModel.getCalendars().observe(owner, this::updateList);
     }
 
 
@@ -143,7 +138,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
      * Keeps references to the most important layout elements of an account view.
      */
     public static class AccountViewHolder extends RecyclerView.ViewHolder {
-        private TextView accountNameView;
+        private final TextView accountNameView;
 
         public AccountViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -161,9 +156,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public class CalendarViewHolder extends RecyclerView.ViewHolder
             implements CompoundButton.OnCheckedChangeListener {
 
-        private GradientDrawable colorShape;
-        private TextView calendarNameView;
-        private Switch activeSwitch;
+        private final GradientDrawable colorShape;
+        private final TextView calendarNameView;
+        private final SwitchMaterial activeSwitch;
 
         public CalendarViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -183,7 +178,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             // Retrieve the calendar we're representing right now
-            CalendarDescriptor calendar = (CalendarDescriptor) calendars.get(getAdapterPosition());
+            CalendarDescriptor calendar = (CalendarDescriptor) calendars.get(getBindingAdapterPosition());
             calendar.setActive(isChecked);
         }
     }

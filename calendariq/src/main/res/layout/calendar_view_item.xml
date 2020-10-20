@@ -16,7 +16,8 @@
         android:src="@drawable/calendar_color_indicator"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/calendarViewItem_calendarColor" />
 
     <TextView
         android:id="@+id/calendarViewItem_calendarName"
@@ -32,7 +33,7 @@
         app:layout_constraintStart_toEndOf="@+id/calendarViewItem_calendarColor"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Switch
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/calendarViewItem_calendarActiveSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

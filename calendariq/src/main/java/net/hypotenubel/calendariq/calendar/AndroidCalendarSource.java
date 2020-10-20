@@ -46,7 +46,7 @@ public class AndroidCalendarSource implements ICalendarSource {
     private static final int INSTANCE_PROJECTION_BEGIN = 0;
 
     /** The context from which this provider was created. */
-    private Context context;
+    private final Context context;
 
     /**
      * Creates a new instance in the given context.
@@ -152,17 +152,19 @@ public class AndroidCalendarSource implements ICalendarSource {
      * Builds a selection expression with the given number of placeholders for calendar IDs.
      */
     private String buildSelectionExpression(int calendarIdCount) {
-        String selection = CalendarContract.Instances.ALL_DAY + " = 0 and (";
+        StringBuilder selectionBuilder = new StringBuilder(
+                CalendarContract.Instances.ALL_DAY + " = 0 and (");
 
         for (int i = 0; i < calendarIdCount; i++) {
             if (i != 0) {
-                selection += " or ";
+                selectionBuilder.append(" or ");
             }
-            selection += CalendarContract.Instances.CALENDAR_ID + " = ?";
+            selectionBuilder.append(CalendarContract.Instances.CALENDAR_ID + " = ?");
         }
-        selection += ")";
 
-        return "(" + selection + ")";
+        selectionBuilder.append(")");
+
+        return "(" + selectionBuilder.toString() + ")";
     }
 
 }

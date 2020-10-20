@@ -17,6 +17,9 @@
     <string name="checkCalendarPermFragment_heading">Calendar Permissions</string>
     <string name="checkCalendarPermFragment_body">We need access to the calendar in order to send appointments to your Garmin device.\n\nActivate calendar access for this app to continue using it.</string>
 
+    <!-- Calendar View Item -->
+    <string name="calendarViewItem_calendarColor">Calendar color</string>
+
     <!-- Settings Activity -->
     <string name="settingsActivity_title">Settings</string>
     <string name="settingsActivity_sending">Sending appointments…</string>
@@ -82,7 +85,9 @@
 
     <string name="pref_last_sync">Sync now</string>
     <string name="pref_last_sync_summary_never">Nothing synced yet.</string>
-    <string name="pref_last_sync_summary_singular">Last synced %1$d device on %2$tB %2$te, %2$tY at %2$tH:%2$tM.</string>
-    <string name="pref_last_sync_summary_plural">Last synced %1$d devices on %2$tB %2$te, %2$tY at %2$tH:%2$tM.</string>
+    <plurals name="pref_last_sync_summary">
+        <item quantity="one">Last synced %1$d device on %2$tB %2$te, %2$tY at %2$tH:%2$tM.</item>
+        <item quantity="other">Last synced %1$d devices on %2$tB %2$te, %2$tY at %2$tH:%2$tM.</item>
+    </plurals>
 
 </resources>
