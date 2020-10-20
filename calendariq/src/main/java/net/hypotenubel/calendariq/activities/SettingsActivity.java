@@ -13,7 +13,7 @@ import androidx.preference.PreferenceManager;
 import androidx.work.Operation;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.connectiq.BroadcastStats;
+import net.hypotenubel.calendariq.connectiq.BroadcastResult;
 import net.hypotenubel.calendariq.services.WatchSyncWorker;
 import net.hypotenubel.calendariq.util.Preferences;
 
@@ -126,14 +126,18 @@ public class SettingsActivity extends AppCompatActivity {
                 lastSyncPreference.setSummary(getString(R.string.pref_last_sync_summary_never));
             } else {
                 // Turn the string into stats and put them into our string
-                BroadcastStats stats = new BroadcastStats(value);
+                BroadcastResult stats = BroadcastResult.deserialize(value);
 
-                String summary = getContext().getResources().getQuantityString(
-                        R.plurals.pref_last_sync_summary,
-                        stats.getDevices(),
-                        stats.getDevices(),
-                        stats.getUtcTimestampMillis());
-                lastSyncPreference.setSummary(summary);
+                if (stats.isSuccess()) {
+                    String summary = getContext().getResources().getQuantityString(
+                            R.plurals.pref_last_sync_summary,
+                            stats.getApps(),
+                            stats.getApps(),
+                            stats.getUtcTimestampMillis());
+                    lastSyncPreference.setSummary(summary);
+                } else {
+                    lastSyncPreference.setSummary(stats.getMessage());
+                }
             }
         }
 

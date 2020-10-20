@@ -11,6 +11,6 @@ public interface IBroadcasterEventListener {
      *
      * @param stats statistics about the broadcast.
      */
-    void broadcastFinished(BroadcastStats stats);
+    void broadcastFinished(BroadcastResult stats);
 
 }

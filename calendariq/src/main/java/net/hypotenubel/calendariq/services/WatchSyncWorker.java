@@ -17,13 +17,14 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import net.hypotenubel.calendariq.connectiq.BroadcastStats;
+import net.hypotenubel.calendariq.connectiq.BroadcastResult;
 import net.hypotenubel.calendariq.connectiq.ConnectIQAppBroadcaster;
 import net.hypotenubel.calendariq.connectiq.IBroadcasterEventListener;
 import net.hypotenubel.calendariq.util.Preferences;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -180,24 +181,40 @@ public class WatchSyncWorker extends Worker {
 
         @Override
         public void handleMessage(@NonNull  Message msg) {
-            // If the message comes from us, load appointments and broadcast them
-            List<Object> appointmentMsg = AppointmentMessageGenerator.prepareAppointmentMessage(
-                    getApplicationContext());
-            ConnectIQAppBroadcaster.broadcast(
-                    appointmentMsg,
-                    getApplicationContext(),
-                    Utilities.APP_IDS,
-                    Utilities.getIQConnectType(),
-                    new EventListener());
+            if (Utilities.isEmulator()) {
+                // If this is run inside the emulator, just pretend to have done something, randomly
+                // being successful or not
+                BroadcastEventListener listener = new BroadcastEventListener();
+
+                Random rand = new Random();
+                if (rand.nextBoolean()) {
+                    new BroadcastEventListener().broadcastFinished(BroadcastResult.success(
+                            1 + rand.nextInt(9)));
+                } else {
+                    new BroadcastEventListener().broadcastFinished(BroadcastResult.failure(
+                            "Oh noes: something went terribly wrong at random!"));
+                }
+
+            } else {
+                // If the message comes from us, load appointments and broadcast them
+                List<Object> appointmentMsg = AppointmentMessageGenerator.prepareAppointmentMessage(
+                        getApplicationContext());
+                ConnectIQAppBroadcaster.broadcast(
+                        appointmentMsg,
+                        getApplicationContext(),
+                        Utilities.APP_IDS,
+                        Utilities.getIQConnectType(),
+                        new BroadcastEventListener());
+            }
         }
     }
 
     /**
      * Listens to broadcasts being finished.
      */
-    private final class EventListener implements IBroadcasterEventListener {
+    private final class BroadcastEventListener implements IBroadcasterEventListener {
         @Override
-        public void broadcastFinished(BroadcastStats stats) {
+        public void broadcastFinished(BroadcastResult stats) {
             synchronized (lock) {
                 finished = true;
 

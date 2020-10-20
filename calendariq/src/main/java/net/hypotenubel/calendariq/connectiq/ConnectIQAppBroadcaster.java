@@ -19,6 +19,27 @@ import java.util.Queue;
  * Use this class to broadcast a message to each installation of a list of apps on any device that
  * is currently connected. Call one of the {@code broadcast(...)} methods to get things rolling.
  * They should be called from a separate thread.
+ *
+ * <p>The way this thing works is a little convoluted thanks to all of the asynchronous operations.
+ * Basically, this is what happens if everything goes according to plan:</p>
+ * <ol>
+ *     <li>We initialize ConnectIQ in the constructor.</li>
+ *     <li>As soon as ConnectIQ responds, we continue in the {@link InitializationListener}. If
+ *       initialization failed, we stop right there, set the error state, and call
+ *       {@link #finish()}. If initialization was successful, we assemble the cross product of
+ *       known apps and connected devices.</li>
+ *     <li>Calling {@link #queryNextInstallation()}, we start working our way through that list,
+ *       either confirming or denying that a given app is installed on a given device. We do so by
+ *       issuing an application info request to ConnectIQ.</li>
+ *     <li>The request's reply is received by an {@link AppInfoListener} instance. If the current
+ *       app is installed on the current device, we add the pair as a recipient to send our
+ *       broadcast message to later on. Either way, the listener calls
+ *       {@link #queryNextInstallation()} again to issue a query for the next app-device pair.</li>
+ *     <li>Once {@link #queryNextInstallation()} detects that there are no app-device pairs left to
+ *       query, it calls {@link #sendMessages()} to start the broadcast.</li>
+ *     <li>Once all messages have been sent, {@link #finish()} tries to shutdown the SDK and
+ *       notifies the listener (if any) of the broadcast result.</li>
+ * </ol>
  */
 public class ConnectIQAppBroadcaster {
 
@@ -49,6 +70,9 @@ public class ConnectIQAppBroadcaster {
     /** Message to send to the app. */
     private final Object msg;
 
+    /** If this ceases to be {@code null}, an error has occurred. */
+    private String errorMessage;
+
     /** Listener for application infos. */
     private final AppInfoListener applicationInfoListener = new AppInfoListener();
     /** Listener for message events. */
@@ -73,6 +97,8 @@ public class ConnectIQAppBroadcaster {
         // Obtain a ConnectIQ instance and start it up
         Log.d(LOG_TAG, "Obtaining ConnectIQ instance for " + connectionType.name());
         connectIQ = ConnectIQ.getInstance(context, connectionType);
+
+        // Once finished this will pass control to the InitializationListener below
         connectIQ.initialize(context, false, new InitializationListener());
     }
 
@@ -122,6 +148,11 @@ public class ConnectIQAppBroadcaster {
     // Implementation
 
     private void queryNextInstallation() {
+        // Be sure to stop if an error has occurred
+        if (isError()) {
+            return;
+        }
+
         if (installationsToQuery.isEmpty()) {
             // We've finished querying devices, so send the messages
             sendMessages();
@@ -147,6 +178,9 @@ public class ConnectIQAppBroadcaster {
 
                 } catch (Exception e) {
                     Log.e(LOG_TAG, "Exception while obtaining application info", e);
+                    error(e.getClass().getSimpleName()
+                        + " while obtaining application info: "
+                        + e.getMessage());
                 }
             }
         }
@@ -157,6 +191,11 @@ public class ConnectIQAppBroadcaster {
      */
     private void sendMessages() {
         for (AppInstallation appInstallation : messageRecipients) {
+            // Be sure to stop if an error has occurred
+            if (isError()) {
+                return;
+            }
+
             try {
                 IQDevice device = appInstallation.device;
                 Log.d(LOG_TAG, "Sending message to "
@@ -173,6 +212,9 @@ public class ConnectIQAppBroadcaster {
 
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Exception while sending message", e);
+                error(e.getClass().getSimpleName()
+                    + " while sending messages: "
+                    + e.getMessage());
             }
         }
 
@@ -188,14 +230,39 @@ public class ConnectIQAppBroadcaster {
         try {
             connectIQ.shutdown(context);
         } catch (InvalidStateException e) {
+            // We don't set an error state here because this might mask a more important previous
+            // error
             Log.d(LOG_TAG, "Exception shutting down ConnectIQ", e);
         }
 
         // Notifiy the listener, if present
         if (listener != null) {
-            listener.broadcastFinished(
-                    new BroadcastStats(sentMessages, System.currentTimeMillis()));
+            if (isError()) {
+                listener.broadcastFinished(BroadcastResult.failure(errorMessage));
+            } else {
+                listener.broadcastFinished(BroadcastResult.success(sentMessages));
+            }
         }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utilities
+
+    /**
+     * Whether an error has occurred during broadcast. If this is {@code true}, it's time to
+     * {@link #finish()}.
+     */
+    private boolean isError() {
+        return errorMessage != null;
+    }
+
+    /**
+     * Set the error state to the given message and call {@link #finish()}.
+     * @param message
+     */
+    private void error(String message) {
+        errorMessage = message;
     }
 
 
@@ -222,12 +289,16 @@ public class ConnectIQAppBroadcaster {
                 queryNextInstallation();
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Exception while trying to obtain connected devices", e);
+                error(e.getClass().getSimpleName()
+                        + " while trying to obtain connected devices: "
+                        + e.getMessage());
             }
         }
 
         @Override
         public void onInitializeError(ConnectIQ.IQSdkErrorStatus iqSdkErrorStatus) {
             Log.e(LOG_TAG, iqSdkErrorStatus.name());
+            error("Unable to initialize ConnectIQ. SDK error status " + iqSdkErrorStatus.name());
         }
 
         @Override
