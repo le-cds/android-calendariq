@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 def versionMajor = 0
 def versionMinor = 1
 def versionPatch = 1
-def versionRevision = 1
+def versionRevision = 3
 def versionSuffix = "devel"
 
 android {
@@ -17,7 +17,7 @@ android {
         if (versionSuffix.isEmpty()) {
             versionName "${versionMajor}.${versionMinor}.${versionPatch}-${versionRevision}"
         } else {
-            versionName "${versionMajor}.${versionMinor}.${versionPatch}-${versionRevision}-${versionSuffix}"
+            versionName "${versionMajor}.${versionMinor}.${versionPatch}-${versionSuffix}-${versionRevision}"
         }
 
         minSdkVersion 24
@@ -32,11 +32,11 @@ android {
         }
 
         release {
-            minifyEnabled true
-            shrinkResources true
+            //minifyEnabled true
+            //shrinkResources true
 
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules.pro'
+            //proguardFiles getDefaultProguardFile('proguard-android.txt'),
+            //        'proguard-rules.pro'
         }
     }
 
