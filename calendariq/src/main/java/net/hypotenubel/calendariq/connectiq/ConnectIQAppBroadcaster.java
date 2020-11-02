@@ -193,6 +193,7 @@ public class ConnectIQAppBroadcaster {
         for (AppInstallation appInstallation : messageRecipients) {
             // Be sure to stop if an error has occurred
             if (isError()) {
+                Log.d(LOG_TAG, "Not sending messages because the error flag is set.");
                 return;
             }
 

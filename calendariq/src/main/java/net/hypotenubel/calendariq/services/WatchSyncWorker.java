@@ -164,6 +164,8 @@ public class WatchSyncWorker extends Worker {
         // Kill the handler thread again
         handlerThread.quit();
 
+        Log.d(LOG_TAG, "Finished sending appointments to Garmin devices...");
+
         return Result.success();
     }
 
