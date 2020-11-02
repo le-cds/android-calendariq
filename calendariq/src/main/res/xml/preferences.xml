@@ -50,4 +50,14 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:key="pref_cat_about"
+        app:title="@string/pref_cat_about">
+
+        <Preference
+            app:title="@string/pref_app_version"
+            app:summary="@string/app_version" />
+
+    </PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>

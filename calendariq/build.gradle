@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 def versionMajor = 0
 def versionMinor = 1
 def versionPatch = 1
-def versionRevision = 3
+def versionRevision = 4
 def versionSuffix = "devel"
 
 android {
@@ -19,6 +19,8 @@ android {
         } else {
             versionName "${versionMajor}.${versionMinor}.${versionPatch}-${versionSuffix}-${versionRevision}"
         }
+
+        resValue "string", "app_version", "${defaultConfig.versionName}"
 
         minSdkVersion 24
         targetSdkVersion 30
