@@ -24,7 +24,8 @@ public final class Utilities {
 
     /** Identifier of our watchface running on the watch. */
     public static final List<String> APP_IDS = Arrays.asList(
-            "d7d720e4-e397-43fe-b4ef-7df656ac5766");
+            "d7d720e4-e397-43fe-b4ef-7df656ac5766",    // Facey McWatchface Debug Version
+            "1a8f8f5b-b8f4-43e9-b16f-82d9d3eceafb");   // Facey McWatchface Release Version
     /** Package ID of the Garmin ConnectIQ app. Used to ensure its existence on the phone. */
     public static final String GARMIN_PACKAGE_ID = "com.garmin.android.apps.connectmobile";
 
