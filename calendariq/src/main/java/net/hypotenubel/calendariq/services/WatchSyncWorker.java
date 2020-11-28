@@ -62,7 +62,7 @@ public class WatchSyncWorker extends Worker {
      * Ensures that our synchronization worker is run by the work manager API.
      *
      * @param appContext the application's context to run the work manager in.
-     * @param interval the interval it should be periodically run in.
+     * @param interval the interval in minutes it should be periodically run in.
      * @param replaceExisting {@code true} if an existing worker should be replaced. If this is
      *                                    {@code false}, nothing happens if a worker already exists.
      */
@@ -199,7 +199,7 @@ public class WatchSyncWorker extends Worker {
 
             } else {
                 // If the message comes from us, load appointments and broadcast them
-                List<Object> appointmentMsg = AppointmentMessageGenerator.prepareAppointmentMessage(
+                List<Object> appointmentMsg = MessageGenerator.prepareMessage(
                         getApplicationContext());
                 ConnectIQAppBroadcaster.broadcast(
                         appointmentMsg,
