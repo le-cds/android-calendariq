@@ -21,6 +21,10 @@ import net.hypotenubel.calendariq.data.Preferences;
 import net.hypotenubel.calendariq.data.connectiq.BroadcastResult;
 import net.hypotenubel.calendariq.data.connectiq.ConnectIQAppBroadcaster;
 import net.hypotenubel.calendariq.data.connectiq.IBroadcasterEventListener;
+import net.hypotenubel.calendariq.data.model.msg.AppointmentsConnectMessagePart;
+import net.hypotenubel.calendariq.data.model.msg.BatteryChargeConnectMessagePart;
+import net.hypotenubel.calendariq.data.model.msg.ConnectMessage;
+import net.hypotenubel.calendariq.data.model.msg.SyncIntervalConnectMessagePart;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.List;
@@ -183,6 +187,13 @@ public class WatchSyncWorker extends Worker {
 
         @Override
         public void handleMessage(@NonNull  Message msg) {
+            Context context = getApplicationContext();
+            List<Object> appointmentMsg = new ConnectMessage()
+                    .addMessagePart(AppointmentsConnectMessagePart.fromPreferences(context))
+                    .addMessagePart(SyncIntervalConnectMessagePart.fromPreferences(context))
+                    .addMessagePart(BatteryChargeConnectMessagePart.fromCurrentDeviceState(context))
+                    .encode();
+
             if (Utilities.isEmulator()) {
                 // If this is run inside the emulator, just pretend to have done something, randomly
                 // being successful or not
@@ -199,8 +210,6 @@ public class WatchSyncWorker extends Worker {
 
             } else {
                 // If the message comes from us, load appointments and broadcast them
-                List<Object> appointmentMsg = MessageGenerator.prepareMessage(
-                        getApplicationContext());
                 ConnectIQAppBroadcaster.broadcast(
                         appointmentMsg,
                         getApplicationContext(),
