@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/CalendarIQTheme">
 
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".ui.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -25,12 +25,12 @@
         </activity>
 
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name=".ui.pref.SettingsActivity"
             android:label="@string/settingsActivity_title"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".ui.main.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.hypotenubel.calendariq.activities.MainActivity" />
+                android:value="net.hypotenubel.calendariq.ui.main.MainActivity" />
         </activity>
     </application>
 

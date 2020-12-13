@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.fragments;
+package net.hypotenubel.calendariq.ui.main.checks;
 
 import android.Manifest;
 import android.os.Bundle;

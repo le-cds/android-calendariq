@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.activities;
+package net.hypotenubel.calendariq.ui.main;
 
 import android.os.Bundle;
 

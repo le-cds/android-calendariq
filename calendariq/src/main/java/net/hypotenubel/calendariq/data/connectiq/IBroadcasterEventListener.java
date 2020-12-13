@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.connectiq;
+package net.hypotenubel.calendariq.data.connectiq;
 
 /**
  * Classes implementing this interface can listen and react to events on

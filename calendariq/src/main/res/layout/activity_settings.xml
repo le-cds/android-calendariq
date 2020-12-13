@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SettingsActivity">
+    tools:context=".ui.pref.SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/settingsActivity_appBar"
@@ -16,7 +16,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/settingsActivity_settingsFragment"
-        android:name="net.hypotenubel.calendariq.activities.SettingsActivity$SettingsFragment"
+        android:name="net.hypotenubel.calendariq.ui.pref.SettingsFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

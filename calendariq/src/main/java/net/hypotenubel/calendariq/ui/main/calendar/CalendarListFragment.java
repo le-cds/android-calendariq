@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.fragments;
+package net.hypotenubel.calendariq.ui.main.calendar;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,9 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.activities.SettingsActivity;
-import net.hypotenubel.calendariq.services.WatchSyncWorker;
-import net.hypotenubel.calendariq.util.Preferences;
+import net.hypotenubel.calendariq.data.Preferences;
+import net.hypotenubel.calendariq.data.service.WatchSyncWorker;
+import net.hypotenubel.calendariq.ui.pref.SettingsActivity;
 import net.hypotenubel.calendariq.util.Utilities;
 
 /**

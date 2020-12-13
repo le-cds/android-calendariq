@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.services;
+package net.hypotenubel.calendariq.data.service;
 
 import android.content.Context;
 import android.os.Handler;
@@ -17,10 +17,10 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import net.hypotenubel.calendariq.connectiq.BroadcastResult;
-import net.hypotenubel.calendariq.connectiq.ConnectIQAppBroadcaster;
-import net.hypotenubel.calendariq.connectiq.IBroadcasterEventListener;
-import net.hypotenubel.calendariq.util.Preferences;
+import net.hypotenubel.calendariq.data.Preferences;
+import net.hypotenubel.calendariq.data.connectiq.BroadcastResult;
+import net.hypotenubel.calendariq.data.connectiq.ConnectIQAppBroadcaster;
+import net.hypotenubel.calendariq.data.connectiq.IBroadcasterEventListener;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.List;

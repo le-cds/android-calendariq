@@ -8,7 +8,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:visibility="visible"
-    tools:context=".fragments.CheckCalendarPermFragment">
+    tools:context=".ui.main.checks.CheckCalendarPermFragment">
 
     <ImageView
         android:id="@+id/checkCalendarPermFragment_icon"

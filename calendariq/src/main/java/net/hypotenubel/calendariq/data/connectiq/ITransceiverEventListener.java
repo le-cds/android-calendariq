@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.connectiq;
+package net.hypotenubel.calendariq.data.connectiq;
 
 import com.garmin.android.connectiq.IQApp;
 import com.garmin.android.connectiq.IQDevice;

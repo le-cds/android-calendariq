@@ -1,12 +1,12 @@
-package net.hypotenubel.calendariq.services;
+package net.hypotenubel.calendariq.data.service;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 
-import net.hypotenubel.calendariq.calendar.ICalendarSource;
-import net.hypotenubel.calendariq.util.Preferences;
+import net.hypotenubel.calendariq.data.Preferences;
+import net.hypotenubel.calendariq.data.access.ICalendarSource;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;

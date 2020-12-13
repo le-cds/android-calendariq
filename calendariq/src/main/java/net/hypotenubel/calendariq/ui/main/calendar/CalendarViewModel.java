@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.fragments;
+package net.hypotenubel.calendariq.ui.main.calendar;
 
 import android.app.Application;
 
@@ -6,9 +6,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
-import net.hypotenubel.calendariq.calendar.ICalendarSource;
-import net.hypotenubel.calendariq.util.Preferences;
+import net.hypotenubel.calendariq.data.Preferences;
+import net.hypotenubel.calendariq.data.access.ICalendarSource;
+import net.hypotenubel.calendariq.data.model.CalendarDescriptor;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.Collections;

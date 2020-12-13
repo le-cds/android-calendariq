@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.fragments;
+package net.hypotenubel.calendariq.ui.main.calendar;
 
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.calendar.CalendarDescriptor;
+import net.hypotenubel.calendariq.data.model.CalendarDescriptor;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;

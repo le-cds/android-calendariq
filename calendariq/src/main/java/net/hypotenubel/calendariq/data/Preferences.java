@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.util;
+package net.hypotenubel.calendariq.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;

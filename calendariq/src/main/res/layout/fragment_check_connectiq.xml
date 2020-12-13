@@ -6,7 +6,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:visibility="invisible"
-    tools:context=".fragments.CheckConnectIQFragment">
+    tools:context=".ui.main.checks.CheckConnectIQFragment">
 
     <ImageView
         android:id="@+id/checkConnectIQFragment_icon"

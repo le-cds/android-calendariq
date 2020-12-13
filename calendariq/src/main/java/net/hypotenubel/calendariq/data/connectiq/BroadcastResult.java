@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.connectiq;
+package net.hypotenubel.calendariq.data.connectiq;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
