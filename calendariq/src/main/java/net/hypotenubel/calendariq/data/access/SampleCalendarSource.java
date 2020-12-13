@@ -35,11 +35,11 @@ public class SampleCalendarSource implements ICalendarSource {
 
         // Return appointments in 30 minute increments, starting in 30 minutes
         Calendar nowCal = Calendar.getInstance();
-        long nowMillis = nowCal.getTimeInMillis();
+        long nowInSeconds = nowCal.getTimeInMillis() / 1000;
 
         List<Long> result = new ArrayList<>();
         for (int i = 1; i <= maxCount; i++) {
-            result.add(nowMillis + i * SECONDS_PER_HALF_HOUR);
+            result.add(nowInSeconds + i * SECONDS_PER_HALF_HOUR);
         }
         return result;
     }
