@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.data.access;
+package net.hypotenubel.calendariq.data.access.calendar;
 
 import android.content.ContentUris;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 import android.util.Log;
 
-import net.hypotenubel.calendariq.data.model.CalendarDescriptor;
+import net.hypotenubel.calendariq.data.model.calendar.CalendarDescriptor;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;

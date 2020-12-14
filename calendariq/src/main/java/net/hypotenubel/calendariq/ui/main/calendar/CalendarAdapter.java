@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.data.model.CalendarDescriptor;
+import net.hypotenubel.calendariq.data.model.calendar.CalendarDescriptor;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;

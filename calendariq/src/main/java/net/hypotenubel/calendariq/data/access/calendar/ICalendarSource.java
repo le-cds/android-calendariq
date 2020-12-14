@@ -1,6 +1,6 @@
-package net.hypotenubel.calendariq.data.access;
+package net.hypotenubel.calendariq.data.access.calendar;
 
-import net.hypotenubel.calendariq.data.model.CalendarDescriptor;
+import net.hypotenubel.calendariq.data.model.calendar.CalendarDescriptor;
 
 import java.util.Collection;
 import java.util.List;

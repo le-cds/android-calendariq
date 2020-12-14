@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.data.model;
+package net.hypotenubel.calendariq.data.model.calendar;
 
 /**
  * Represents a calendar. A calendar can be active or not. This influences whether appointments from

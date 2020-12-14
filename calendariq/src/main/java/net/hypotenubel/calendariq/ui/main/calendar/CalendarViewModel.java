@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import net.hypotenubel.calendariq.data.Preferences;
-import net.hypotenubel.calendariq.data.access.ICalendarSource;
-import net.hypotenubel.calendariq.data.model.CalendarDescriptor;
+import net.hypotenubel.calendariq.data.access.calendar.ICalendarSource;
+import net.hypotenubel.calendariq.data.model.calendar.CalendarDescriptor;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.Collections;

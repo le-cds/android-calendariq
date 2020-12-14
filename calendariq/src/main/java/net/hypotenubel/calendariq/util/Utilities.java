@@ -10,9 +10,9 @@ import androidx.core.content.ContextCompat;
 
 import com.garmin.android.connectiq.ConnectIQ;
 
-import net.hypotenubel.calendariq.data.access.AndroidCalendarSource;
-import net.hypotenubel.calendariq.data.access.ICalendarSource;
-import net.hypotenubel.calendariq.data.access.SampleCalendarSource;
+import net.hypotenubel.calendariq.data.access.calendar.AndroidCalendarSource;
+import net.hypotenubel.calendariq.data.access.calendar.ICalendarSource;
+import net.hypotenubel.calendariq.data.access.calendar.SampleCalendarSource;
 
 import java.util.Arrays;
 import java.util.List;

@@ -3,7 +3,7 @@ package net.hypotenubel.calendariq.data.model.msg;
 import android.content.Context;
 
 import net.hypotenubel.calendariq.data.Preferences;
-import net.hypotenubel.calendariq.data.access.ICalendarSource;
+import net.hypotenubel.calendariq.data.access.calendar.ICalendarSource;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
