@@ -1,6 +1,6 @@
 package net.hypotenubel.calendariq.data.connectiq;
 
-import net.hypotenubel.calendariq.data.model.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
 
 /**
  * Classes implementing this interface can listen and react to events on

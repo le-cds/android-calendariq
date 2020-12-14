@@ -11,7 +11,7 @@ import androidx.work.Operation;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.data.Preferences;
-import net.hypotenubel.calendariq.data.model.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
 import net.hypotenubel.calendariq.data.service.WatchSyncWorker;
 
 /**

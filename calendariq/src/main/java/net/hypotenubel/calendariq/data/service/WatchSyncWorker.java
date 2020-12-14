@@ -20,11 +20,11 @@ import androidx.work.WorkerParameters;
 import net.hypotenubel.calendariq.data.Preferences;
 import net.hypotenubel.calendariq.data.connectiq.ConnectIQAppBroadcaster;
 import net.hypotenubel.calendariq.data.connectiq.IBroadcasterEventListener;
-import net.hypotenubel.calendariq.data.model.BroadcastStatistics;
 import net.hypotenubel.calendariq.data.model.msg.AppointmentsConnectMessagePart;
 import net.hypotenubel.calendariq.data.model.msg.BatteryChargeConnectMessagePart;
 import net.hypotenubel.calendariq.data.model.msg.ConnectMessage;
 import net.hypotenubel.calendariq.data.model.msg.SyncIntervalConnectMessagePart;
+import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.List;

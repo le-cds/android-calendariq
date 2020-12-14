@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.data.model;
+package net.hypotenubel.calendariq.data.model.stats;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
