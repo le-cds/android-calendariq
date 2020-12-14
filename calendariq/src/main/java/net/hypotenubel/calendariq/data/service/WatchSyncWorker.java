@@ -18,9 +18,9 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import net.hypotenubel.calendariq.data.Preferences;
-import net.hypotenubel.calendariq.data.connectiq.BroadcastResult;
 import net.hypotenubel.calendariq.data.connectiq.ConnectIQAppBroadcaster;
 import net.hypotenubel.calendariq.data.connectiq.IBroadcasterEventListener;
+import net.hypotenubel.calendariq.data.model.BroadcastStatistics;
 import net.hypotenubel.calendariq.data.model.msg.AppointmentsConnectMessagePart;
 import net.hypotenubel.calendariq.data.model.msg.BatteryChargeConnectMessagePart;
 import net.hypotenubel.calendariq.data.model.msg.ConnectMessage;
@@ -201,10 +201,13 @@ public class WatchSyncWorker extends Worker {
 
                 Random rand = new Random();
                 if (rand.nextBoolean()) {
-                    new BroadcastEventListener().broadcastFinished(BroadcastResult.success(
+                    new BroadcastEventListener().broadcastFinished(BroadcastStatistics.success(
                             1 + rand.nextInt(9)));
                 } else {
-                    new BroadcastEventListener().broadcastFinished(BroadcastResult.failure(
+                    int totalApps = 1 + rand.nextInt(9);
+                    new BroadcastEventListener().broadcastFinished(BroadcastStatistics.failure(
+                            totalApps,
+                            1 + rand.nextInt(totalApps),
                             "Oh noes: something went terribly wrong at random!"));
                 }
 
@@ -225,7 +228,7 @@ public class WatchSyncWorker extends Worker {
      */
     private final class BroadcastEventListener implements IBroadcasterEventListener {
         @Override
-        public void broadcastFinished(BroadcastResult stats) {
+        public void broadcastFinished(BroadcastStatistics stats) {
             synchronized (lock) {
                 finished = true;
 

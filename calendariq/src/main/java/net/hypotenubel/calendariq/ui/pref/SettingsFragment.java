@@ -11,7 +11,7 @@ import androidx.work.Operation;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.data.Preferences;
-import net.hypotenubel.calendariq.data.connectiq.BroadcastResult;
+import net.hypotenubel.calendariq.data.model.BroadcastStatistics;
 import net.hypotenubel.calendariq.data.service.WatchSyncWorker;
 
 /**
@@ -106,13 +106,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             lastSyncPreference.setSummary(getString(R.string.pref_last_sync_summary_never));
         } else {
             // Turn the string into stats and put them into our string
-            BroadcastResult stats = BroadcastResult.deserialize(value);
+            BroadcastStatistics stats = BroadcastStatistics.deserialize(value);
 
-            if (stats.isSuccess()) {
+            if (stats.getMessage() == null) {
                 String summary = getContext().getResources().getQuantityString(
                         R.plurals.pref_last_sync_summary,
-                        stats.getApps(),
-                        stats.getApps(),
+                        stats.getTotalApps(),
+                        stats.getTotalApps(),
                         stats.getUtcTimestampMillis());
                 lastSyncPreference.setSummary(summary);
             } else {

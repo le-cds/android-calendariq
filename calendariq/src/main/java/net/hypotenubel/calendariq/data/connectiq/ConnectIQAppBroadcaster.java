@@ -8,6 +8,7 @@ import com.garmin.android.connectiq.IQApp;
 import com.garmin.android.connectiq.IQDevice;
 import com.garmin.android.connectiq.exception.InvalidStateException;
 
+import net.hypotenubel.calendariq.data.model.BroadcastStatistics;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
@@ -62,6 +63,9 @@ public class ConnectIQAppBroadcaster {
     private AppInstallation installationCurrentlyQueried = null;
     /** Map of device / app object combinations that we'll send the message to. */
     private final List<AppInstallation> messageRecipients = new ArrayList<>();
+
+    /** The number of messages we have to send to reach each app installation. */
+    private int messagesToSend = 0;
     /** Number of messages we have tried to send. */
     private int sentMessages = 0;
 
@@ -190,6 +194,8 @@ public class ConnectIQAppBroadcaster {
      * Sends the message to all device / app combinations we've found.
      */
     private void sendMessages() {
+        messagesToSend = messageRecipients.size();
+
         for (AppInstallation appInstallation : messageRecipients) {
             // Be sure to stop if an error has occurred
             if (isError()) {
@@ -239,9 +245,10 @@ public class ConnectIQAppBroadcaster {
         // Notifiy the listener, if present
         if (listener != null) {
             if (isError()) {
-                listener.broadcastFinished(BroadcastResult.failure(errorMessage));
+                listener.broadcastFinished(BroadcastStatistics.failure(
+                        messagesToSend, sentMessages, errorMessage));
             } else {
-                listener.broadcastFinished(BroadcastResult.success(sentMessages));
+                listener.broadcastFinished(BroadcastStatistics.success(sentMessages));
             }
         }
     }
