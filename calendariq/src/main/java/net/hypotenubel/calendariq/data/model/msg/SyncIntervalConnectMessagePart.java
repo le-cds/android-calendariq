@@ -12,7 +12,7 @@ import java.util.List;
 public class SyncIntervalConnectMessagePart implements IConnectMessagePart {
 
     /** Whether the battery is being charged or not. */
-    private int interval;
+    private final int interval;
 
     /**
      * Creates a new instance initialized from the preferences.

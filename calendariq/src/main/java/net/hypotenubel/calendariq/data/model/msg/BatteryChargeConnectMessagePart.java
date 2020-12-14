@@ -13,9 +13,9 @@ import java.util.List;
 public class BatteryChargeConnectMessagePart implements IConnectMessagePart {
 
     /** Whether the battery is being charged or not. */
-    private boolean isCharging;
+    private final boolean isCharging;
     /** Battery charge, between 0 and 100. */
-    private int chargePercentage;
+    private final int chargePercentage;
 
     /**
      * Creates a new instance initialized with the device's current state.

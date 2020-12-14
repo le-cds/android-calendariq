@@ -10,7 +10,7 @@ import java.util.List;
 public class ConnectMessage {
 
     /** Message parts that will define the message's content. */
-    private List<IConnectMessagePart> parts = new ArrayList<>();
+    private final List<IConnectMessagePart> parts = new ArrayList<>();
 
     public ConnectMessage addMessagePart(IConnectMessagePart part) {
         parts.add(part);
