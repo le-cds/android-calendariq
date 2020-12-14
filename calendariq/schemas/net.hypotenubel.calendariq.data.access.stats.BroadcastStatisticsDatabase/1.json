@@ -1,0 +1,52 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "ce312745846503abed0d9a97f97977f0",
+    "entities": [
+      {
+        "tableName": "BroadcastStatistics",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`utcTimestampMillis` INTEGER NOT NULL, `totalApps` INTEGER NOT NULL, `contactedApps` INTEGER NOT NULL, `message` TEXT, PRIMARY KEY(`utcTimestampMillis`))",
+        "fields": [
+          {
+            "fieldPath": "utcTimestampMillis",
+            "columnName": "utcTimestampMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalApps",
+            "columnName": "totalApps",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contactedApps",
+            "columnName": "contactedApps",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "message",
+            "columnName": "message",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "utcTimestampMillis"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ce312745846503abed0d9a97f97977f0')"
+    ]
+  }
+}
