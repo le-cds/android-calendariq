@@ -1,12 +1,10 @@
 package net.hypotenubel.calendariq.ui.pref;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 import androidx.work.Operation;
 
 import net.hypotenubel.calendariq.R;
@@ -40,7 +38,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         frequency.setSummaryProvider(new FormattingSummaryProvider(getString(
                 R.string.pref_frequency_summary)));
 
+        // TODO Obtain LiveData view on the most recent synchronization attempt
+
         // Listen to frequency changes to we can restart the sync worker
+        // TODO This should be done when the fragment is closed
         frequency.setOnPreferenceChangeListener((preference, newValue) -> {
             onFrequencyChanged(newValue.toString());
             return true;
@@ -59,19 +60,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         // Update last sync time
         updateLastSyncSummary();
-
-        // Register for preference change events
-        PreferenceManager.getDefaultSharedPreferences(getContext())
-                .registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        // Unregister for preference change events
-        PreferenceManager.getDefaultSharedPreferences(getContext())
-                .unregisterOnSharedPreferenceChangeListener(sharedPreferenceChangeListener);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -83,40 +71,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private Preference lastSyncPreference;
 
     /**
-     * Listens for changes to shared preferences. This is basically only there to check whether
-     * the last sync time has changed and to update the preference's summary accordingly.
-     */
-    private final SharedPreferences.OnSharedPreferenceChangeListener sharedPreferenceChangeListener
-            = (sharedPreferences, key) -> {
-                if (key.equals(Preferences.LAST_SYNC.getKey())) {
-                    updateLastSyncSummary();
-                }
-            };
-
-    /**
      * Provides a summary for the last synchronisation. This is more complex, so we handle it in
      * this rather special method.
      */
     private void updateLastSyncSummary() {
-        // Not sure how to obtain the preference value except for actually looking it up in the
-        // shared preferences
-        String value = Preferences.LAST_SYNC.loadString(getContext());
-
-        if (value == null || value.equals("")) {
-            lastSyncPreference.setSummary(getString(R.string.pref_last_sync_summary_never));
+        BroadcastStatistics stat = null;
+        if (stat == null) {
+            lastSyncPreference.setSummary(null);
         } else {
-            // Turn the string into stats and put them into our string
-            BroadcastStatistics stats = BroadcastStatistics.deserialize(value);
-
-            if (stats.getMessage() == null) {
+            if (stat.getMessage() == null) {
                 String summary = getContext().getResources().getQuantityString(
                         R.plurals.pref_last_sync_summary,
-                        stats.getTotalApps(),
-                        stats.getTotalApps(),
-                        stats.getUtcTimestampMillis());
+                        stat.getTotalApps(),
+                        stat.getTotalApps(),
+                        stat.getUtcTimestampMillis());
                 lastSyncPreference.setSummary(summary);
             } else {
-                lastSyncPreference.setSummary(stats.getMessage());
+                lastSyncPreference.setSummary(stat.getMessage());
             }
         }
     }

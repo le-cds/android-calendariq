@@ -44,7 +44,6 @@
         <Preference
             app:key="last_sync"
             app:title="@string/pref_last_sync"
-            app:summary="@string/pref_last_sync_summary_never"
             app:defaultValue=""
             app:icon="@drawable/icon_sync"/>
 

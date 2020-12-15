@@ -29,7 +29,6 @@ public enum Preferences {
     APPOINTMENTS("appointments", "10", Integer.class, null),
     INTERVAL("interval", "7", Integer.class, null),
     FREQUENCY("frequency", "15", Integer.class, null),
-    LAST_SYNC("last_sync", "", String.class, null),
     ACTIVE_CALENDARS("activeCalendars", null, Set.class, Integer.class);
 
 
