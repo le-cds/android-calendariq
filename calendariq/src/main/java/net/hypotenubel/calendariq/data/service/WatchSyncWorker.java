@@ -17,7 +17,8 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import net.hypotenubel.calendariq.data.Preferences;
+import net.hypotenubel.calendariq.data.access.stats.BroadcastStatisticsDatabase;
+import net.hypotenubel.calendariq.data.access.stats.IBroadcastStatisticsDao;
 import net.hypotenubel.calendariq.data.connectiq.ConnectIQAppBroadcaster;
 import net.hypotenubel.calendariq.data.connectiq.IBroadcasterEventListener;
 import net.hypotenubel.calendariq.data.model.msg.AppointmentsConnectMessagePart;
@@ -232,8 +233,10 @@ public class WatchSyncWorker extends Worker {
             synchronized (lock) {
                 finished = true;
 
-                // Store the synchronization stats
-                Preferences.LAST_SYNC.storeString(getApplicationContext(), stats.toString());
+                IBroadcastStatisticsDao dao = BroadcastStatisticsDatabase
+                        .getInstance(getApplicationContext())
+                        .getDao();
+                dao.addWithoutGrowing(stats);
 
                 lock.notifyAll();
             }
