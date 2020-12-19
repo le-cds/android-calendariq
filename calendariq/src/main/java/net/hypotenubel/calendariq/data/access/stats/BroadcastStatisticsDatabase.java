@@ -16,11 +16,14 @@ public abstract class BroadcastStatisticsDatabase extends RoomDatabase {
     // This could be improved by injecting a singleton database object into client objects
     private static BroadcastStatisticsDatabase singleton = null;
     public static BroadcastStatisticsDatabase getInstance(Context context) {
-        synchronized (DB_NAME) {
-            if (singleton == null) {
-                singleton = Room
-                        .databaseBuilder(context, BroadcastStatisticsDatabase.class, DB_NAME)
-                        .build();
+        // Common case (singleton != null) should be fast, and thus not be synchronized
+        if (singleton == null) {
+            synchronized (DB_NAME) {
+                if (singleton == null) {
+                    singleton = Room
+                            .databaseBuilder(context, BroadcastStatisticsDatabase.class, DB_NAME)
+                            .build();
+                }
             }
         }
         return singleton;
