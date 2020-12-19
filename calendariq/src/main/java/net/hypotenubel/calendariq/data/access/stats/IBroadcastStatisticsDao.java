@@ -1,5 +1,6 @@
 package net.hypotenubel.calendariq.data.access.stats;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -41,6 +42,12 @@ public interface IBroadcastStatisticsDao {
      */
     @Query("SELECT * FROM BroadcastStatistics ORDER BY utcTimestampMillis DESC LIMIT :n")
     List<BroadcastStatistics> getNewest(int n);
+
+    /**
+     * Same as {@link #getNewest(int)}, but wraps the result in a {@link LiveData} object.
+     */
+    @Query("SELECT * FROM BroadcastStatistics ORDER BY utcTimestampMillis DESC LIMIT :n")
+    LiveData<List<BroadcastStatistics>> getNewestLive(int n);
 
     /**
      * Returns the {@code n} oldest log items, or all of them if fewer exist.

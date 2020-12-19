@@ -9,8 +9,11 @@ import androidx.work.Operation;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.data.Preferences;
+import net.hypotenubel.calendariq.data.access.stats.BroadcastStatisticsDatabase;
 import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
 import net.hypotenubel.calendariq.data.service.WatchSyncWorker;
+
+import java.util.List;
 
 /**
  * Fragment that displays our list of settings.
@@ -38,7 +41,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         frequency.setSummaryProvider(new FormattingSummaryProvider(getString(
                 R.string.pref_frequency_summary)));
 
-        // TODO Obtain LiveData view on the most recent synchronization attempt
+        // Obtain LiveData view on the most recent synchronization attempt and hook up an update
+        // method as an observer
+        BroadcastStatisticsDatabase
+                .getInstance(this.getContext())
+                .getDao()
+                .getNewestLive(1)
+                .observe(this, this::updateLastSyncSummary);
 
         // Listen to frequency changes to we can restart the sync worker
         // TODO This should be done when the fragment is closed
@@ -54,14 +63,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Update last sync time
-        updateLastSyncSummary();
-    }
-
     ///////////////////////////////////////////////////////////////////////////////////////////
     // Last Synced
 
@@ -74,20 +75,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
      * Provides a summary for the last synchronisation. This is more complex, so we handle it in
      * this rather special method.
      */
-    private void updateLastSyncSummary() {
-        BroadcastStatistics stat = null;
-        if (stat == null) {
+    private void updateLastSyncSummary(List<BroadcastStatistics> newestStatList) {
+        if (newestStatList == null || newestStatList.size() != 1) {
             lastSyncPreference.setSummary(null);
         } else {
-            if (stat.getMessage() == null) {
+            BroadcastStatistics newestStat = newestStatList.get(0);
+            if (newestStat.getMessage() == null) {
                 String summary = getContext().getResources().getQuantityString(
                         R.plurals.pref_last_sync_summary,
-                        stat.getTotalApps(),
-                        stat.getTotalApps(),
-                        stat.getUtcTimestampMillis());
+                        newestStat.getTotalApps(),
+                        newestStat.getTotalApps(),
+                        newestStat.getUtcTimestampMillis());
                 lastSyncPreference.setSummary(summary);
             } else {
-                lastSyncPreference.setSummary(stat.getMessage());
+                lastSyncPreference.setSummary(newestStat.getMessage());
             }
         }
     }
