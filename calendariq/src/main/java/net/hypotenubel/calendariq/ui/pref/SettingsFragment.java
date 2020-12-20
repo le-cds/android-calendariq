@@ -83,8 +83,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             if (newestStat.getMessage() == null) {
                 String summary = getContext().getResources().getQuantityString(
                         R.plurals.pref_last_sync_summary,
-                        newestStat.getTotalApps(),
-                        newestStat.getTotalApps(),
+                        newestStat.getContactedApps(),
+                        newestStat.getContactedApps(),
                         newestStat.getUtcTimestampMillis());
                 lastSyncPreference.setSummary(summary);
             } else {
