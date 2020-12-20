@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -77,7 +79,7 @@ public class CalendarListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         RecyclerView calendarView = view.findViewById(R.id.calendarListFragment_calendars);
-        calendarViewModel = new CalendarViewModel(getActivity().getApplication());
+        calendarViewModel = new ViewModelProvider(this).get(CalendarViewModel.class);
 
         // Setup layout
         LinearLayoutManager calendarLayoutManager = new LinearLayoutManager(getContext());
@@ -111,6 +113,11 @@ public class CalendarListFragment extends Fragment {
         if (item.getItemId() == R.id.calendar_list_fragment_menu_refresh) {
             // This will automatically cause our list to update
             calendarViewModel.refresh();
+            return true;
+
+        } else if (item.getItemId() == R.id.calendar_list_fragment_menu_log) {
+            Navigation.findNavController(getView()).navigate(
+                    R.id.action_calendarListFragment_to_logFragment);
             return true;
 
         } else if (item.getItemId() == R.id.calendar_list_fragment_menu_settings) {
