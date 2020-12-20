@@ -6,4 +6,6 @@
     <color name="calendar_colorSecondary">#c0c0e7</color>
     <color name="calendar_colorBackground">#121218</color>
     <color name="calendar_colorSurface">#1c1c22</color>
+    <color name="calendar_colorSuccess">#A5D6A7</color>
+    <color name="calendar_colorFailure">#F06292</color>
 </resources>

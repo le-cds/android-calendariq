@@ -4,7 +4,15 @@
     <!-- Calendar List Fragment -->
     <string name="calendarListFragment_instructions">Select the calendars to sync with your watch.</string>
     <string name="calendarListFragment_menu_refresh">Refresh</string>
+    <string name="calendarListFragment_menu_log">Sync history</string>
     <string name="calendarListFragment_menu_settings">Settings</string>
+
+    <!-- Log Fragment -->
+    <string name="logFragment_logViewItem_syncTime">%1$ta, %1$tb %1$te %1$tY, %1$tT</string>
+    <plurals name="logFragment_logViewItem_syncDetails_success">
+        <item quantity="one">Successfully synced %1$d app.</item>
+        <item quantity="other">Successfully synced %1$d apps.</item>
+    </plurals>
 
     <!-- Check Connect IQ Fragment -->
     <string name="checkConnectIQFragment_iconContentDescription">Warning Icon</string>

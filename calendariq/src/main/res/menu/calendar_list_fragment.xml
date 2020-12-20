@@ -7,6 +7,11 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/calendar_list_fragment_menu_log"
+        android:title="@string/calendarListFragment_menu_log"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/calendar_list_fragment_menu_settings"
         android:title="@string/calendarListFragment_menu_settings"
         app:showAsAction="never"/>

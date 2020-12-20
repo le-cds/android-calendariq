@@ -38,6 +38,12 @@ public interface IBroadcastStatisticsDao {
     List<BroadcastStatistics> getAll();
 
     /**
+     * Same as {@link #getAll()}, but wraps the result in a {@link LiveData} object.
+     */
+    @Query("SELECT * FROM BroadcastStatistics ORDER BY utcTimestampMillis DESC")
+    LiveData<List<BroadcastStatistics>> getAllLive();
+
+    /**
      * Returns the {@code n} newest log items, or all of them if fewer exist.
      */
     @Query("SELECT * FROM BroadcastStatistics ORDER BY utcTimestampMillis DESC LIMIT :n")
