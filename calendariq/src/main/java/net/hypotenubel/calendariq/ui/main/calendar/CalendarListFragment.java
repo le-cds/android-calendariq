@@ -69,7 +69,7 @@ public class CalendarListFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar_list, container, false);
+        return inflater.inflate(R.layout.calendar_list_fragment, container, false);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class CalendarListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_calendar_list, menu);
+        inflater.inflate(R.menu.calendar_list_fragment, menu);
     }
 
     @Override
@@ -108,12 +108,12 @@ public class CalendarListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.fragment_calendar_list_menu_refresh) {
+        if (item.getItemId() == R.id.calendar_list_fragment_menu_refresh) {
             // This will automatically cause our list to update
             calendarViewModel.refresh();
             return true;
 
-        } else if (item.getItemId() == R.id.fragment_calendar_list_menu_settings) {
+        } else if (item.getItemId() == R.id.calendar_list_fragment_menu_settings) {
             startActivity(new Intent(this.getActivity(), SettingsActivity.class));
             return true;
 

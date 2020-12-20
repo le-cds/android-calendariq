@@ -44,7 +44,7 @@ public class CheckConnectIQFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_check_connectiq, container, false);
+        View view = inflater.inflate(R.layout.check_connectiq_fragment, container, false);
 
         // Attach event listener explicitly since we're inside a fragment
         Button playStoreButton = view.findViewById(R.id.checkConnectIQFragment_playStoreButton);

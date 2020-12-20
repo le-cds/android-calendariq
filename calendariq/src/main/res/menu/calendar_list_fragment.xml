@@ -2,12 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/fragment_calendar_list_menu_refresh"
+        android:id="@+id/calendar_list_fragment_menu_refresh"
         android:title="@string/calendarListFragment_menu_refresh"
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/fragment_calendar_list_menu_settings"
+        android:id="@+id/calendar_list_fragment_menu_settings"
         android:title="@string/calendarListFragment_menu_settings"
         app:showAsAction="never"/>
 

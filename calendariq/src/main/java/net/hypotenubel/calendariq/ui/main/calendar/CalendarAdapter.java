@@ -100,10 +100,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (viewType == VIEW_TYPE_ACCOUNT) {
             return new AccountViewHolder(inflater.inflate(
-                    R.layout.account_view_item, parent, false));
+                    R.layout.calendar_list_account_view_item, parent, false));
         } else if (viewType == VIEW_TYPE_CALENDAR) {
             return new CalendarViewHolder(inflater.inflate(
-                    R.layout.calendar_view_item, parent, false));
+                    R.layout.calendar_list_calendar_view_item, parent, false));
         } else {
             throw new IllegalStateException();
         }
