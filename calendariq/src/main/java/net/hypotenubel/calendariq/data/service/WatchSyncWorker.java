@@ -1,6 +1,7 @@
 package net.hypotenubel.calendariq.data.service;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -233,10 +234,15 @@ public class WatchSyncWorker extends Worker {
             synchronized (lock) {
                 finished = true;
 
-                IBroadcastStatisticsDao dao = BroadcastStatisticsDatabase
-                        .getInstance(getApplicationContext())
-                        .getDao();
-                dao.addWithoutGrowing(stats);
+                // TODO AsyncTask is deprecated
+                // This will do for now, but once we tackle #16 or #22, we'll have to do this
+                // properly.
+                AsyncTask.execute(() -> {
+                    IBroadcastStatisticsDao dao = BroadcastStatisticsDatabase
+                            .getInstance(getApplicationContext())
+                            .getDao();
+                    dao.addWithoutGrowing(stats);
+                });
 
                 lock.notifyAll();
             }
