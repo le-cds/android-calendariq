@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.data.Preferences;
@@ -31,6 +32,8 @@ public class CalendarListFragment extends Fragment {
 
     /** View model for our calendars. */
     private CalendarViewModel calendarViewModel;
+
+    private SwipeRefreshLayout swipeContainer;
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -88,6 +91,10 @@ public class CalendarListFragment extends Fragment {
         // Setup adapter
         CalendarAdapter calendarAdapter = new CalendarAdapter(this, calendarViewModel);
         calendarView.setAdapter(calendarAdapter);
+
+        // Setup swipe refresh
+        swipeContainer = view.findViewById(R.id.calendarListFragment_swipeContainer);
+        swipeContainer.setOnRefreshListener(this::refreshViewModel);
     }
 
     @Override
@@ -112,7 +119,8 @@ public class CalendarListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.calendar_list_fragment_menu_refresh) {
             // This will automatically cause our list to update
-            calendarViewModel.refresh();
+            swipeContainer.setRefreshing(true);
+            refreshViewModel();
             return true;
 
         } else if (item.getItemId() == R.id.calendar_list_fragment_menu_log) {
@@ -127,6 +135,11 @@ public class CalendarListFragment extends Fragment {
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void refreshViewModel() {
+        calendarViewModel.refresh();
+        swipeContainer.setRefreshing(false);
     }
 
 }
