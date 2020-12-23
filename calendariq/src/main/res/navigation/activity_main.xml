@@ -9,7 +9,7 @@
         android:id="@+id/checkConnectIQFragment"
         android:name="net.hypotenubel.calendariq.ui.main.checks.CheckConnectIQFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/check_connectiq_fragment" >
+        tools:layout="@layout/fragment_check_connectiq" >
         <action
             android:id="@+id/action_checkConnectIQFragment_to_checkCalendarPermFragment"
             app:destination="@id/checkCalendarPermFragment"
@@ -20,7 +20,7 @@
         android:id="@+id/checkCalendarPermFragment"
         android:name="net.hypotenubel.calendariq.ui.main.checks.CheckCalendarPermFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/check_calendarperm_fragment" >
+        tools:layout="@layout/fragment_check_calendarperm" >
         <action
             android:id="@+id/action_checkCalendarPermFragment_to_calendarListFragment"
             app:destination="@id/calendarListFragment"
@@ -31,7 +31,7 @@
         android:id="@+id/calendarListFragment"
         android:name="net.hypotenubel.calendariq.ui.main.calendar.CalendarListFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/calendar_list_fragment">
+        tools:layout="@layout/fragment_calendar_list">
         <action
             android:id="@+id/action_calendarListFragment_to_logFragment"
             app:destination="@id/logFragment"
@@ -44,5 +44,5 @@
         android:id="@+id/logFragment"
         android:name="net.hypotenubel.calendariq.ui.main.log.LogFragment"
         android:label="@string/logFragment_label"
-        tools:layout="@layout/log_fragment" />
+        tools:layout="@layout/fragment_log" />
 </navigation>

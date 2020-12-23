@@ -40,7 +40,7 @@ public class CheckCalendarPermFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.check_calendarperm_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_check_calendarperm, container, false);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class LogViewHolder extends RecyclerView.ViewHolder {
     static LogViewHolder create(ViewGroup parent) {
         View view = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.log_view_item, parent, false);
+                .inflate(R.layout.view_item_log, parent, false);
         return new LogViewHolder(view);
     }
 

@@ -28,7 +28,7 @@ public class LogFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.log_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_log, container, false);
     }
 
     @Override
