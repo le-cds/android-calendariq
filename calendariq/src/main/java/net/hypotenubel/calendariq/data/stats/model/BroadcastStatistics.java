@@ -1,10 +1,10 @@
-package net.hypotenubel.calendariq.data.model.stats;
+package net.hypotenubel.calendariq.data.stats.model;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import net.hypotenubel.calendariq.data.connectiq.ConnectIQAppBroadcaster;
+import net.hypotenubel.calendariq.sync.connectiq.ConnectIQAppBroadcaster;
 
 /**
  * Results of a broadcast attempt through {@link ConnectIQAppBroadcaster}. Each instance can be

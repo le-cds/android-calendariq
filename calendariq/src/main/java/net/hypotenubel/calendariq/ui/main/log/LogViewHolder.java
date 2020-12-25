@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
 
 /**
  * Thing that displays a log item in a {@link RecyclerView}.

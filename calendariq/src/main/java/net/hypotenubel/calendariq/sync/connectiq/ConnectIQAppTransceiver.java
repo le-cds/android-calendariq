@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.data.connectiq;
+package net.hypotenubel.calendariq.sync.connectiq;
 
 import android.content.Context;
 import android.util.Log;

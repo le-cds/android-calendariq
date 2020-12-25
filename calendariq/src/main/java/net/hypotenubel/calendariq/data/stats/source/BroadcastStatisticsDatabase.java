@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.data.access.stats;
+package net.hypotenubel.calendariq.data.stats.source;
 
 import android.content.Context;
 
@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
 
 @Database(entities = BroadcastStatistics.class, version = 1)
 public abstract class BroadcastStatisticsDatabase extends RoomDatabase {

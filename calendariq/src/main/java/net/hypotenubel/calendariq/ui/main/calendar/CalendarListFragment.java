@@ -21,7 +21,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.data.Preferences;
-import net.hypotenubel.calendariq.data.service.WatchSyncWorker;
+import net.hypotenubel.calendariq.sync.WatchSyncWorker;
 import net.hypotenubel.calendariq.ui.pref.SettingsActivity;
 import net.hypotenubel.calendariq.util.Utilities;
 
@@ -34,18 +34,6 @@ public class CalendarListFragment extends Fragment {
     private CalendarViewModel calendarViewModel;
 
     private SwipeRefreshLayout swipeContainer;
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Creation
-
-    public CalendarListFragment() {
-        // Required empty public constructor
-    }
-
-    public static CalendarListFragment newInstance() {
-        return new CalendarListFragment();
-    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

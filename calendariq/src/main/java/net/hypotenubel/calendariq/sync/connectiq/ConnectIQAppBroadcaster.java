@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.data.connectiq;
+package net.hypotenubel.calendariq.sync.connectiq;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,7 +8,7 @@ import com.garmin.android.connectiq.IQApp;
 import com.garmin.android.connectiq.IQDevice;
 import com.garmin.android.connectiq.exception.InvalidStateException;
 
-import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;

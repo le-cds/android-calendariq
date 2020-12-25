@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.data.service;
+package net.hypotenubel.calendariq.sync;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -18,15 +18,15 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import net.hypotenubel.calendariq.data.access.stats.BroadcastStatisticsDatabase;
-import net.hypotenubel.calendariq.data.access.stats.IBroadcastStatisticsDao;
-import net.hypotenubel.calendariq.data.connectiq.ConnectIQAppBroadcaster;
-import net.hypotenubel.calendariq.data.connectiq.IBroadcasterEventListener;
-import net.hypotenubel.calendariq.data.model.msg.AppointmentsConnectMessagePart;
-import net.hypotenubel.calendariq.data.model.msg.BatteryChargeConnectMessagePart;
-import net.hypotenubel.calendariq.data.model.msg.ConnectMessage;
-import net.hypotenubel.calendariq.data.model.msg.SyncIntervalConnectMessagePart;
-import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.msg.model.AppointmentsConnectMessagePart;
+import net.hypotenubel.calendariq.data.msg.model.BatteryChargeConnectMessagePart;
+import net.hypotenubel.calendariq.data.msg.model.ConnectMessage;
+import net.hypotenubel.calendariq.data.msg.model.SyncIntervalConnectMessagePart;
+import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
+import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
+import net.hypotenubel.calendariq.sync.connectiq.ConnectIQAppBroadcaster;
+import net.hypotenubel.calendariq.sync.connectiq.IBroadcasterEventListener;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.List;

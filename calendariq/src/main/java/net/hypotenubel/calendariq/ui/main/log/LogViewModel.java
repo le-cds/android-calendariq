@@ -5,8 +5,8 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import net.hypotenubel.calendariq.data.access.stats.BroadcastStatisticsDatabase;
-import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
 
 import java.util.List;
 

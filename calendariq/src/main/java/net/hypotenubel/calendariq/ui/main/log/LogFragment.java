@@ -19,10 +19,6 @@ import net.hypotenubel.calendariq.R;
  */
 public class LogFragment extends Fragment {
 
-    public LogFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

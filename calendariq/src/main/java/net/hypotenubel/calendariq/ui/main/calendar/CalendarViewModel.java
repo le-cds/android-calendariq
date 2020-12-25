@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import net.hypotenubel.calendariq.data.Preferences;
-import net.hypotenubel.calendariq.data.access.calendar.ICalendarSource;
-import net.hypotenubel.calendariq.data.model.calendar.CalendarDescriptor;
+import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
+import net.hypotenubel.calendariq.data.calendar.source.ICalendarSource;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.Collections;
@@ -23,13 +23,14 @@ import java.util.Set;
 public class CalendarViewModel extends AndroidViewModel {
 
     /** List of calendars. */
-    private MutableLiveData<List<CalendarDescriptor>> calendars;
+    private final MutableLiveData<List<CalendarDescriptor>> calendars = new MutableLiveData<>();
 
     /**
      * Creates a new instance in the given application context.
      */
     public CalendarViewModel(Application application) {
         super(application);
+        refresh();
     }
 
     /**
@@ -38,10 +39,6 @@ public class CalendarViewModel extends AndroidViewModel {
      * @return list of calendars.
      */
     public LiveData<List<CalendarDescriptor>> getCalendars() {
-        if (calendars == null) {
-            refresh();
-        }
-
         return calendars;
     }
 
@@ -49,11 +46,6 @@ public class CalendarViewModel extends AndroidViewModel {
      * Refreshes our list of calendars.
      */
     public void refresh() {
-        // Ensure that the calendars are not null
-        if (calendars == null) {
-            calendars = new MutableLiveData<>();
-        }
-
         // Fire off a thread that loads a new list of calendars, provided that we have calendar
         // access
         if (Utilities.checkCalendarPermission(getApplication())) {
@@ -66,7 +58,7 @@ public class CalendarViewModel extends AndroidViewModel {
                 Collections.sort(calList);
 
                 // Set the calendar activity flags
-                applyActivityFlags(calList);
+                loadActiveCalendarIds(calList);
 
                 // Update live data
                 calendars.postValue(calList);
@@ -75,11 +67,13 @@ public class CalendarViewModel extends AndroidViewModel {
     }
 
     /**
-     * Sets activity flags for the given calendars. If we haven't loaded any calendars yet, this
-     * method loads activity flags from the preferences. Otherwise, it extracts IDs of active
-     * calendars from our current list and applies them to the new list.
+     * Loads the set of active calendars and applies them to the given set of calendar descriptor
+     * instances accordingly. If we haven't loaded any calendars yet, this method loads activity
+     * flags from the preferences. Otherwise, it extracts IDs of active calendars from our current
+     * list and applies them to the new list. It it the latter which supports refreshing the
+     * calendar list.
      */
-    private void applyActivityFlags(List<CalendarDescriptor> calList) {
+    private void loadActiveCalendarIds(List<CalendarDescriptor> calList) {
         Set<Integer> activeCalIds;
 
         // Obtain the active calendar IDs from preferences or current list of calendars

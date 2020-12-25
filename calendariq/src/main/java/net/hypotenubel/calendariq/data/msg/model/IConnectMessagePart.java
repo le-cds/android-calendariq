@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.data.model.msg;
+package net.hypotenubel.calendariq.data.msg.model;
 
 import java.util.List;
 

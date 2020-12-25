@@ -1,4 +1,4 @@
-package net.hypotenubel.calendariq.data.access.stats;
+package net.hypotenubel.calendariq.data.stats.source;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -6,7 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import net.hypotenubel.calendariq.data.model.stats.BroadcastStatistics;
+import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
 
 import java.util.List;
 
