@@ -14,16 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import net.hypotenubel.calendariq.R;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Shows the contents of our sync log. Not much going on here, really.
  */
+@AndroidEntryPoint
 public class LogFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_log, container, false);
     }
 

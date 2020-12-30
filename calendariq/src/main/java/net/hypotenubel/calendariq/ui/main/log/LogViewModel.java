@@ -1,12 +1,11 @@
 package net.hypotenubel.calendariq.ui.main.log;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
+import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
-import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
+import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
 
 import java.util.List;
 
@@ -14,17 +13,13 @@ import java.util.List;
  * View model for the list of calendars. The activity state of the calendars is automatically
  * synchronised with the preferences.
  */
-public class LogViewModel extends AndroidViewModel {
+public class LogViewModel extends ViewModel {
 
-    private LiveData<List<BroadcastStatistics>> logItems;
+    private final LiveData<List<BroadcastStatistics>> logItems;
 
-    public LogViewModel(Application application) {
-        super(application);
-
-        logItems = BroadcastStatisticsDatabase
-                .getInstance(application)
-                .getDao()
-                .getAllLive();
+    @ViewModelInject
+    public LogViewModel(IBroadcastStatisticsDao broadcastStatsDao) {
+        logItems = broadcastStatsDao.getAllLive();
     }
 
     public LiveData<List<BroadcastStatistics>> getLogItems() {

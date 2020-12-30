@@ -12,6 +12,9 @@ import androidx.navigation.ui.NavigationUI;
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.util.Utilities;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = Utilities.logTag(MainActivity.class);

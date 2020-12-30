@@ -30,7 +30,7 @@ public class LogAdapter extends ListAdapter<BroadcastStatistics, LogViewHolder> 
         holder.bind(stat);
     }
 
-    static class BroadcastDiff extends DiffUtil.ItemCallback<BroadcastStatistics> {
+    private static class BroadcastDiff extends DiffUtil.ItemCallback<BroadcastStatistics> {
 
         @Override
         public boolean areItemsTheSame(@NonNull BroadcastStatistics oldItem, @NonNull BroadcastStatistics newItem) {
