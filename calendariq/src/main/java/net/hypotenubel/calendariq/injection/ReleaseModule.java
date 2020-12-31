@@ -26,12 +26,7 @@ public abstract class ReleaseModule {
             @ApplicationContext Context context) {
 
         return BroadcastStatisticsDatabase.getInstance(context);
-        //return Room
-        //        .databaseBuilder(
-        //                context,
-        //                BroadcastStatisticsDatabase.class,
-        //                BroadcastStatisticsDatabase.DB_NAME)
-        //        .build();
+        //return BroadcastStatisticsDatabase.create(context);
     }
 
     @Provides

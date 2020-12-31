@@ -11,7 +11,18 @@ import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
 @Database(entities = BroadcastStatistics.class, version = 1)
 public abstract class BroadcastStatisticsDatabase extends RoomDatabase {
 
-    private static final String DB_NAME = "broadcast-statistics";
+    public static final String DB_NAME = "broadcast-statistics";
+
+    /**
+     * Returns a new instance for the given context. This is not a singleton.
+     */
+    public static BroadcastStatisticsDatabase create(Context context) {
+        return Room
+                .databaseBuilder(context, BroadcastStatisticsDatabase.class, DB_NAME)
+                .build();
+    }
+
+    // TODO The singleton code below needs to be removed as soon as dependency injection works
 
     // This could be improved by injecting a singleton database object into client objects
     private static BroadcastStatisticsDatabase singleton = null;
@@ -20,9 +31,7 @@ public abstract class BroadcastStatisticsDatabase extends RoomDatabase {
         if (singleton == null) {
             synchronized (DB_NAME) {
                 if (singleton == null) {
-                    singleton = Room
-                            .databaseBuilder(context, BroadcastStatisticsDatabase.class, DB_NAME)
-                            .build();
+                    singleton = create(context);
                 }
             }
         }
