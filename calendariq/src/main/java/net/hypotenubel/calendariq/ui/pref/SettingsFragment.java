@@ -10,15 +10,26 @@ import androidx.work.Operation;
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.data.Preferences;
 import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
-import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
+import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
 import net.hypotenubel.calendariq.sync.WatchSyncWorker;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Fragment that displays our list of settings.
  */
+@AndroidEntryPoint
 public class SettingsFragment extends PreferenceFragmentCompat {
+
+    // TODO Thhings to inject:
+    //      - Thing that controls our sync services
+
+    /** We'll use this to check for the most recent sync event. */
+    @Inject IBroadcastStatisticsDao broadcastStatsDao;
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // Lifecycle
@@ -43,9 +54,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         // Obtain LiveData view on the most recent synchronization attempt and hook up an update
         // method as an observer
-        BroadcastStatisticsDatabase
-                .getInstance(this.getContext())
-                .getDao()
+        broadcastStatsDao
                 .getNewestLive(1)
                 .observe(this, this::updateLastSyncSummary);
 
