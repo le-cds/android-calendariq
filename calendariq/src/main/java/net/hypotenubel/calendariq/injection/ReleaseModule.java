@@ -4,9 +4,12 @@ import android.content.Context;
 
 import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
 import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
+import net.hypotenubel.calendariq.util.DefaultPrerequisitesChecker;
+import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
 
 import javax.inject.Singleton;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
@@ -19,6 +22,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 @Module
 @InstallIn(ApplicationComponent.class)
 public abstract class ReleaseModule {
+
+    @Binds
+    abstract IPrerequisitesChecker bindPrerequisiteChecker(DefaultPrerequisitesChecker c);
 
     @Provides
     @Singleton

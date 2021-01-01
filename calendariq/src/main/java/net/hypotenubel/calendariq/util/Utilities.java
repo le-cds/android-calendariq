@@ -1,14 +1,7 @@
 package net.hypotenubel.calendariq.util;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Build;
-
-import androidx.core.content.ContextCompat;
-
-import com.garmin.android.connectiq.ConnectIQ;
 
 import net.hypotenubel.calendariq.data.calendar.source.AndroidCalendarSource;
 import net.hypotenubel.calendariq.data.calendar.source.ICalendarSource;
@@ -26,8 +19,6 @@ public final class Utilities {
     public static final List<String> APP_IDS = Arrays.asList(
             "d7d720e4-e397-43fe-b4ef-7df656ac5766",    // Facey McWatchface Debug Version
             "1a8f8f5b-b8f4-43e9-b16f-82d9d3eceafb");   // Facey McWatchface Release Version
-    /** Package ID of the Garmin ConnectIQ app. Used to ensure its existence on the phone. */
-    public static final String GARMIN_PACKAGE_ID = "com.garmin.android.apps.connectmobile";
 
 
     /**
@@ -48,34 +39,6 @@ public final class Utilities {
      */
     public static String logTag(Class<?> clazz) {
         return "CalendarIQ." + clazz.getSimpleName();
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // ConnectIQ
-
-    /**
-     * Checks whether ConnectIQ is installed.
-     */
-    public static boolean isConnectIQInstalled(Context context) {
-        try {
-            // Try to find the app, which must also correspond to a minimum version (see ConnectIQ
-            // mobile SDK code)
-            PackageInfo info = context.getPackageManager().getPackageInfo(GARMIN_PACKAGE_ID, 0);
-            return info.versionCode >= 2000;
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Returns the ConnectIQ connection type to use.
-     *
-     * @return the connection type.
-     */
-    public static ConnectIQ.IQConnectType getIQConnectType() {
-        //return ConnectIQ.IQConnectType.TETHERED;
-        return ConnectIQ.IQConnectType.WIRELESS;
     }
 
 
@@ -113,23 +76,6 @@ public final class Utilities {
         } else {
             return new AndroidCalendarSource(context);
         }
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Permissions
-
-    /**
-     * Checks whether we have permission to read calendars.
-     *
-     * @param context the context from which this method is called.
-     * @return {@code true} if we can read calendars.
-     */
-    public static boolean checkCalendarPermission(Context context) {
-        int permissionState = ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.READ_CALENDAR);
-        return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
 }

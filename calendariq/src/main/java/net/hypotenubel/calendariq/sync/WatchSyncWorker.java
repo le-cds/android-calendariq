@@ -18,6 +18,8 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.garmin.android.connectiq.ConnectIQ;
+
 import net.hypotenubel.calendariq.data.msg.model.AppointmentsConnectMessagePart;
 import net.hypotenubel.calendariq.data.msg.model.BatteryChargeConnectMessagePart;
 import net.hypotenubel.calendariq.data.msg.model.ConnectMessage;
@@ -219,7 +221,7 @@ public class WatchSyncWorker extends Worker {
                         appointmentMsg,
                         getApplicationContext(),
                         Utilities.APP_IDS,
-                        Utilities.getIQConnectType(),
+                        ConnectIQ.IQConnectType.WIRELESS,
                         new BroadcastEventListener());
             }
         }

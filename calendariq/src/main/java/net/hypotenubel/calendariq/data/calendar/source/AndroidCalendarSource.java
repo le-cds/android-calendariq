@@ -8,6 +8,8 @@ import android.provider.CalendarContract;
 import android.util.Log;
 
 import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
+import net.hypotenubel.calendariq.util.DefaultPrerequisitesChecker;
+import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
@@ -46,6 +48,9 @@ public class AndroidCalendarSource implements ICalendarSource {
     // The following constants are the indices in the instances projection
     private static final int INSTANCE_PROJECTION_BEGIN = 0;
 
+    // TODO Inject prerequisites checker
+    private IPrerequisitesChecker prerequisitesChecker = new DefaultPrerequisitesChecker();
+
     /** The context from which this provider was created. */
     private final Context context;
 
@@ -63,7 +68,7 @@ public class AndroidCalendarSource implements ICalendarSource {
         List<CalendarDescriptor> calendars = new ArrayList<>();
 
         // Only try loading calendars if we have permission to do so
-        if (!Utilities.checkCalendarPermission(context)) {
+        if (!prerequisitesChecker.isCalendarAccessible(context)) {
             Log.d(LOG_TAG, "Missing calendar permission");
             return calendars;
         }

@@ -23,12 +23,24 @@ import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.data.Preferences;
 import net.hypotenubel.calendariq.sync.WatchSyncWorker;
 import net.hypotenubel.calendariq.ui.pref.SettingsActivity;
-import net.hypotenubel.calendariq.util.Utilities;
+import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Our main fragment which shows a list of calendars that can be activated and deactivated.
  */
+@AndroidEntryPoint
 public class CalendarListFragment extends Fragment {
+
+    // TODO Things to inject
+    //      - View model
+    //      - View adapter
+    //      - Thing that controls our services?
+
+    @Inject IPrerequisitesChecker prerequisitesChecker;
 
     /** View model for our calendars. */
     private CalendarViewModel calendarViewModel;
@@ -49,7 +61,7 @@ public class CalendarListFragment extends Fragment {
         // Take this opportunity to ensure that our sync service is working (unless we're running
         // in the emulator)
         Context context = getContext();
-        if (Utilities.checkCalendarPermission(context) && !Utilities.isEmulator()) {
+        if (prerequisitesChecker.arePrerequisitesMet(getContext())) {
             WatchSyncWorker.runSyncWorker(
                     context.getApplicationContext(),
                     Preferences.FREQUENCY.loadInt(getContext()),

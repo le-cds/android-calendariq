@@ -12,26 +12,29 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.util.Utilities;
+import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * A fragment which checks whether we have calendar access permissions or not. If so, moves along.
  * Otherwise, displays an appropriate message to the user.
  */
+@AndroidEntryPoint
 public class CheckCalendarPermFragment extends Fragment {
+
+    @Inject
+    IPrerequisitesChecker prerequisitesChecker;
+
+    /** We only want to ask once for permissions without any action from the user. */
+    private boolean initialPermissionsCheckDone = false;
 
     /** The launcher we use to start permission requests. */
     private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
             this::permissionResult);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Construction
-
-    public CheckCalendarPermFragment() {
-        // Required empty public constructor
-    }
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Lifecycle
@@ -47,8 +50,11 @@ public class CheckCalendarPermFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        // Take the opportunity to check whether we have calendar permissions
-        checkForCalendarPermissions();
+        if (!initialPermissionsCheckDone) {
+            // Take the opportunity to check whether we have calendar permissions
+            initialPermissionsCheckDone = true;
+            checkForCalendarPermissions();
+        }
     }
 
 
@@ -60,9 +66,7 @@ public class CheckCalendarPermFragment extends Fragment {
      * impressively useless.
      */
     private void checkForCalendarPermissions() {
-        boolean calendarPermissions = Utilities.checkCalendarPermission(getContext());
-
-        if (calendarPermissions) {
+        if (prerequisitesChecker.isCalendarAccessible(getContext())) {
             proceedToNextScreen();
         } else {
             requestPermissionLauncher.launch(Manifest.permission.READ_CALENDAR);

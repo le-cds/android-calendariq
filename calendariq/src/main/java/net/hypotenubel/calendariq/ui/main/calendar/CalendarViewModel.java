@@ -46,24 +46,21 @@ public class CalendarViewModel extends AndroidViewModel {
      * Refreshes our list of calendars.
      */
     public void refresh() {
-        // Fire off a thread that loads a new list of calendars, provided that we have calendar
-        // access
-        if (Utilities.checkCalendarPermission(getApplication())) {
-            new Thread(() -> {
-                // Load available calendars
-                ICalendarSource provider = Utilities.obtainCalendarProvider(getApplication());
-                List<CalendarDescriptor> calList = provider.getAvailableCalendars();
+        // Fire off a thread that loads a new list of calendars
+        new Thread(() -> {
+            // Load available calendars
+            ICalendarSource provider = Utilities.obtainCalendarProvider(getApplication());
+            List<CalendarDescriptor> calList = provider.getAvailableCalendars();
 
-                // Sort the list so that the UI won't have to
-                Collections.sort(calList);
+            // Sort the list so that the UI won't have to
+            Collections.sort(calList);
 
-                // Set the calendar activity flags
-                loadActiveCalendarIds(calList);
+            // Set the calendar activity flags
+            loadActiveCalendarIds(calList);
 
-                // Update live data
-                calendars.postValue(calList);
-            }).start();
-        }
+            // Update live data
+            calendars.postValue(calList);
+        }).start();
     }
 
     /**
