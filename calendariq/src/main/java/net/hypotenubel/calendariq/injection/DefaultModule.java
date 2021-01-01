@@ -21,7 +21,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
  */
 @Module
 @InstallIn(ApplicationComponent.class)
-public abstract class ReleaseModule {
+public abstract class DefaultModule {
 
     @Binds
     abstract IPrerequisitesChecker bindPrerequisiteChecker(DefaultPrerequisitesChecker c);
