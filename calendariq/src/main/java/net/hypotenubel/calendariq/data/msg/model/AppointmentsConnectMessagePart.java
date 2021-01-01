@@ -51,6 +51,7 @@ public class AppointmentsConnectMessagePart implements IConnectMessagePart {
                 .withActiveCalendarIDs(Preferences.ACTIVE_CALENDARS.loadIntSet(context))
                 .withMaxAppointments(Preferences.APPOINTMENTS.loadInt(context))
                 .withMaxDays(Preferences.INTERVAL.loadInt(context))
+                // TODO The calendar source should be injected
                 .loadAppointments(Utilities.obtainCalendarProvider(context));
     }
 

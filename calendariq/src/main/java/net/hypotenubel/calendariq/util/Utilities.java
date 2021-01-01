@@ -1,7 +1,6 @@
 package net.hypotenubel.calendariq.util;
 
 import android.content.Context;
-import android.os.Build;
 
 import net.hypotenubel.calendariq.data.calendar.source.AndroidCalendarSource;
 import net.hypotenubel.calendariq.data.calendar.source.ICalendarSource;
@@ -46,32 +45,17 @@ public final class Utilities {
     // Emulation
 
     /**
-     * Makes an effort to check whether we're currently running on an emulator.
-     *
-     * @return {@code true} if we're running on an emulator.
-     */
-    public static boolean isEmulator() {
-        // This just tests for the Android SDK emulator
-        return Build.BRAND.equals("google")
-                && Build.MANUFACTURER.equals("Google")
-                && Build.PRODUCT.startsWith("sdk_gphone_")
-                && (Build.MODEL.startsWith("sdk_gphone_")
-                    || Build.MODEL.contains("Emulator"))
-                && Build.FINGERPRINT.startsWith("google/sdk_gphone_")
-                && (Build.FINGERPRINT.endsWith(":user/release-keys")
-                    || Build.FINGERPRINT.endsWith(":userdebug/dev-keys"));
-    }
-
-    /**
      * Returns an instance of {@link ICalendarSource} that is appropriate for the given context.
      * When running in an emulator, a sample data provider is returned. Otherwise, a provider is
      * returned that provides access to the user's Android calendars.
+     *
+     * TODO Remove as soon as the ICalendarSource is properly dependency-injected everywhere
      *
      * @param context the context from which this method is called.
      * @return a suitable calendar provider.
      */
     public static ICalendarSource obtainCalendarProvider(Context context) {
-        if (Utilities.isEmulator()) {
+        if (new DefaultPrerequisitesChecker().isEmulator()) {
             return new SampleCalendarSource();
         } else {
             return new AndroidCalendarSource(context);

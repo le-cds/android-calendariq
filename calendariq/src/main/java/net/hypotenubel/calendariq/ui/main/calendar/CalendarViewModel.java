@@ -22,6 +22,8 @@ import java.util.Set;
  */
 public class CalendarViewModel extends AndroidViewModel {
 
+    // TODO Make injectable and inject the ICalendarSource
+
     /** List of calendars. */
     private final MutableLiveData<List<CalendarDescriptor>> calendars = new MutableLiveData<>();
 

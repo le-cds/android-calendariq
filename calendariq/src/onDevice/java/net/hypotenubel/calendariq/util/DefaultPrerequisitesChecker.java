@@ -36,4 +36,8 @@ public class DefaultPrerequisitesChecker implements IPrerequisitesChecker {
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
+    @Override
+    public boolean isEmulator() {
+        return false;
+    }
 }

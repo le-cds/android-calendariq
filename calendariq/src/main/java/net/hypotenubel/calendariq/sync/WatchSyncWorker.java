@@ -29,6 +29,7 @@ import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
 import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
 import net.hypotenubel.calendariq.sync.connectiq.ConnectIQAppBroadcaster;
 import net.hypotenubel.calendariq.sync.connectiq.IBroadcasterEventListener;
+import net.hypotenubel.calendariq.util.DefaultPrerequisitesChecker;
 import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.List;
@@ -198,7 +199,8 @@ public class WatchSyncWorker extends Worker {
                     .addMessagePart(BatteryChargeConnectMessagePart.fromCurrentDeviceState(context))
                     .encode();
 
-            if (Utilities.isEmulator()) {
+            // TODO This should be solved differently once dependency injection works
+            if (new DefaultPrerequisitesChecker().isEmulator()) {
                 // If this is run inside the emulator, just pretend to have done something, randomly
                 // being successful or not
                 BroadcastEventListener listener = new BroadcastEventListener();
