@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * A calendar provider that returns sample data. To be used in the Android emulator, since that
  * usually doesn't have proper calendar data available.
@@ -19,6 +21,10 @@ public class SampleCalendarSource implements ICalendarSource {
     /** List of calendar descriptors returned by this thing. */
     private List<CalendarDescriptor> descriptors;
 
+
+    @Inject
+    public SampleCalendarSource() {
+    }
 
     @Override
     public List<CalendarDescriptor> getAvailableCalendars() {

@@ -17,6 +17,10 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
 /**
  * An implementation of {@link ICalendarSource} that loads calendars from the Android APIs.
  */
@@ -59,7 +63,8 @@ public class AndroidCalendarSource implements ICalendarSource {
      *
      * @param context the context from which the instance is created.
      */
-    public AndroidCalendarSource(Context context) {
+    @Inject
+    public AndroidCalendarSource(@ApplicationContext Context context) {
         this.context = context;
     }
 

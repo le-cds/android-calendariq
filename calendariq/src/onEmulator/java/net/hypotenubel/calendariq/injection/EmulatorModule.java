@@ -2,6 +2,8 @@ package net.hypotenubel.calendariq.injection;
 
 import android.content.Context;
 
+import net.hypotenubel.calendariq.data.calendar.source.ICalendarSource;
+import net.hypotenubel.calendariq.data.calendar.source.SampleCalendarSource;
 import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
 import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
 import net.hypotenubel.calendariq.util.DefaultPrerequisitesChecker;
@@ -25,6 +27,9 @@ public abstract class EmulatorModule {
 
     @Binds
     abstract IPrerequisitesChecker bindPrerequisiteChecker(DefaultPrerequisitesChecker c);
+
+    @Binds
+    abstract ICalendarSource bindCalendarSource(SampleCalendarSource cs);
 
     @Provides
     @Singleton
