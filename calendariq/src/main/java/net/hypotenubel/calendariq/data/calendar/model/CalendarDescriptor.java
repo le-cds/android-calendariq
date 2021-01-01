@@ -10,8 +10,8 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
     private final int id;
     /** The calendar's name. */
     private final String calName;
-    /** Name of the account the calendar belongs to. */
-    private final String accName;
+    /** The account the calendar belongs to. */
+    private final AccountDescriptor account;
     /** The calendar's color. */
     private final int colour;
 
@@ -26,16 +26,16 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
      *         the calendar's identifier.
      * @param calName
      *         the calendar's name.
-     * @param accName
-     *         name of the account the calendar belongs to.
+     * @param account
+     *         the account the calendar belongs to.
      * @param colour
      *         the calendar's colour.
      */
-    public CalendarDescriptor(final int id, final String calName, final String accName,
+    public CalendarDescriptor(final int id, final String calName, final AccountDescriptor account,
                               final int colour) {
         this.id = id;
         this.calName = calName;
-        this.accName = accName;
+        this.account = account;
         this.colour = colour;
     }
 
@@ -59,12 +59,12 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
     }
 
     /**
-     * Returns the name of the account the calendar belongs to.
+     * Returns the account the calendar belongs to.
      *
-     * @return the name.
+     * @return the account.
      */
-    public String getAccName() {
-        return accName;
+    public AccountDescriptor getAccount() {
+        return account;
     }
 
     /**
@@ -96,20 +96,22 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
 
     @Override
     public String toString() {
-        return getAccName() + "/" + getCalName() + "/" + getId();
+        return account + "/" + getCalName() + "/" + getId();
     }
 
     @Override
     public int compareTo(CalendarDescriptor other) {
         // We sort by account name, then calendar name, then ID (as a fallback)
-        if (accName.equals(other.accName)) {
+        int accountComparison = account.compareTo(other.account);
+
+        if (accountComparison == 0) {
             if (calName.equals(other.calName)) {
                 return Integer.compare(id, other.id);
             } else {
                 return calName.compareTo(other.calName);
             }
         } else {
-            return accName.compareTo(other.accName);
+            return accountComparison;
         }
     }
 

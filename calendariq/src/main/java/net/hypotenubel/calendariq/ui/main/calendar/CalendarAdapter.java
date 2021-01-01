@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import net.hypotenubel.calendariq.R;
+import net.hypotenubel.calendariq.data.calendar.model.AccountDescriptor;
 import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
 import net.hypotenubel.calendariq.util.Utilities;
 
@@ -59,11 +60,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         calendars.clear();
 
         // Add calendars to our list, but insert account name headers along the way
-        String currAccountName = null;
+        AccountDescriptor currAccount = null;
         for (CalendarDescriptor descriptor : newCalendars) {
-            if (currAccountName == null || !currAccountName.equals(descriptor.getAccName())) {
-                currAccountName = descriptor.getAccName();
-                calendars.add(currAccountName);
+            if (currAccount == null || !currAccount.equals(descriptor.getAccount())) {
+                currAccount = descriptor.getAccount();
+                calendars.add(currAccount);
             }
 
             calendars.add(descriptor);
@@ -86,7 +87,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Object o = calendars.get(position);
         if (o instanceof CalendarDescriptor) {
             return VIEW_TYPE_CALENDAR;
-        } else if (o instanceof String) {
+        } else if (o instanceof AccountDescriptor) {
             return VIEW_TYPE_ACCOUNT;
         } else {
             throw new IllegalStateException();
@@ -122,11 +123,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             calViewHolder.calendarNameView.setText(descriptor.getCalName());
             calViewHolder.activeSwitch.setChecked(descriptor.isActive());
 
-        } else if (o instanceof String) {
-            String account = (String) o;
+        } else if (o instanceof AccountDescriptor) {
+            AccountDescriptor account = (AccountDescriptor) o;
             AccountViewHolder accViewHolder = (AccountViewHolder) viewHolder;
 
-            accViewHolder.accountNameView.setText(account);
+            accViewHolder.accountNameView.setText(account.getName());
         }
     }
 

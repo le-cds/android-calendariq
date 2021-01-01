@@ -1,5 +1,6 @@
 package net.hypotenubel.calendariq.data.calendar.source;
 
+import net.hypotenubel.calendariq.data.calendar.model.AccountDescriptor;
 import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
 
 import java.util.ArrayList;
@@ -79,8 +80,8 @@ public class SampleCalendarSource implements ICalendarSource {
      */
     private static class CalendarBuilder {
 
-        /** Name of the account new calendars will be associated with. */
-        private String currentAccountName;
+        /** The account new calendars will be associated with. */
+        private AccountDescriptor currentAccountDescriptor;
         /** ID assigned to the next calendar. */
         private int nextCalendarId = 0;
         /** Descriptors of the calendars we have created. */
@@ -90,7 +91,7 @@ public class SampleCalendarSource implements ICalendarSource {
          * Starts a new account that new calendars will be associated with.
          */
         private CalendarBuilder newAccount(String accountName) {
-            currentAccountName = accountName;
+            currentAccountDescriptor = new AccountDescriptor(accountName);
             return this;
         }
 
@@ -101,7 +102,7 @@ public class SampleCalendarSource implements ICalendarSource {
             CalendarDescriptor descriptor = new CalendarDescriptor(
                     nextCalendarId,
                     name,
-                    currentAccountName,
+                    currentAccountDescriptor,
                     color);
             calendarDescriptors.add(descriptor);
 

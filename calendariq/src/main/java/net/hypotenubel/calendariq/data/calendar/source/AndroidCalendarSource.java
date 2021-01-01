@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 import android.util.Log;
 
+import net.hypotenubel.calendariq.data.calendar.model.AccountDescriptor;
 import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
 import net.hypotenubel.calendariq.util.DefaultPrerequisitesChecker;
 import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
@@ -15,7 +16,10 @@ import net.hypotenubel.calendariq.util.Utilities;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -70,12 +74,10 @@ public class AndroidCalendarSource implements ICalendarSource {
 
     @Override
     public List<CalendarDescriptor> getAvailableCalendars() {
-        List<CalendarDescriptor> calendars = new ArrayList<>();
-
         // Only try loading calendars if we have permission to do so
         if (!prerequisitesChecker.isCalendarAccessible(context)) {
             Log.d(LOG_TAG, "Missing calendar permission");
-            return calendars;
+            return Collections.emptyList();
         }
 
         // Load all calendars
@@ -88,9 +90,7 @@ public class AndroidCalendarSource implements ICalendarSource {
 
         // Call loadCalendar(int) to load details about each specific calendar
         cursor.moveToFirst();
-        while (cursor.moveToNext()) {
-            calendars.add(toCalendar(cursor));
-        }
+        List<CalendarDescriptor> calendars = toCalendars(cursor);
         cursor.close();
 
         return calendars;
@@ -100,16 +100,33 @@ public class AndroidCalendarSource implements ICalendarSource {
      * Turns the cursor's current row of data into a calendar instance.
      *
      * @param cursor the cursor that holds the data.
-     * @return a calendar.
+     * @return a list of calendars.
      */
-    private CalendarDescriptor toCalendar(Cursor cursor) {
-        int calId = cursor.getInt(CALENDAR_PROJECTION_ID);
-        return new CalendarDescriptor(
-                calId,
-                cursor.getString(CALENDAR_PROJECTION_DISPLAY_NAME),
-                cursor.getString(CALENDAR_PROJECTION_ACCOUNT_NAME),
-                cursor.getInt(CALENDAR_PROJECTION_COLOR)
-        );
+    private List<CalendarDescriptor> toCalendars(Cursor cursor) {
+        List<CalendarDescriptor> calendarDescriptors = new ArrayList<>();
+
+        // Remember the account descriptors we've created
+        Map<String, AccountDescriptor> accountDescriptors = new HashMap<>();
+
+        while (cursor.moveToNext()) {
+            // Look for an account object
+            String accountName = cursor.getString(CALENDAR_PROJECTION_ACCOUNT_NAME);
+
+            AccountDescriptor accountDescriptor = accountDescriptors.get(accountName);
+            if (accountDescriptor == null) {
+                accountDescriptor = new AccountDescriptor(accountName);
+                accountDescriptors.put(accountName, accountDescriptor);
+            }
+
+            // Add new calendar descriptor
+            calendarDescriptors.add(new CalendarDescriptor(
+                    cursor.getInt(CALENDAR_PROJECTION_ID),
+                    cursor.getString(CALENDAR_PROJECTION_DISPLAY_NAME),
+                    accountDescriptor,
+                    cursor.getInt(CALENDAR_PROJECTION_COLOR)));
+        }
+
+        return calendarDescriptors;
     }
 
     @Override
