@@ -10,8 +10,6 @@ def versionRevision = 2
 def versionSuffix = "devel"
 
 android {
-    compileSdkVersion 30
-
     defaultConfig {
         applicationId "net.hypotenubel.calendariq"
 
@@ -25,6 +23,7 @@ android {
 
         resValue "string", "app_version", "${defaultConfig.versionName}"
 
+        compileSdkVersion 30
         minSdkVersion 24
         targetSdkVersion 30
 
@@ -48,6 +47,17 @@ android {
 
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "emulator"
+    productFlavors {
+        onDevice {
+            dimension "emulator"
+        }
+
+        onEmulator {
+            dimension "emulator"
         }
     }
 
