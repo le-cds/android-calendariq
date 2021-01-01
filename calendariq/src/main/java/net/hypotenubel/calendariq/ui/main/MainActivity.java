@@ -30,10 +30,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.mainActivity_appBar));
 
+        // Our permission check and calendar fragments should never display the Back/Up button
+        appBarConfig = new AppBarConfiguration.Builder(
+                R.id.checkConnectIQFragment,
+                R.id.checkCalendarPermFragment,
+                R.id.calendarListFragment
+        ).build();
+
         // Make the Navigation framework manage the action bar
         NavController navController = getNavHostFragment().getNavController();
-        appBarConfig = new AppBarConfiguration.Builder(R.id.calendarListFragment).build();
-        Toolbar toolbar = findViewById(R.id.mainActivity_appBar);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfig);
     }
 
