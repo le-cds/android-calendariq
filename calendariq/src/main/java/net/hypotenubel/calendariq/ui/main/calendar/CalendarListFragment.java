@@ -1,6 +1,5 @@
 package net.hypotenubel.calendariq.ui.main.calendar;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,10 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.data.Preferences;
-import net.hypotenubel.calendariq.sync.WatchSyncWorker;
+import net.hypotenubel.calendariq.sync.SyncController;
 import net.hypotenubel.calendariq.ui.pref.SettingsActivity;
-import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
 
 import javax.inject.Inject;
 
@@ -35,10 +32,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class CalendarListFragment extends Fragment {
 
-    // TODO Things to inject
-    //      - Thing that controls our services
-    //      Then we can get rid of the prerequisites checker as well
-    @Inject IPrerequisitesChecker prerequisitesChecker;
+    @Inject
+    SyncController syncController;
 
     private CalendarViewModel calendarViewModel;
     private SwipeRefreshLayout swipeContainer;
@@ -54,15 +49,8 @@ public class CalendarListFragment extends Fragment {
         // We have stuff to put into the options menu!
         setHasOptionsMenu(true);
 
-        // Take this opportunity to ensure that our sync service is working (unless we're running
-        // in the emulator)
-        Context context = getContext();
-        if (prerequisitesChecker.arePrerequisitesMet(getContext())) {
-            WatchSyncWorker.runSyncWorker(
-                    context.getApplicationContext(),
-                    Preferences.FREQUENCY.loadInt(context),
-                    false);
-        }
+        // Take this opportunity to ensure that our sync service is configured
+        syncController.reconfigureSyncServices();
     }
 
     @Override

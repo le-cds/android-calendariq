@@ -9,12 +9,6 @@ import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.Operation;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -34,7 +28,6 @@ import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A worker that can be invoked regularly to send appointments to devices. Provides static methods
@@ -48,11 +41,6 @@ public class WatchSyncWorker extends Worker {
     /** Log tag for log messages. */
     private static final String LOG_TAG = Utilities.logTag(WatchSyncWorker.class);
 
-    /** ID of the work item we're using to run our worker periodically. */
-    private static final String SYNC_WORK_NAME = "sync_devices";
-    /** ID of the work item we're using to run our worker once. */
-    private static final String SYNC_ONCE_WORK_NAME = "sync_devices_once";
-
     // Message field values that indicate that a message to the handler thread was sent by us
     private static final int SERVICE_MESSAGE_WHAT = 0xdabcd41f;
     private static final int SERVICE_MESSAGE_ARG_1 = 0x2676922f;
@@ -62,66 +50,6 @@ public class WatchSyncWorker extends Worker {
     private final Object lock = new Object();
     /** Whether the broadcaster has already told us that it's finished. */
     private boolean finished = false;
-
-
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    // Management
-
-    /**
-     * Ensures that our synchronization worker is run by the work manager API.
-     *
-     * @param appContext the application's context to run the work manager in.
-     * @param interval the interval in minutes it should be periodically run in.
-     * @param replaceExisting {@code true} if an existing worker should be replaced. If this is
-     *                                    {@code false}, nothing happens if a worker already exists.
-     */
-    public static void runSyncWorker(final Context appContext, int interval,
-                                     boolean replaceExisting) {
-
-        // Let it be known in the kingdom that we shall unleash the workers!
-        if (replaceExisting) {
-            Log.d(LOG_TAG,"Replacing sync worker with interval of " + interval + " minutes");
-        } else {
-            Log.d(LOG_TAG,"Running sync worker with interval of " + interval + " minutes");
-        }
-
-        // Build a new periodic work request and register it if none was already registered
-        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(
-                WatchSyncWorker.class,
-                interval,
-                TimeUnit.MINUTES)
-                .build();
-
-        ExistingPeriodicWorkPolicy policy = replaceExisting
-                ? ExistingPeriodicWorkPolicy.REPLACE
-                : ExistingPeriodicWorkPolicy.KEEP;
-        WorkManager
-                .getInstance(appContext)
-                .enqueueUniquePeriodicWork(
-                        SYNC_WORK_NAME,
-                        policy,
-                        request);
-    }
-
-    /**
-     * Ensures that our synchronization worker is run once by the work manager API. Returns the
-     * operation to be run so that callers can wait for that application to complete to show some
-     * kind of a notification.
-     *
-     * @param appContext the application's context to run the work manager in.
-     */
-    public static Operation runSyncWorkerOnce(final Context appContext) {
-        Log.d(LOG_TAG,"Running sync worker once");
-
-        // Build a new periodic work request and register it if none was already registered
-        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(WatchSyncWorker.class).build();
-        return WorkManager
-                .getInstance(appContext)
-                .enqueueUniqueWork(
-                        SYNC_ONCE_WORK_NAME,
-                        ExistingWorkPolicy.REPLACE,
-                        request);
-    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,7 +73,7 @@ public class WatchSyncWorker extends Worker {
         // ConnectIQ requires a thread with a looper :/
         HandlerThread handlerThread = new HandlerThread("WatchSyncWorkerThread");
         handlerThread.start();
-        ConnectIQThreadHandler handler = new ConnectIQThreadHandler(handlerThread.getLooper());
+        SyncHandler handler = new SyncHandler(handlerThread.getLooper());
 
         // Broadcast the whole thing
         synchronized (lock) {
@@ -185,8 +113,8 @@ public class WatchSyncWorker extends Worker {
     /**
      * Handler for our ConnectIQ thread. This initiates the actual broadcast.
      */
-    private final class ConnectIQThreadHandler extends Handler {
-        public ConnectIQThreadHandler(Looper looper) {
+    private final class SyncHandler extends Handler {
+        public SyncHandler(Looper looper) {
             super(looper);
         }
 

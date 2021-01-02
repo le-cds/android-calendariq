@@ -5,13 +5,11 @@ import android.widget.Toast;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.work.Operation;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.data.Preferences;
 import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
 import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
-import net.hypotenubel.calendariq.sync.WatchSyncWorker;
+import net.hypotenubel.calendariq.sync.SyncController;
 
 import java.util.List;
 
@@ -25,11 +23,13 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-    // TODO Thhings to inject:
-    //      - Thing that controls our sync services
-
     /** We'll use this to check for the most recent sync event. */
-    @Inject IBroadcastStatisticsDao broadcastStatsDao;
+    @Inject
+    IBroadcastStatisticsDao broadcastStatsDao;
+
+    /** We'll use this to fire off manual synchronisations and update the service frequency. */
+    @Inject
+    SyncController syncController;
 
     ///////////////////////////////////////////////////////////////////////////////////////////
     // Lifecycle
@@ -58,18 +58,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 .getNewestLive(1)
                 .observe(this, this::updateLastSyncSummary);
 
-        // Listen to frequency changes to we can restart the sync worker
-        // TODO This should be done when the fragment is closed
-        frequency.setOnPreferenceChangeListener((preference, newValue) -> {
-            onFrequencyChanged(newValue.toString());
-            return true;
-        });
-
         // Listen to synchronisation requests
         lastSyncPreference.setOnPreferenceClickListener(preference -> {
             runSyncWorkerOnce();
             return true;
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        syncController.reconfigureSyncServices();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -103,33 +103,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////
-    // Sync Worker Updates
-
-    /**
-     * Re-register sync worker upon frequency changes.
-     */
-    private void onFrequencyChanged(String newValue) {
-        WatchSyncWorker.runSyncWorker(
-                getContext().getApplicationContext(),
-                Preferences.FREQUENCY.loadInt(this.getContext()),
-                true);
-    }
+    // Sync Now
 
     /**
      * Ensures that our synchronization worker is run once by the work manager API.
      */
     private void runSyncWorkerOnce() {
-        Operation syncOperation = WatchSyncWorker.runSyncWorkerOnce(
-                getContext().getApplicationContext());
+        syncController.syncOnce();
 
-        // Display a toast when the operation finishes
-        syncOperation.getState().observe(this, state -> {
-            // This is only called if things were successful
-            Toast.makeText(
-                    SettingsFragment.this.getActivity(),
-                    getString(R.string.settingsActivity_sending),
-                    Toast.LENGTH_SHORT)
-                    .show();
-        });
+        Toast.makeText(
+                SettingsFragment.this.getActivity(),
+                getString(R.string.settingsActivity_sending),
+                Toast.LENGTH_SHORT)
+                .show();
     }
 }
