@@ -28,7 +28,7 @@ public class ConnectMessage {
         // 2038-01-19 at 03:14:07
         msg.add((int) (System.currentTimeMillis() / 1000));
 
-        parts.stream().forEach(part -> part.encodeAndAppend(msg));
+        parts.forEach(part -> part.encodeAndAppend(msg));
 
         return msg;
     }

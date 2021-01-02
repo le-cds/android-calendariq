@@ -23,7 +23,7 @@ public class CalendarViewModel extends ViewModel {
     private final CalendarRepository calendarRepository;
 
     /** The data to be observed by the UI. */
-    private LiveData<List<Object>> accountsAndCalendars;
+    private final LiveData<List<Object>> accountsAndCalendars;
 
     /**
      * Creates a new instance in the given application context.

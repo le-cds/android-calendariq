@@ -267,7 +267,6 @@ public class ConnectIQAppBroadcaster {
 
     /**
      * Set the error state to the given message and call {@link #finish()}.
-     * @param message
      */
     private void error(String message) {
         errorMessage = message;
