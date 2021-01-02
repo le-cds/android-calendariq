@@ -11,7 +11,7 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
     /** The calendar's ID. */
     private final int id;
     /** The calendar's name. */
-    private final String calName;
+    private final String name;
     /** The account the calendar belongs to. */
     private final AccountDescriptor account;
     /** The calendar's color. */
@@ -26,17 +26,17 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
      *
      * @param id
      *         the calendar's identifier.
-     * @param calName
+     * @param name
      *         the calendar's name.
      * @param account
      *         the account the calendar belongs to.
      * @param colour
      *         the calendar's colour.
      */
-    public CalendarDescriptor(final int id, final String calName, final AccountDescriptor account,
+    public CalendarDescriptor(final int id, final String name, final AccountDescriptor account,
                               final int colour) {
         this.id = id;
-        this.calName = calName;
+        this.name = name;
         this.account = account;
         this.colour = colour;
     }
@@ -56,8 +56,8 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
      *
      * @return the name.
      */
-    public String getCalName() {
-        return calName;
+    public String getName() {
+        return name;
     }
 
     /**
@@ -98,7 +98,7 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
 
     @Override
     public String toString() {
-        return account + "/" + getCalName() + "/" + getId();
+        return account + "/" + getName() + "/" + getId();
     }
 
     @Override
@@ -124,10 +124,10 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
         int accountComparison = account.compareTo(other.account);
 
         if (accountComparison == 0) {
-            if (calName.equals(other.calName)) {
+            if (name.equals(other.name)) {
                 return Integer.compare(id, other.id);
             } else {
-                return calName.compareTo(other.calName);
+                return name.compareTo(other.name);
             }
         } else {
             return accountComparison;

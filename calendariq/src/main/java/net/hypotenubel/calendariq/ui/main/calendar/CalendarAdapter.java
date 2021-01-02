@@ -73,7 +73,7 @@ public class CalendarAdapter extends ListAdapter<Object, RecyclerView.ViewHolder
 
             // Xor colour value with this value to make the colour solid as opposed to translucent
             calViewHolder.colorShape.setColor(descriptor.getColour() | 0xFF000000);
-            calViewHolder.calendarNameView.setText(descriptor.getCalName());
+            calViewHolder.calendarNameView.setText(descriptor.getName());
             calViewHolder.activeSwitch.setChecked(descriptor.isActive());
 
         } else if (o instanceof AccountDescriptor) {
@@ -103,7 +103,7 @@ public class CalendarAdapter extends ListAdapter<Object, RecyclerView.ViewHolder
                 CalendarDescriptor oldCalendar = (CalendarDescriptor) oldItem;
                 CalendarDescriptor newCalendar = (CalendarDescriptor) newItem;
 
-                return oldCalendar.getCalName().equals(newCalendar.getCalName())
+                return oldCalendar.getName().equals(newCalendar.getName())
                         && oldCalendar.getColour() == newCalendar.getColour()
                         && oldCalendar.isActive() == newCalendar.isActive();
 
