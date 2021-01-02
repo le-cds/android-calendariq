@@ -3,21 +3,17 @@ package net.hypotenubel.calendariq.ui.main;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import net.hypotenubel.calendariq.R;
-import net.hypotenubel.calendariq.util.Utilities;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
-
-    private static final String LOG_TAG = Utilities.logTag(MainActivity.class);
 
     /** Used for having the Navigation framework manage the action bar. */
     private AppBarConfiguration appBarConfig;
@@ -54,6 +50,5 @@ public class MainActivity extends AppCompatActivity {
         return (NavHostFragment) getSupportFragmentManager().findFragmentById(
                 R.id.mainActivity_fragmentContainer);
     }
-
 
 }

@@ -163,7 +163,9 @@ public class CalendarAdapter extends ListAdapter<Object, RecyclerView.ViewHolder
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            // Retrieve the calendar we're representing right now
+            // Retrieve the calendar we're representing right now. Updating the domain object here
+            // is not quite as clean; this should probably be done in the repository, with our
+            // fragment handling the glue code bit. But well...
             CalendarDescriptor calendar = (CalendarDescriptor) getItem(getBindingAdapterPosition());
             calendar.setActive(isChecked);
         }
