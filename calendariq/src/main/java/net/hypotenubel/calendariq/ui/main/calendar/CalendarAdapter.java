@@ -9,7 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -17,74 +18,26 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import net.hypotenubel.calendariq.R;
 import net.hypotenubel.calendariq.data.calendar.model.AccountDescriptor;
 import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
-import net.hypotenubel.calendariq.util.Utilities;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Adapts a {@link CalendarViewModel} for a recycler view. The adapter internally works on a
- * complete copy of the list of calendars since we expect that there won't be that many. It
- * refreshes itself automatically if the view model's list of calendars is refreshed.
+ * Adapts a {@link CalendarViewModel} for a recycler view.
  */
-public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    /** Log tag used to log log messages in a logging fashion. */
-    private static final String LOG_TAG = Utilities.logTag(CalendarAdapter.class);
+public class CalendarAdapter extends ListAdapter<Object, RecyclerView.ViewHolder> {
 
     /** View type for displaying account names. */
     private static final int VIEW_TYPE_ACCOUNT = 1;
     /** View type for displaying calendars. */
     private static final int VIEW_TYPE_CALENDAR = 2;
 
-    /** The calendars we're adapting. */
-    private final List<Object> calendars = new ArrayList<>();
 
-
-    /**
-     * Creates a new instance owned by the given lifecycle owner to display the given view model.
-     */
-    public CalendarAdapter(LifecycleOwner owner, CalendarViewModel viewModel) {
-        viewModel.getCalendars().observe(owner, this::updateList);
+    public CalendarAdapter() {
+        super(DIFF_CALLBACK);
     }
 
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Initialization
-
-    /**
-     * Updates the list of calendars and refreshes our view.
-     */
-    private void updateList(List<CalendarDescriptor> newCalendars) {
-        // We'll rebuild our list in a moment
-        calendars.clear();
-
-        // Add calendars to our list, but insert account name headers along the way
-        AccountDescriptor currAccount = null;
-        for (CalendarDescriptor descriptor : newCalendars) {
-            if (currAccount == null || !currAccount.equals(descriptor.getAccount())) {
-                currAccount = descriptor.getAccount();
-                calendars.add(currAccount);
-            }
-
-            calendars.add(descriptor);
-        }
-
-        notifyDataSetChanged();
-    }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Adapter
-
-    @Override
-    public int getItemCount() {
-        return calendars.size();
-    }
 
     @Override
     public int getItemViewType(int position) {
-        Object o = calendars.get(position);
+        Object o = getItem(position);
         if (o instanceof CalendarDescriptor) {
             return VIEW_TYPE_CALENDAR;
         } else if (o instanceof AccountDescriptor) {
@@ -112,7 +65,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        Object o = calendars.get(i);
+        Object o = getItem(i);
 
         if (o instanceof CalendarDescriptor) {
             CalendarDescriptor descriptor = (CalendarDescriptor) o;
@@ -130,6 +83,38 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             accViewHolder.accountNameView.setText(account.getName());
         }
     }
+
+    private static final DiffUtil.ItemCallback<Object> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<Object>() {
+
+        @Override
+        public boolean areItemsTheSame(@NonNull Object oldItem, @NonNull Object newItem) {
+            if (!oldItem.getClass().equals(newItem.getClass())) {
+                return false;
+            } else {
+                // Calendar equality is just an ID check; account equality is just a name check
+                return oldItem.equals(newItem);
+            }
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Object oldItem, @NonNull Object newItem) {
+            if (oldItem instanceof CalendarDescriptor) {
+                CalendarDescriptor oldCalendar = (CalendarDescriptor) oldItem;
+                CalendarDescriptor newCalendar = (CalendarDescriptor) newItem;
+
+                return oldCalendar.getCalName().equals(newCalendar.getCalName())
+                        && oldCalendar.getColour() == newCalendar.getColour()
+                        && oldCalendar.isActive() == newCalendar.isActive();
+
+            } else {
+                // In this case, both items will be accounts and their names are the same, so
+                // there's nothing more to check here
+                return true;
+            }
+        }
+
+    };
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,7 +164,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             // Retrieve the calendar we're representing right now
-            CalendarDescriptor calendar = (CalendarDescriptor) calendars.get(getBindingAdapterPosition());
+            CalendarDescriptor calendar = (CalendarDescriptor) getItem(getBindingAdapterPosition());
             calendar.setActive(isChecked);
         }
     }

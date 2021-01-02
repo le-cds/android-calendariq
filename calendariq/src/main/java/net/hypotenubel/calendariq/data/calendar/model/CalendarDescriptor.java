@@ -1,5 +1,7 @@
 package net.hypotenubel.calendariq.data.calendar.model;
 
+import java.util.Objects;
+
 /**
  * Represents a calendar. A calendar can be active or not. This influences whether appointments from
  * this calendar are taken into account when attempting to find upcoming appointments.
@@ -97,6 +99,23 @@ public final class CalendarDescriptor implements Comparable<CalendarDescriptor> 
     @Override
     public String toString() {
         return account + "/" + getCalName() + "/" + getId();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        } else if (o == null || getClass() != o.getClass()){
+            return false;
+        } else {
+            CalendarDescriptor that = (CalendarDescriptor) o;
+            return id == that.id;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

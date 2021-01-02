@@ -36,15 +36,11 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class CalendarListFragment extends Fragment {
 
     // TODO Things to inject
-    //      - View model
-    //      - View adapter
-    //      - Thing that controls our services?
-
+    //      - Thing that controls our services
+    //      Then we can get rid of the prerequisites checker as well
     @Inject IPrerequisitesChecker prerequisitesChecker;
 
-    /** View model for our calendars. */
     private CalendarViewModel calendarViewModel;
-
     private SwipeRefreshLayout swipeContainer;
 
 
@@ -64,7 +60,7 @@ public class CalendarListFragment extends Fragment {
         if (prerequisitesChecker.arePrerequisitesMet(getContext())) {
             WatchSyncWorker.runSyncWorker(
                     context.getApplicationContext(),
-                    Preferences.FREQUENCY.loadInt(getContext()),
+                    Preferences.FREQUENCY.loadInt(context),
                     false);
         }
     }
@@ -82,15 +78,17 @@ public class CalendarListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         RecyclerView calendarView = view.findViewById(R.id.calendarListFragment_calendars);
-        calendarViewModel = new ViewModelProvider(this).get(CalendarViewModel.class);
 
-        // Setup layout
         LinearLayoutManager calendarLayoutManager = new LinearLayoutManager(getContext());
         calendarView.setLayoutManager(calendarLayoutManager);
 
-        // Setup adapter
-        CalendarAdapter calendarAdapter = new CalendarAdapter(this, calendarViewModel);
+        CalendarAdapter calendarAdapter = new CalendarAdapter();
         calendarView.setAdapter(calendarAdapter);
+
+        calendarViewModel = new ViewModelProvider(this)
+                .get(CalendarViewModel.class);
+        calendarViewModel.getAccountsAndCalendars().observe(
+                getViewLifecycleOwner(), calendarAdapter::submitList);
 
         // Setup swipe refresh
         swipeContainer = view.findViewById(R.id.calendarListFragment_swipeContainer);
