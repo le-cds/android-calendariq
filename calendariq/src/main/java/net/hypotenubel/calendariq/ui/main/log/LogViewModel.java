@@ -4,8 +4,8 @@ import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import net.hypotenubel.calendariq.data.stats.BroadcastStatisticsRepository;
 import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
-import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
 
 import java.util.List;
 
@@ -18,8 +18,8 @@ public class LogViewModel extends ViewModel {
     private final LiveData<List<BroadcastStatistics>> logItems;
 
     @ViewModelInject
-    public LogViewModel(IBroadcastStatisticsDao broadcastStatsDao) {
-        logItems = broadcastStatsDao.getAllLive();
+    public LogViewModel(BroadcastStatisticsRepository broadcastStatsRepo) {
+        logItems = broadcastStatsRepo.getBroadcastStats();
     }
 
     public LiveData<List<BroadcastStatistics>> getLogItems() {

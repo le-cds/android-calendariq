@@ -1,7 +1,6 @@
 package net.hypotenubel.calendariq.sync.synchroniser;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -15,8 +14,8 @@ import net.hypotenubel.calendariq.data.msg.model.AppointmentsConnectMessagePart;
 import net.hypotenubel.calendariq.data.msg.model.BatteryChargeConnectMessagePart;
 import net.hypotenubel.calendariq.data.msg.model.ConnectMessage;
 import net.hypotenubel.calendariq.data.msg.model.SyncIntervalConnectMessagePart;
+import net.hypotenubel.calendariq.data.stats.BroadcastStatisticsRepository;
 import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
-import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
 import net.hypotenubel.calendariq.sync.connectiq.IBroadcasterEventListener;
 import net.hypotenubel.calendariq.util.Utilities;
 
@@ -40,12 +39,13 @@ public class Synchroniser implements Runnable {
 
     /** Application context. */
     private final Context appContext;
+    // TODO Change this to CalendarRepository
     /** Access to appointments. */
     private final ICalendarSource calendarSource;
     /** How exactly we'll broadcast our message. */
     private final IBroadcastStrategy broadcastStrategy;
     /** Access to the broadcast statistics database. */
-    private final IBroadcastStatisticsDao broadcastStatisticsDao;
+    private final BroadcastStatisticsRepository broadcastStatsRepository;
 
     /** Synchronization lock to wait for the broadcaster to finish. */
     private final Object lock = new Object();
@@ -55,11 +55,11 @@ public class Synchroniser implements Runnable {
     @Inject
     public Synchroniser(@ApplicationContext Context context, ICalendarSource calendarSource,
                         IBroadcastStrategy broadcastStrategy,
-                        IBroadcastStatisticsDao statsDao) {
+                        BroadcastStatisticsRepository broadcastStatsRepository) {
         this.appContext = context;
         this.calendarSource = calendarSource;
         this.broadcastStrategy = broadcastStrategy;
-        this.broadcastStatisticsDao = statsDao;
+        this.broadcastStatsRepository = broadcastStatsRepository;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,12 +132,7 @@ public class Synchroniser implements Runnable {
         public void broadcastFinished(BroadcastStatistics stats) {
             synchronized (lock) {
                 finished = true;
-
-                // TODO Replace AsyncTask as soon as we have a broadcast statistics repository.
-                AsyncTask.execute(() -> {
-                    broadcastStatisticsDao.addWithoutGrowing(stats);
-                });
-
+                broadcastStatsRepository.addBroadcastStats(stats);
                 lock.notifyAll();
             }
         }

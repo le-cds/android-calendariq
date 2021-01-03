@@ -7,8 +7,8 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import net.hypotenubel.calendariq.R;
+import net.hypotenubel.calendariq.data.stats.BroadcastStatisticsRepository;
 import net.hypotenubel.calendariq.data.stats.model.BroadcastStatistics;
-import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
 import net.hypotenubel.calendariq.sync.SyncController;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     /** We'll use this to check for the most recent sync event. */
     @Inject
-    IBroadcastStatisticsDao broadcastStatsDao;
+    BroadcastStatisticsRepository broadcastStatsRepo;
 
     /** We'll use this to fire off manual synchronisations and update the service frequency. */
     @Inject
@@ -54,8 +54,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         // Obtain LiveData view on the most recent synchronization attempt and hook up an update
         // method as an observer
-        broadcastStatsDao
-                .getNewestLive(1)
+        broadcastStatsRepo
+                .getNewestBroadcastStats()
                 .observe(this, this::updateLastSyncSummary);
 
         // Listen to synchronisation requests
