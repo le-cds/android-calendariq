@@ -50,7 +50,7 @@ public class CalendarListFragment extends Fragment {
         setHasOptionsMenu(true);
 
         // Take this opportunity to ensure that our sync service is configured
-        syncController.reconfigureSyncServices();
+        syncController.ensureSyncServicesAreRunning();
     }
 
     @Override

@@ -7,6 +7,9 @@ import net.hypotenubel.calendariq.data.calendar.source.ICalendarSource;
 import net.hypotenubel.calendariq.data.calendar.source.SampleCalendarSource;
 import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
 import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
+import net.hypotenubel.calendariq.sync.synchroniser.ConnectBroadcastStrategy;
+import net.hypotenubel.calendariq.sync.synchroniser.IBroadcastStrategy;
+import net.hypotenubel.calendariq.sync.synchroniser.RandomBroadcastStrategy;
 import net.hypotenubel.calendariq.util.DefaultPrerequisitesChecker;
 import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
 
@@ -31,6 +34,9 @@ public abstract class DefaultModule {
 
     @Binds
     abstract ICalendarSource bindCalendarSource(AndroidCalendarSource cs);
+
+    @Binds
+    abstract IBroadcastStrategy bindBroadcastStrategy(ConnectBroadcastStrategy bs);
 
     @Provides
     @Singleton
