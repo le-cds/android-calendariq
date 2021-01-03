@@ -28,7 +28,4 @@ public interface IPrerequisitesChecker {
         return isGarminConnectInstalled(context) && isCalendarAccessible(context);
     }
 
-    // TODO This method must be removed once everything is properly dependency-injected
-    boolean isEmulator();
-
 }

@@ -2,26 +2,30 @@ package net.hypotenubel.calendariq.util;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
 import androidx.core.content.ContextCompat;
 
 import javax.inject.Inject;
 
-// TODO Change this class name as soon as this is dependency-injected everywhere.
-//      Once that is done we could have the different IPrerequisitesChecker live
-//      in the main source set again and only extract the DI modules to different
-//      source sets.
-public class DefaultPrerequisitesChecker implements IPrerequisitesChecker {
+public class DevicePrerequisitesChecker implements IPrerequisitesChecker {
 
     @Inject
-    public DefaultPrerequisitesChecker() {
+    public DevicePrerequisitesChecker() {
         // Make injectable
     }
 
     @Override
     public boolean isGarminConnectInstalled(Context context) {
-        return true;
+        try {
+            // Try to find the app, which must also correspond to a minimum version (see ConnectIQ
+            // mobile SDK code)
+            PackageInfo info = context.getPackageManager().getPackageInfo(GARMIN_PACKAGE_ID, 0);
+            return info.versionCode >= 2000;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     @Override
@@ -32,8 +36,4 @@ public class DefaultPrerequisitesChecker implements IPrerequisitesChecker {
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
 
-    @Override
-    public boolean isEmulator() {
-        return true;
-    }
 }

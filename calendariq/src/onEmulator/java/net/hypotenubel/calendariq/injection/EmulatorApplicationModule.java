@@ -8,7 +8,7 @@ import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
 import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
 import net.hypotenubel.calendariq.sync.synchroniser.IBroadcastStrategy;
 import net.hypotenubel.calendariq.sync.synchroniser.RandomBroadcastStrategy;
-import net.hypotenubel.calendariq.util.DefaultPrerequisitesChecker;
+import net.hypotenubel.calendariq.util.EmulatorPrerequisitesChecker;
 import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
 
 import javax.inject.Singleton;
@@ -28,7 +28,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 public abstract class EmulatorApplicationModule {
 
     @Binds
-    abstract IPrerequisitesChecker bindPrerequisiteChecker(DefaultPrerequisitesChecker c);
+    abstract IPrerequisitesChecker bindPrerequisiteChecker(EmulatorPrerequisitesChecker c);
 
     @Binds
     abstract ICalendarSource bindCalendarSource(SampleCalendarSource cs);

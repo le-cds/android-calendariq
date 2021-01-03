@@ -9,7 +9,7 @@ import android.util.Log;
 
 import net.hypotenubel.calendariq.data.calendar.model.AccountDescriptor;
 import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
-import net.hypotenubel.calendariq.util.DefaultPrerequisitesChecker;
+import net.hypotenubel.calendariq.util.EmulatorPrerequisitesChecker;
 import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
 import net.hypotenubel.calendariq.util.Utilities;
 
@@ -57,7 +57,7 @@ public class AndroidCalendarSource implements ICalendarSource {
     private static final int INSTANCE_PROJECTION_BEGIN = 0;
 
     // TODO Inject prerequisites checker
-    private IPrerequisitesChecker prerequisitesChecker = new DefaultPrerequisitesChecker();
+    private IPrerequisitesChecker prerequisitesChecker = new EmulatorPrerequisitesChecker();
 
     /** The context from which this provider was created. */
     private final Context context;

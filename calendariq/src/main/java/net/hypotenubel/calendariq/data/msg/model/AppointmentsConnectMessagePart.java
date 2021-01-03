@@ -4,7 +4,6 @@ import android.content.Context;
 
 import net.hypotenubel.calendariq.data.Preferences;
 import net.hypotenubel.calendariq.data.calendar.source.ICalendarSource;
-import net.hypotenubel.calendariq.util.Utilities;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,13 +45,13 @@ public class AppointmentsConnectMessagePart implements IConnectMessagePart {
      * Loads all the required settings from the preferences and returns the resulting list of
      * appointments.
      */
-    public static AppointmentsConnectMessagePart fromPreferences(Context context) {
+    public static AppointmentsConnectMessagePart fromPreferences(Context context,
+                                                                 ICalendarSource calendarSource) {
         return new AppointmentsConnectMessagePart()
                 .withActiveCalendarIDs(Preferences.ACTIVE_CALENDARS.loadIntSet(context))
                 .withMaxAppointments(Preferences.APPOINTMENTS.loadInt(context))
                 .withMaxDays(Preferences.INTERVAL.loadInt(context))
-                // TODO The calendar source should be injected
-                .loadAppointments(Utilities.obtainCalendarProvider(context));
+                .loadAppointments(calendarSource);
     }
 
     /**

@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import net.hypotenubel.calendariq.data.calendar.source.ICalendarSource;
 import net.hypotenubel.calendariq.data.msg.model.AppointmentsConnectMessagePart;
 import net.hypotenubel.calendariq.data.msg.model.BatteryChargeConnectMessagePart;
 import net.hypotenubel.calendariq.data.msg.model.ConnectMessage;
@@ -39,6 +40,8 @@ public class Synchroniser implements Runnable {
 
     /** Application context. */
     private final Context appContext;
+    /** Access to appointments. */
+    private final ICalendarSource calendarSource;
     /** How exactly we'll broadcast our message. */
     private final IBroadcastStrategy broadcastStrategy;
     /** Access to the broadcast statistics database. */
@@ -50,9 +53,11 @@ public class Synchroniser implements Runnable {
     private boolean finished = false;
 
     @Inject
-    public Synchroniser(@ApplicationContext Context context, IBroadcastStatisticsDao statsDao,
-                        IBroadcastStrategy broadcastStrategy) {
+    public Synchroniser(@ApplicationContext Context context, ICalendarSource calendarSource,
+                        IBroadcastStrategy broadcastStrategy,
+                        IBroadcastStatisticsDao statsDao) {
         this.appContext = context;
+        this.calendarSource = calendarSource;
         this.broadcastStrategy = broadcastStrategy;
         this.broadcastStatisticsDao = statsDao;
     }
@@ -112,7 +117,7 @@ public class Synchroniser implements Runnable {
         @Override
         public void handleMessage(@NonNull  Message msg) {
             ConnectMessage connectMessage = new ConnectMessage()
-                    .addMessagePart(AppointmentsConnectMessagePart.fromPreferences(appContext))
+                    .addMessagePart(AppointmentsConnectMessagePart.fromPreferences(appContext, calendarSource))
                     .addMessagePart(SyncIntervalConnectMessagePart.fromPreferences(appContext))
                     .addMessagePart(BatteryChargeConnectMessagePart.fromCurrentDeviceState(appContext));
             broadcastStrategy.broadcast(connectMessage, appContext, new BroadcastEventListener());
