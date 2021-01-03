@@ -2,12 +2,10 @@ package net.hypotenubel.calendariq.injection;
 
 import android.content.Context;
 
-import net.hypotenubel.calendariq.data.calendar.source.AndroidCalendarSource;
 import net.hypotenubel.calendariq.data.calendar.source.ICalendarSource;
 import net.hypotenubel.calendariq.data.calendar.source.SampleCalendarSource;
 import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
 import net.hypotenubel.calendariq.data.stats.source.IBroadcastStatisticsDao;
-import net.hypotenubel.calendariq.sync.synchroniser.ConnectBroadcastStrategy;
 import net.hypotenubel.calendariq.sync.synchroniser.IBroadcastStrategy;
 import net.hypotenubel.calendariq.sync.synchroniser.RandomBroadcastStrategy;
 import net.hypotenubel.calendariq.util.DefaultPrerequisitesChecker;
@@ -23,20 +21,20 @@ import dagger.hilt.android.components.ApplicationComponent;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 
 /**
- * Defines dependency injection bindings for our standard release version.
+ * Defines dependency injection bindings for our emulator version.
  */
 @Module
 @InstallIn(ApplicationComponent.class)
-public abstract class DefaultModule {
+public abstract class EmulatorApplicationModule {
 
     @Binds
     abstract IPrerequisitesChecker bindPrerequisiteChecker(DefaultPrerequisitesChecker c);
 
     @Binds
-    abstract ICalendarSource bindCalendarSource(AndroidCalendarSource cs);
+    abstract ICalendarSource bindCalendarSource(SampleCalendarSource cs);
 
     @Binds
-    abstract IBroadcastStrategy bindBroadcastStrategy(ConnectBroadcastStrategy bs);
+    abstract IBroadcastStrategy bindBroadcastStrategy(RandomBroadcastStrategy bs);
 
     @Provides
     @Singleton
