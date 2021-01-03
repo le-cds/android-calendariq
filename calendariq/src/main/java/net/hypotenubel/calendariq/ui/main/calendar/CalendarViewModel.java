@@ -5,9 +5,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import net.hypotenubel.calendariq.data.calendar.CalendarRepository;
 import net.hypotenubel.calendariq.data.calendar.model.AccountDescriptor;
 import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
-import net.hypotenubel.calendariq.data.calendar.source.CalendarRepository;
 
 import java.util.ArrayList;
 import java.util.List;
