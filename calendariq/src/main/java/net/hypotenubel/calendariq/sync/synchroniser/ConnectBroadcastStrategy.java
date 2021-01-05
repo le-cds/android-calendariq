@@ -4,10 +4,11 @@ import android.content.Context;
 
 import com.garmin.android.connectiq.ConnectIQ;
 
+import net.hypotenubel.calendariq.data.apps.model.TargetApps;
+import net.hypotenubel.calendariq.data.apps.source.ITargetAppIdsSource;
 import net.hypotenubel.calendariq.data.msg.model.ConnectMessage;
 import net.hypotenubel.calendariq.sync.connectiq.ConnectIQAppBroadcaster;
 import net.hypotenubel.calendariq.sync.connectiq.IBroadcasterEventListener;
-import net.hypotenubel.calendariq.util.Utilities;
 
 import javax.inject.Inject;
 
@@ -16,8 +17,11 @@ import javax.inject.Inject;
  */
 public class ConnectBroadcastStrategy implements IBroadcastStrategy {
 
+    private final TargetApps targetApps;
+
     @Inject
-    public ConnectBroadcastStrategy() {
+    public ConnectBroadcastStrategy(ITargetAppIdsSource targetAppSource) {
+        this.targetApps = targetAppSource.getTargetApps();
     }
 
     @Override
@@ -25,7 +29,7 @@ public class ConnectBroadcastStrategy implements IBroadcastStrategy {
         ConnectIQAppBroadcaster.broadcast(
                 msg.encode(),
                 appContext,
-                Utilities.APP_IDS,
+                targetApps.getTargetAppIds(),
                 ConnectIQ.IQConnectType.WIRELESS,
                 listener);
     }

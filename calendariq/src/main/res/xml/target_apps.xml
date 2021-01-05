@@ -1,0 +1,7 @@
+<TargetApps>
+    <!-- Facey McWatchface Debug Version -->
+    <App id="d7d720e4-e397-43fe-b4ef-7df656ac5766" />
+
+    <!-- Facey McWatchface Release Version -->
+    <App id="1a8f8f5b-b8f4-43e9-b16f-82d9d3eceafb" />
+</TargetApps>

@@ -2,6 +2,8 @@ package net.hypotenubel.calendariq.injection;
 
 import android.content.Context;
 
+import net.hypotenubel.calendariq.data.apps.source.ITargetAppIdsSource;
+import net.hypotenubel.calendariq.data.apps.source.XmlResourceTargetAppIdsSource;
 import net.hypotenubel.calendariq.data.calendar.source.ICalendarSource;
 import net.hypotenubel.calendariq.data.calendar.source.SampleCalendarSource;
 import net.hypotenubel.calendariq.data.stats.source.BroadcastStatisticsDatabase;
@@ -32,6 +34,9 @@ public abstract class EmulatorApplicationModule {
 
     @Binds
     abstract ICalendarSource bindCalendarSource(SampleCalendarSource cs);
+
+    @Binds
+    abstract ITargetAppIdsSource bindTargetAppSource(XmlResourceTargetAppIdsSource ids);
 
     @Binds
     abstract IBroadcastStrategy bindBroadcastStrategy(RandomBroadcastStrategy bs);
