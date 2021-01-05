@@ -65,7 +65,7 @@ public class SyncController {
 
         // TODO This will have to be adapted as soon as we support different sync services
         if (prerequisitesMet) {
-            int interval = Preferences.INTERVAL.loadInt(appContext);
+            int interval = Preferences.FREQUENCY.loadInt(appContext);
             SyncWorkerController.start(appContext, interval, forceRestart);
         } else {
             SyncWorkerController.stop(appContext);
