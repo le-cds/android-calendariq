@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="net.hypotenubel.calendariq">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -33,6 +34,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.hypotenubel.calendariq.ui.main.MainActivity" />
         </activity>
+
+        <!-- Remove default initialization of WorkManager; we're using custom initialization to
+             get Hilt dependency injection to work with WorkManager. -->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            tools:node="remove" />
     </application>
 
 </manifest>
