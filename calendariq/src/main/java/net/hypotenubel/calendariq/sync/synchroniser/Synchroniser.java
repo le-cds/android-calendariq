@@ -39,7 +39,6 @@ public class Synchroniser implements Runnable {
 
     /** Application context. */
     private final Context appContext;
-    // TODO Change this to CalendarRepository
     /** Access to appointments. */
     private final ICalendarSource calendarSource;
     /** How exactly we'll broadcast our message. */

@@ -9,7 +9,6 @@ import android.util.Log;
 
 import net.hypotenubel.calendariq.data.calendar.model.AccountDescriptor;
 import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
-import net.hypotenubel.calendariq.util.EmulatorPrerequisitesChecker;
 import net.hypotenubel.calendariq.util.IPrerequisitesChecker;
 import net.hypotenubel.calendariq.util.Utilities;
 
@@ -56,8 +55,7 @@ public class AndroidCalendarSource implements ICalendarSource {
     // The following constants are the indices in the instances projection
     private static final int INSTANCE_PROJECTION_BEGIN = 0;
 
-    // TODO Inject prerequisites checker
-    private IPrerequisitesChecker prerequisitesChecker = new EmulatorPrerequisitesChecker();
+    private final IPrerequisitesChecker prerequisitesChecker;
 
     /** The context from which this provider was created. */
     private final Context context;
@@ -66,10 +64,13 @@ public class AndroidCalendarSource implements ICalendarSource {
      * Creates a new instance in the given context.
      *
      * @param context the context from which the instance is created.
+     * @param prerequisitesChecker thing to check whether we have calendar access permissions.
      */
     @Inject
-    public AndroidCalendarSource(@ApplicationContext Context context) {
+    public AndroidCalendarSource(@ApplicationContext Context context,
+                                 IPrerequisitesChecker prerequisitesChecker) {
         this.context = context;
+        this.prerequisitesChecker = prerequisitesChecker;
     }
 
     @Override

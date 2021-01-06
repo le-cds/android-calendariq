@@ -161,7 +161,6 @@ public class ConnectIQAppTransceiver {
      */
     public final void sendMessage(final IQDevice device, final IQApp app, final List<Object> msg) {
         if (isRunning()) {
-            // TODO Enqueue send requests and process them on a separate worker thread?
             new Thread(() -> {
                 try {
                     Log.d(LOG_TAG, "Sending message to " + app.getApplicationId()

@@ -22,22 +22,6 @@ public abstract class BroadcastStatisticsDatabase extends RoomDatabase {
                 .build();
     }
 
-    // TODO The singleton code below needs to be removed as soon as dependency injection works
-
-    // This could be improved by injecting a singleton database object into client objects
-    private static BroadcastStatisticsDatabase singleton = null;
-    public static BroadcastStatisticsDatabase getInstance(Context context) {
-        // Common case (singleton != null) should be fast, and thus not be synchronized
-        if (singleton == null) {
-            synchronized (DB_NAME) {
-                if (singleton == null) {
-                    singleton = create(context);
-                }
-            }
-        }
-        return singleton;
-    }
-
     public abstract IBroadcastStatisticsDao getDao();
 
 }

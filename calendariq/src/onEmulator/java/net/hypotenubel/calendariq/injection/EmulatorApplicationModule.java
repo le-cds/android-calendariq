@@ -46,8 +46,7 @@ public abstract class EmulatorApplicationModule {
     static BroadcastStatisticsDatabase provideBroadcastStatisticsDatabase(
             @ApplicationContext Context context) {
 
-        return BroadcastStatisticsDatabase.getInstance(context);
-        //return BroadcastStatisticsDatabase.create(context);
+        return BroadcastStatisticsDatabase.create(context);
     }
 
     @Provides
