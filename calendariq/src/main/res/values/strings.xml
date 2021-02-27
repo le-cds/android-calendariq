@@ -72,7 +72,7 @@
     <string name="pref_cat_when">When to Sync</string>
 
     <string name="pref_frequency">Frequency</string>
-    <string name="pref_frequency_summary">Sync every %1s.</string>
+    <string name="pref_frequency_summary">Sync at most every %1s.</string>
     <string-array name="pref_frequency_entries">
         <item>15 minutes</item>
         <item>20 minutes</item>
