@@ -1,6 +1,5 @@
 package net.hypotenubel.calendariq.ui.main.calendar;
 
-import androidx.hilt.lifecycle.ViewModelInject;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
@@ -12,12 +11,17 @@ import net.hypotenubel.calendariq.data.calendar.model.CalendarDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
 /**
  * View model for the calendar list. This view model provides not just the list of calendars, but
  * also inserts The activity state of the calendars is automatically
  * synchronised with the preferences. This is basically just a bit of glue code between the
  * {@link CalendarRepository} and the {@link androidx.recyclerview.widget.RecyclerView}.
  */
+@HiltViewModel
 public class CalendarViewModel extends ViewModel {
 
     private final CalendarRepository calendarRepository;
@@ -28,7 +32,7 @@ public class CalendarViewModel extends ViewModel {
     /**
      * Creates a new instance in the given application context.
      */
-    @ViewModelInject
+    @Inject
     public CalendarViewModel(CalendarRepository calendarRepository) {
         this.calendarRepository = calendarRepository;
 

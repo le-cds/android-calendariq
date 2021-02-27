@@ -4,19 +4,20 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.hilt.Assisted;
-import androidx.hilt.work.WorkerInject;
+import androidx.hilt.work.HiltWorker;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import net.hypotenubel.calendariq.sync.synchroniser.Synchroniser;
 import net.hypotenubel.calendariq.util.Utilities;
 
-import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.assisted.Assisted;
+import dagger.assisted.AssistedInject;
 
 /**
  * Thin wrapper around {@link Synchroniser} for use with {@link androidx.work.WorkManager}.
  */
+@HiltWorker
 public class SyncWorker extends Worker {
 
     /** Log tag for log messages. */
@@ -24,8 +25,8 @@ public class SyncWorker extends Worker {
 
     private final Synchroniser synchroniser;
 
-    @WorkerInject
-    public SyncWorker(@Assisted @ApplicationContext Context context,
+    @AssistedInject
+    public SyncWorker(@Assisted Context context,
                       @Assisted WorkerParameters workerParams, Synchroniser synchroniser) {
         super(context, workerParams);
 
