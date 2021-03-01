@@ -9,6 +9,7 @@
         <item name="colorSecondary">@color/calendar_colorSecondary</item>
         <item name="android:colorBackground">@color/calendar_colorBackground</item>
         <item name="colorSurface">@color/calendar_colorSurface</item>
+        <item name="android:statusBarColor">@color/calendar_colorStatusBar</item>
     </style>
 
 </resources>

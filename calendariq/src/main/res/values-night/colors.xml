@@ -8,4 +8,5 @@
     <color name="calendar_colorSurface">#1c1c22</color>
     <color name="calendar_colorSuccess">#A5D6A7</color>
     <color name="calendar_colorFailure">#F06292</color>
+    <color name="calendar_colorStatusBar">#000000</color>
 </resources>
