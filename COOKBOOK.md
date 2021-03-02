@@ -14,6 +14,7 @@ Do this to release a new release:
 * [ ] Produce a build.
 * [ ] Upload the build to the Play Store, using the text from the first step as release notes.
 * [ ] Install new release and be sure that it works.
+* [ ] Possibly update text or images in Play Store listing.
 * [ ] Promote new release to production
 * [ ] Do a GitHub release.
 * [ ] Back on the `master` branch, bump the version number to match the current release, but increase the revision number.
